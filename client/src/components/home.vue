@@ -1,7 +1,7 @@
 <template>
   <div class="main">
       <Map class="map"></Map>
-      <div v-if="!$store.loggedOut">
+      <div class="loginDiv" v-if="!$store.loggedOut">
         <div class="overlay"></div>
         <div class="elements-wrapper">
           <Logo></Logo>
@@ -33,12 +33,10 @@ export default {
 .main {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .elements-wrapper {
+  width: 500px;
   padding-bottom: 30vh;
 }
 
@@ -52,11 +50,19 @@ export default {
   position: absolute;
 }
 
+.loginDiv {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .overlay {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.35);
 }
 </style>
 

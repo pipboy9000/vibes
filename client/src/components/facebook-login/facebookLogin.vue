@@ -104,6 +104,7 @@ export default {
 }
 
 button {
+  width: 275px;
   position: relative;
   padding: 0 15px 0px 46px;
   border: none;
@@ -136,10 +137,9 @@ button {
 }
 
 img {
-  position: absolute;
   top: 3px;
   left: 10px;
-  width: 30px;
+  width: 22px;
 }
 
 @keyframes spin {
