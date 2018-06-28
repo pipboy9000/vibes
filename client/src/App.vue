@@ -8,7 +8,7 @@
 export default {
   name: "App",
   mounted() {
-    debugger;
+
   },
   methods: {
     getUserData: data => {
@@ -59,5 +59,9 @@ body {
   margin: 0;
   width: 100%;
   height: 100%;
+}
+
+.emoji {
+    font-family: "Segoe UI Emoji";
 }
 </style>

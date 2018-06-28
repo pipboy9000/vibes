@@ -20,8 +20,8 @@ export default {
       icon,
       appId: "1033690713453013",
       version: "v2.10",
-      logoutLabel: "Log out from Facebook",
-      loginLabel: "Log In To Facebook",
+      logoutLabel: "Logout of Facebook",
+      loginLabel: "Login with Facebook",
 
       loginOptions: function() {
         return {
@@ -56,7 +56,7 @@ export default {
       fbLogout().then(response => {
         this.isWorking = false;
         this.isConnected = false;
-        this.$emit("logout", response);
+        this.$store.commit("setFbDetails", null);
       });
     },
     login() {
@@ -64,14 +64,11 @@ export default {
       fbLogin(this.loginOptions).then(response => {
         if (response.status === "connected") {
           this.isConnected = true;
+          this.$store.commit("setFbDetails", response);
         } else {
           this.isConnected = false;
         }
         this.isWorking = false;
-        this.$emit("login", {
-          response,
-          FB: window.FB
-        });
       });
     }
   },
@@ -83,14 +80,9 @@ export default {
       .then(response => {
         if (response.status === "connected") {
           this.isConnected = true;
+          this.$store.commit("setFbDetails", response);
         }
         this.isWorking = false;
-        /** get-initial-status to be depcreated on next major version */
-        this.$emit("get-initial-status", response);
-        this.$emit("sdk-loaded", {
-          isConnected: this.isConnected,
-          FB: window.FB
-        });
       });
   }
 };
@@ -101,10 +93,11 @@ export default {
 .container {
   display: flex;
   justify-content: center;
+  width: min-content;
 }
 
 button {
-  width: 275px;
+  width: 225px;
   position: relative;
   padding: 0 15px 0px 46px;
   border: none;

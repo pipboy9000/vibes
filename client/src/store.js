@@ -8,16 +8,23 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    connected: false,
+    fbDetails: null,
+    socketConnected: false,
     location: null,
     vibes: null
   },
   getters: {
     myLocation: state => {
       return state.location
+    },
+    fbDetails: state => {
+      return state.fbDetails
     }
   },
   mutations: {
+    setFbDetails: (state, fbDetails) => {
+      state.fbDetails = fbDetails;
+    },
     updateLocation: (state, location) => {
       state.location = location;
     },
@@ -26,7 +33,7 @@ export default new Vuex.Store({
     },
     SOCKET_CONNECTED: (state, vibes) => {
       console.log('socket connected');
-      state.connected = true;
+      state.socketConnected = true;
     }
   },
   actions: {}

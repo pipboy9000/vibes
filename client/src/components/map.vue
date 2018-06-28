@@ -28,7 +28,6 @@ export default {
     };
   },
   mounted() {
-    debugger;
     this.$refs.map.$mapPromise.then(map => {
       this.map = map;
       location.watchLocation();
