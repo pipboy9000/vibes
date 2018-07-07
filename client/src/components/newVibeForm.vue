@@ -1,9 +1,16 @@
 <template>
     <div class="overlay">
         <div class="bg">
-            <div ref="titleBg" class="titleBg"></div>
-            <div ref="titleStroke" class="titleStroke">{{title}}</div>
-            <input ref="title" class="title" placeholder="Title" v-model="title" @change="resizeTitle">
+            <div class="titleWRapper">
+                <div ref="titleBg" class="titleBg"></div>
+                <div ref="titleStroke" class="titleStroke">{{title}}</div>
+                <input ref="titleInput" class="title input" placeholder="Title" v-model="title" @input="resizeTitle" @keydown="resizeTitle" maxlength="50">
+            </div>
+            <div class="tagsWrapper">
+                <div class="addTagBtn">+</div>
+                <div class="addTagBtn">+</div>
+                <div class="addTagBtn">+</div>
+            </div>
         </div>
     </div>
 </template>
@@ -12,17 +19,32 @@
 export default {
   name: "newVibeForm",
   mounted() {
-    this.titleWidth = this.$refs.titleBg.clientWidth;
+    this.titleWidth = this.$refs.titleBg.clientWidth - 30;
   },
   data() {
     return {
       title: "",
-      titleWidth: null
+      titleWidth: null,
+      titlePxSize: 57,
+      titlePxSizeBase: 57
     };
   },
   methods: {
     resizeTitle: function(e) {
-      console.log(this.$refs.titleStroke.clientWidth);
+      if (this.$refs.titleStroke.clientWidth - this.titleWidth > 10) {
+        this.titlePxSize--;
+        this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
+        this.$refs.titleInput.style.fontSize = this.titlePxSize + "px";
+        this.$nextTick(this.resizeTitle);
+      } else if (
+        this.$refs.titleStroke.clientWidth - this.titleWidth < -10 &&
+        this.titlePxSize < this.titlePxSizeBase
+      ) {
+        this.titlePxSize++;
+        this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
+        this.$refs.titleInput.style.fontSize = this.titlePxSize + "px";
+        this.$nextTick(this.resizeTitle);
+      }
     }
   }
 };
@@ -50,6 +72,14 @@ export default {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
+.titleWRapper {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .titleBg {
   left: 0;
   right: 0;
@@ -62,42 +92,53 @@ export default {
 }
 
 .titleStroke {
-  display: inline-block;
   position: absolute;
-  transform: translateX(-50%);
   border-radius: 10px;
   background: transparent;
-  height: 80px;
   font-size: 57px;
   text-align: center;
   font-family: "Pacifico", cursive;
-  position: absolute;
   -webkit-text-stroke-width: 5px;
   -webkit-text-stroke-color: #3fb7f5;
   color: white;
   border: none;
   outline: none;
+  white-space: pre;
+  top: auto;
+  bottom: auto;
 }
 
 .title {
   position: absolute;
-  top: 9px;
-  left: 15px;
-  width: calc(100% - 30px);
   border-radius: 10px;
   background: transparent;
-  height: 80px;
   font-size: 57px;
   text-align: center;
   font-family: "Pacifico", cursive;
-  position: absolute;
   color: white;
   border: none;
   outline: none;
+  top: auto;
+  bottom: auto;
 }
 
 .title::placeholder {
-  color: #747474;
+  color: #d0d0d0;
+}
+
+.input {
+  width: 100%;
+}
+
+.tagsWrapper {
+  width: 100%;
+  padding-bottom: 70%;
+}
+
+.addTagBtn {
+  width: 30vw;
+  height: 30vw;
+  background: red;
 }
 </style>
 
