@@ -7,7 +7,6 @@ import store from './store';
 import socketio from 'socket.io-client'
 import VueSocketio from 'vue-socket.io';
 import * as VueGoogleMaps from 'vue2-google-maps';
-import FacebookLogin from 'facebook-login-vuejs';
 
 Vue.config.productionTip = false;
 

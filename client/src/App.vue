@@ -1,14 +1,19 @@
 <template>
   <div id="app">
     <router-view/>
+    <emoji-selector></emoji-selector>
   </div>
 </template>
 
 <script>
+import EmojiSelector from "./components/emojiSelector";
 export default {
   name: "App",
+  components: {
+    EmojiSelector
+  },
   mounted() {
-
+    
   },
   methods: {
     getUserData: data => {
@@ -26,6 +31,7 @@ export default {
 
 <style>
 #app {
+  position: absolute;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -36,7 +42,7 @@ export default {
 }
 
 /*fb login button style override*/
-#app > div > div.elements-wrapper > div.container.button > button  > div {
+#app > div > div.elements-wrapper > div.container.button > button > div {
   display: none;
 }
 
@@ -62,6 +68,6 @@ body {
 }
 
 .emoji {
-    font-family: "Segoe UI Emoji";
+  font-family: "Segoe UI Emoji";
 }
 </style>
