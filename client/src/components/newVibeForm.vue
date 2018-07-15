@@ -1,6 +1,7 @@
 <template>
-    <div class="overlay">
-        <div class="bg">
+  <transition name="fade">
+    <div class="overlay" @click="close" v-if="show">
+        <div class="bg" @click="bgClicked">
             <div class="titleWRapper">
                 <div ref="titleBg" class="titleBg"></div>
                 <div ref="titleStroke" class="titleStroke">{{title}}</div>
@@ -11,29 +12,49 @@
                 <div @click="selectEmoji(1)" :class="{addTagBtn: emojis[1] === '+' , emoji:emojis[1] !== '+'}">{{emojis[1]}}</div>
                 <div @click="selectEmoji(2)" :class="{addTagBtn: emojis[2] === '+' , emoji:emojis[2] !== '+'}">{{emojis[2]}}</div>
             </div>
-              <textarea class="description" rows="10" placeholder="description"></textarea>
-              <div class="startBtn">Start</div>
+              <textarea class="description" rows="10" placeholder="description" v-model="description"></textarea>
+              <div class="startBtn" @click="startVibe">Start</div>
         </div>
     </div>
+  </transition>
 </template>
 
 <script>
 import { EventBus } from "../event-bus";
+import socket from "../services/socket.js";
+import location from "../services/location.js";
 export default {
   name: "newVibeForm",
-  mounted() {
-    this.titleWidth = this.$refs.titleBg.clientWidth - 30;
+  mounted() {},
+  created() {
+    EventBus.$on("openNewVibeForm", this.open);
   },
   data() {
     return {
+      show: false,
       title: "",
+      description: "",
+      emojis: ["+", "+", "+"],
       titleWidth: null,
       titlePxSize: 65,
-      titlePxSizeBase: 65,
-      emojis: ["+", "+", "+"]
+      titlePxSizeBase: 65
     };
   },
   methods: {
+    open() {
+      this.show = true;
+      if (!this.titleWidth) {
+        this.$nextTick(function() {
+          this.titleWidth = this.$refs.titleBg.clientWidth - 30;
+        });
+      }
+    },
+    close() {
+      this.show = false;
+    },
+    bgClicked(e) {
+      e.stopPropagation();
+    },
     resizeTitle(e) {
       if (this.$refs.titleStroke.clientWidth - this.titleWidth > 10) {
         this.titlePxSize--;
@@ -51,13 +72,33 @@ export default {
       }
     },
     selectEmoji(emojiIdx) {
-      debugger;
       var self = this;
       EventBus.$emit("openEmojiSelector", emoji => {
-        debugger;
         self.emojis[emojiIdx] = emoji;
         self.emojis = self.emojis.slice();
       });
+    },
+    startVibe() {
+      if (!this.$store.state.location) {
+        console.log("location not ready");
+        return;
+      }
+
+      var location = {
+        lat: this.$store.state.location.coords.latitude,
+        lng: this.$store.state.location.coords.longitude
+      };
+
+      var vibe = {
+        title: this.title,
+        description: this.description,
+        emojis: this.emojis,
+        location,
+        token: this.$store.state.fbDetails.authResponse.accessToken
+      };
+
+      socket.newVibe(vibe);
+      this.close();
     }
   },
   computed: {
@@ -209,6 +250,14 @@ export default {
   line-height: 52px;
   color: white;
   box-shadow: 0 5px 1px 1px #0002;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
 

@@ -8,7 +8,7 @@ export default new Vuex.Store({
     fbDetails: null,
     socketConnected: false,
     location: null,
-    vibes: null
+    vibes: {}
   },
   getters: {
     myLocation: state => {
@@ -23,15 +23,30 @@ export default new Vuex.Store({
       state.fbDetails = fbDetails;
     },
     updateLocation: (state, location) => {
+      console.log(location);
       state.location = location;
     },
     setVibes(state, vibes) {
       state.vibes = vibes;
+      console.log(vibes);
     },
-    SOCKET_CONNECTED: (state, vibes) => {
-      console.log('socket connected');
-      state.socketConnected = true;
+    newVibe(state, vibe) {
+      debugger;
+      this._vm.$set(state.vibes, vibe._id, vibe);
+      console.log(state.vibes);
     }
   },
-  actions: {}
+  actions: {
+    setVibes(context, vibesArray) {
+      new Promise(function (res, rej) {
+        var vibes = {};
+        vibesArray.forEach(vibe => {
+          vibes[vibe._id] = vibe;
+        });
+        res(vibes);
+      }).then(vibes => {
+        context.commit('setVibes', vibes);
+      });
+    }
+  }
 })

@@ -20,7 +20,7 @@ export default {
   name: "emojiSelector",
   data() {
     return {
-      show: true,
+      show: false,
       query: "",
       callback: null
     };
@@ -34,7 +34,6 @@ export default {
       this.close();
     },
     close() {
-      console.log("overlay clicked");
       this.show = false;
     },
     open(callback) {

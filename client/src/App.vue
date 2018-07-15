@@ -11,20 +11,6 @@ export default {
   name: "App",
   components: {
     EmojiSelector
-  },
-  mounted() {
-    
-  },
-  methods: {
-    getUserData: data => {
-      console.log(data);
-    }
-  },
-  sockets: {
-    setVibes(vibes) {
-      console.log(vibes);
-      this.$store.commit("setVibes", vibes);
-    }
   }
 };
 </script>

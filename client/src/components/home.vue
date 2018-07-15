@@ -1,18 +1,18 @@
 <template>
   <div class="main">
       <Map class="map"></Map>
-      <!-- v-if="$store.state.fbDetails" -->
-      <!-- <transition name="fade"> -->
-        <div class="loginDiv"> 
+        <div class="loginDiv" v-if="$store.state.fbDetails === null"> 
           <div class="overlay"></div>
           <div class="elements-wrapper">
             <Logo :size="200" style="padding-bottom:40px"></Logo>
             <FacebookLogin></FacebookLogin>
           </div>
         </div>
-      <div class="newVibeBtn emoji" @click="toggleNewVibe">🏖</div>
-      <NewVibeForm class="newVibeForm"></NewVibeForm>
-      <Logo :size="50" class="logo-small"></logo>
+        <div v-else>
+          <div class="newVibeBtn" @click="openNewVibeForm">+</div>
+          <list></list>
+          <NewVibeForm class="newVibeForm"></NewVibeForm>
+        </div>
   </div>
 </template>
 
@@ -20,20 +20,22 @@
 import Map from "./map";
 import FacebookLogin from "./facebook-login/facebookLogin";
 import Logo from "./logo";
+import list from "./list";
 import NewVibeForm from "./newVibeForm";
+import { EventBus } from "../event-bus";
 
 export default {
   name: "home",
-  mounted() {},
   components: {
     Map,
     FacebookLogin,
     Logo,
-    NewVibeForm
+    NewVibeForm,
+    list
   },
   methods: {
-    toggleNewVibe() {
-      console.log("new vibe");
+    openNewVibeForm() {
+      EventBus.$emit("openNewVibeForm");
     }
   }
 };
@@ -94,13 +96,19 @@ export default {
   position: absolute;
   width: 80px;
   height: 80px;
-  background-color: white;
-  border: 5px solid lightblue;
+  background-color: #22dbe3;
+  border: 5px solid white;
   left: 50%;
+  -webkit-transform: translateX (-50%);
   transform: translateX (-50%);
   translate: -50%;
   bottom: 50px;
   border-radius: 80px;
+  font-family: cursive;
+  font-size: 70px;
+  line-height: 70px;
+  color: white;
+  box-shadow: 0px 8px 10px -1px #0004;
 }
 
 .newVibeForm {

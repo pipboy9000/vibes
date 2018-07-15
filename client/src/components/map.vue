@@ -45,7 +45,6 @@ export default {
   },
   watch: {
     myLocation(newLoc, oldLoc) {
-      console.log(newLoc);
       this.map.panTo(newLoc);
       this.map.setZoom(15);
     }
