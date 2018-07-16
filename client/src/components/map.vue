@@ -30,19 +30,26 @@ export default {
       EventBus.$on("focus", this.focusSelf);
     });
   },
+  computed: {
+    location() {
+      return {
+        lat: this.$store.state.location.coords.latitude,
+        lng: this.$store.state.location.coords.longitude
+      };
+    }
+  },
   methods: {
     focus(location) {
-      debugger;
       if (location) {
         this.map.panTo(location);
-        this.map.setZoom(10);
+        this.map.setZoom(15);
       }
     },
     focusVibe(vibe) {
       this.focus(vibe.location);
     },
     focusSelf() {
-      this.focus(this.$store.state.location);
+      this.focus(this.myLocation);
     },
     zoomIn() {
       this.map.setZoom(this.map.getZoom() + 1);
@@ -54,11 +61,12 @@ export default {
   computed: {
     google: gmapApi,
     myLocation() {
-      if (this.$store.state.location)
+      if (this.$store.state.location) {
         return {
           lat: this.$store.state.location.coords.latitude,
           lng: this.$store.state.location.coords.longitude
         };
+      }
       return null;
     },
     vibes() {
@@ -74,6 +82,7 @@ export default {
         circle.setMap(null);
         circle = null;
       });
+      this.circles = [];
 
       for (var id in newVibes) {
         var circle = new google.maps.Circle({

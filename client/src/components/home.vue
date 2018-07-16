@@ -118,7 +118,7 @@ export default {
   height: 100%;
 }
 
-.list{
+.list {
   margin: 20px;
 }
 </style>

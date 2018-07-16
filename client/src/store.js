@@ -23,12 +23,11 @@ export default new Vuex.Store({
       state.fbDetails = fbDetails;
     },
     updateLocation: (state, location) => {
-      console.log(location);
+      console.log('location', location);
       state.location = location;
     },
     setVibes(state, vibes) {
       state.vibes = vibes;
-      console.log(vibes);
     },
     newVibe(state, vibe) {
       this._vm.$set(state.vibes, vibe._id, vibe);

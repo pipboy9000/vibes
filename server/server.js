@@ -28,6 +28,12 @@ function validate(token) {
     });
 }
 
+function setVibes() {
+  db.getVibes().then(vibes => {
+    io.emit('setVibes', vibes);
+  });
+}
+
 io.on('connection', function (socket) {
   console.log('socket connected');
   db.getVibes().then(vibes => {
@@ -54,5 +60,6 @@ io.on('connection', function (socket) {
 });
 
 server.listen(port, function () {
-  console.log('listening on port ' + port)
+  console.log('listening on port ' + port);
+  setInterval(setVibes, 5000); //reset vibes list for everyone every 5 seconds
 });
