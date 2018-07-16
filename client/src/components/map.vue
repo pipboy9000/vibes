@@ -25,15 +25,30 @@ export default {
       this.map = map;
       location.watchLocation();
       EventBus.$on("listItemClicked", this.focusVibe);
+      EventBus.$on("zoomIn", this.zoomIn);
+      EventBus.$on("zoomOut", this.zoomOut);
+      EventBus.$on("focus", this.focusSelf);
     });
   },
   methods: {
     focus(location) {
-      this.map.panTo(location);
-      this.map.setZoom(10);
+      debugger;
+      if (location) {
+        this.map.panTo(location);
+        this.map.setZoom(10);
+      }
     },
     focusVibe(vibe) {
       this.focus(vibe.location);
+    },
+    focusSelf() {
+      this.focus(this.$store.state.location);
+    },
+    zoomIn() {
+      this.map.setZoom(this.map.getZoom() + 1);
+    },
+    zoomOut() {
+      this.map.setZoom(this.map.getZoom() - 1);
     }
   },
   computed: {
@@ -55,7 +70,6 @@ export default {
       this.focus(newLoc);
     },
     vibes(newVibes, oldVibes) {
-      debugger;
       this.circles.forEach(circle => {
         circle.setMap(null);
         circle = null;
