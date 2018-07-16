@@ -24,13 +24,16 @@ export default {
     this.$refs.map.$mapPromise.then(map => {
       this.map = map;
       location.watchLocation();
-      EventBus.$on("listItemClicked", this.focus);
+      EventBus.$on("listItemClicked", this.focusVibe);
     });
   },
   methods: {
-    focus(vibe) {
-      this.map.panTo(vibe.location);
+    focus(location) {
+      this.map.panTo(location);
       this.map.setZoom(10);
+    },
+    focusVibe(vibe) {
+      this.focus(vibe.location);
     }
   },
   computed: {

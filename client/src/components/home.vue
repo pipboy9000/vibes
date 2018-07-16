@@ -12,6 +12,7 @@
           <div class="newVibeBtn" @click="openNewVibeForm">+</div>
           <list class="list"></list>
           <NewVibeForm class="newVibeForm"></NewVibeForm>
+          <mapUI></mapUI>
         </div>
   </div>
 </template>
@@ -21,6 +22,7 @@ import Map from "./map";
 import FacebookLogin from "./facebook-login/facebookLogin";
 import Logo from "./logo";
 import list from "./list";
+import mapUI from "./mapUI";
 import NewVibeForm from "./newVibeForm";
 import { EventBus } from "../event-bus";
 
@@ -31,7 +33,8 @@ export default {
     FacebookLogin,
     Logo,
     NewVibeForm,
-    list
+    list,
+    mapUI
   },
   methods: {
     openNewVibeForm() {
