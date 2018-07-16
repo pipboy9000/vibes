@@ -13,6 +13,8 @@ async function newVibe(vibe, uid) {
     vibe.createdBy = uid;
     vibe.users = [uid];
     vibe.lastJoined = now;
+    vibe.location.lat += Math.random()*3;
+    vibe.location.lng += Math.random()*3;
 
     let client;
 

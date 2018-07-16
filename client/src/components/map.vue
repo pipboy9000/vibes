@@ -1,22 +1,14 @@
 <template>
-<GmapMap class="map"
-  :center="{lat:10, lng:10}"
-  :zoom="7"
-  map-type-id="terrain"
-  ref="map"
-  :options="{disableDefaultUI: true}"
->
-    <gmap-marker
-    :v-if="myLocation"
-      :position="myLocation"
-      :clickable="true"
-    ></gmap-marker>
+<GmapMap class="map" :center="{lat:10, lng:10}" :zoom="7" map-type-id="terrain" ref="map" :options="{disableDefaultUI: true}">
+    <!-- <gmap-marker :v-if="myLocation" :position="myLocation" :clickable="true" ></gmap-marker> -->
+    <gmap-marker v-for="vibe in $store.state.vibes" :key="vibe._id" :position="vibe.location"></gmap-marker>
 </GmapMap>
 </template>
 
 <script>
 import location from "../services/location.js";
 import { EventBus } from "../event-bus.js";
+import { gmapApi } from "vue2-google-maps";
 
 export default {
   name: "Map",
@@ -24,29 +16,61 @@ export default {
   data() {
     return {
       map: null,
-      myMarker: null
+      myMarker: null,
+      circles: []
     };
   },
   mounted() {
     this.$refs.map.$mapPromise.then(map => {
       this.map = map;
       location.watchLocation();
+      EventBus.$on("listItemClicked", this.focus);
     });
   },
+  methods: {
+    focus(vibe) {
+      this.map.panTo(vibe.location);
+      this.map.setZoom(10);
+    }
+  },
   computed: {
+    google: gmapApi,
     myLocation() {
       if (this.$store.state.location)
         return {
           lat: this.$store.state.location.coords.latitude,
           lng: this.$store.state.location.coords.longitude
         };
-        return null;
+      return null;
+    },
+    vibes() {
+      return this.$store.state.vibes;
     }
   },
   watch: {
     myLocation(newLoc, oldLoc) {
-      this.map.panTo(newLoc);
-      this.map.setZoom(15);
+      this.focus(newLoc);
+    },
+    vibes(newVibes, oldVibes) {
+      debugger;
+      this.circles.forEach(circle => {
+        circle.setMap(null);
+        circle = null;
+      });
+
+      for (var id in newVibes) {
+        var circle = new google.maps.Circle({
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#FF0000",
+          fillOpacity: 0.35,
+          map: this.map,
+          center: newVibes[id].location,
+          radius: newVibes[id].users.length * 1000
+        });
+        this.circles.push(circle);
+      }
     }
   }
 };

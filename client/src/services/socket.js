@@ -9,7 +9,6 @@ io.on('setVibes', vibes => {
 });
 
 io.on('newVibe', vibe => {
-  console.log(vibe);
   store.commit('newVibe', vibe);
 })
 

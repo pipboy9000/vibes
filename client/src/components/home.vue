@@ -10,7 +10,7 @@
         </div>
         <div v-else>
           <div class="newVibeBtn" @click="openNewVibeForm">+</div>
-          <list></list>
+          <list class="list"></list>
           <NewVibeForm class="newVibeForm"></NewVibeForm>
         </div>
   </div>
@@ -101,7 +101,6 @@ export default {
   left: 50%;
   -webkit-transform: translateX (-50%);
   transform: translateX (-50%);
-  translate: -50%;
   bottom: 50px;
   border-radius: 80px;
   font-family: cursive;
@@ -114,6 +113,10 @@ export default {
 .newVibeForm {
   width: 100%;
   height: 100%;
+}
+
+.list{
+  margin: 20px;
 }
 </style>
 

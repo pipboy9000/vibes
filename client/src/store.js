@@ -31,9 +31,7 @@ export default new Vuex.Store({
       console.log(vibes);
     },
     newVibe(state, vibe) {
-      debugger;
       this._vm.$set(state.vibes, vibe._id, vibe);
-      console.log(state.vibes);
     }
   },
   actions: {

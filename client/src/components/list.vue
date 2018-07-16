@@ -7,6 +7,7 @@
 <script>
 import store from "../store";
 import listItem from "./listItem";
+import { EventBus } from "../event-bus";
 
 export default {
   name: "list",
@@ -15,8 +16,8 @@ export default {
 </script>
 
 <style scoped="true">
-.wrapper{
-    position: absolute;
+.wrapper {
+  position: absolute;
 }
 </style>
 
