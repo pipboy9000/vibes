@@ -13,8 +13,6 @@ async function newVibe(vibe, uid) {
     vibe.createdBy = uid;
     vibe.users = [uid];
     vibe.lastJoined = now;
-    vibe.location.lat += Math.random()*3;
-    vibe.location.lng += Math.random()*3;
 
     let client;
 
@@ -56,7 +54,23 @@ async function getVibes() {
     }
 }
 
+async function updateUser(user) {
+    try {
+        client = await MongoClient.connect(url, connectSettings);
+        db = client.db(dbName);
+        await db.collection('user').update({
+                fbId: user.fbId
+            },
+            user, {
+                upsert: true
+            });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 module.exports = {
     newVibe,
-    getVibes
+    getVibes,
+    updateUser
 }

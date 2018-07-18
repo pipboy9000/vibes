@@ -94,7 +94,7 @@ export default {
         description: this.description,
         emojis: this.emojis,
         location,
-        token: this.$store.state.fbDetails.authResponse.accessToken
+        token: this.$store.getters.token
       };
 
       socket.newVibe(vibe);
@@ -254,7 +254,7 @@ export default {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s;
+  transition: opacity 0.2s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;

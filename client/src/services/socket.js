@@ -17,6 +17,10 @@ function newVibe(vibe) {
   io.emit('newVibe', vibe);
 }
 
+function update(me) {
+  io.emit('updateUser', me);
+}
+
 export default {
-  newVibe
+  newVibe, update
 }

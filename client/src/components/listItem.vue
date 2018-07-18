@@ -29,8 +29,6 @@ export default {
   props: ["vibe"],
   computed: {
     time() {
-      console.log(Date.now() - this.vibe.createdAt);
-      console.log(timeAgo.format(this.vibe.createdAt, "twitter"));
       return timeAgo.format(this.vibe.createdAt);
     }
   },

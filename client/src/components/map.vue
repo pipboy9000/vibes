@@ -1,6 +1,6 @@
 <template>
 <GmapMap class="map" :center="{lat:10, lng:10}" :zoom="7" map-type-id="terrain" ref="map" :options="{disableDefaultUI: true}">
-    <!-- <gmap-marker :v-if="myLocation" :position="myLocation" :clickable="true" ></gmap-marker> -->
+    <gmap-marker :v-if="myLocation" :position="myLocation" :clickable="true" :icon="myIcon"></gmap-marker>
     <gmap-marker v-for="vibe in $store.state.vibes" :key="vibe._id" :position="vibe.location"></gmap-marker>
 </GmapMap>
 </template>
@@ -16,8 +16,9 @@ export default {
   data() {
     return {
       map: null,
-      myMarker: null,
-      circles: []
+      myIcon: {url: "../assets/user_marker.png"},
+      circles: [],
+      users: []
     };
   },
   mounted() {
@@ -29,14 +30,6 @@ export default {
       EventBus.$on("zoomOut", this.zoomOut);
       EventBus.$on("focus", this.focusSelf);
     });
-  },
-  computed: {
-    location() {
-      return {
-        lat: this.$store.state.location.coords.latitude,
-        lng: this.$store.state.location.coords.longitude
-      };
-    }
   },
   methods: {
     focus(location) {
@@ -61,13 +54,16 @@ export default {
   computed: {
     google: gmapApi,
     myLocation() {
-      if (this.$store.state.location) {
-        return {
-          lat: this.$store.state.location.coords.latitude,
-          lng: this.$store.state.location.coords.longitude
-        };
-      }
-      return null;
+      //development
+      return this.$store.getters.myLocation;
+
+      // if (this.$store.state.location) {
+      //   return {
+      //     lat: this.$store.state.location.coords.latitude,
+      //     lng: this.$store.state.location.coords.longitude
+      //   };
+      // }
+      // return null;
     },
     vibes() {
       return this.$store.state.vibes;
@@ -78,24 +74,32 @@ export default {
       this.focus(newLoc);
     },
     vibes(newVibes, oldVibes) {
-      this.circles.forEach(circle => {
-        circle.setMap(null);
-        circle = null;
-      });
-      this.circles = [];
-
-      for (var id in newVibes) {
-        var circle = new google.maps.Circle({
-          strokeColor: "#FF0000",
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: "#FF0000",
-          fillOpacity: 0.35,
-          map: this.map,
-          center: newVibes[id].location,
-          radius: newVibes[id].users.length * 1000
-        });
-        this.circles.push(circle);
+      var i = 0;
+      for (var vibeId in newVibes) {
+        var vibe = newVibes[vibeId];
+        if (i < this.circles.length) {
+          this.circles[i].setCenter(vibe.location);
+          this.circles[i].setRadius(vibe.users.length * 50);
+        } else {
+          console.log(this.map);
+          var circle = new google.maps.Circle({
+            strokeColor: "#ff13c4",
+            strokeOpacity: 0.5,
+            strokeWeight: 3,
+            fillColor: "#ff6ada",
+            fillOpacity: 0.25,
+            map: this.map,
+            center: vibe.location,
+            radius: vibe.users.length * 50
+          });
+          this.circles.push(circle);
+        }
+        i++;
+      }
+      //clear unused circles
+      for (i = i; i < this.circles.length; i++) {
+        this.circles[i].setMap(null);
+        this.circles[i] = null;
       }
     }
   }

@@ -18,48 +18,60 @@ app.get('/', function (req, res) {
 });
 
 function validate(token) {
-  return axios.get('https://graph.facebook.com/debug_token?&input_token=' + token + '&access_token=' + appId + '|' + appSecret)
-    .then(res => {
-      if (res.data.data.is_valid) {
-        return res.data.data.user_id;
-      }
-    }).catch(err => {
-      return false;
+  //development
+  return Promise.resolve("10156492526329808");
+
+    // return axios.get('https://graph.facebook.com/debug_token?&input_token=' + token + '&access_token=' + appId + '|' + appSecret)
+    //   .then(res => {
+    //     if (res.data.data.is_valid) {
+    //       return res.data.data.user_id;
+    //     }
+    //   }).catch(err => {
+    //     return false;
+    //   });
+  }
+
+  function setVibes() {
+    db.getVibes().then(vibes => {
+      io.emit('setVibes', vibes);
     });
-}
+  }
 
-function setVibes() {
-  db.getVibes().then(vibes => {
-    io.emit('setVibes', vibes);
-  });
-}
-
-io.on('connection', function (socket) {
-  console.log('socket connected');
-  db.getVibes().then(vibes => {
-    socket.emit('setVibes', vibes);
-  });
-
-  socket.on('newVibe', function (vibe) {
-    validate(vibe.token).then(uid => {
-      if (uid) {
-        db.newVibe(vibe, uid).then(vibe => {
-          socket.emit('newVibe', vibe);
-        })
-      } else {
-        console.log("user credentials invalid");
-      }
-    });
-  });
-
-  socket.on('getVibes', function () {
+  io.on('connection', function (socket) {
+    console.log('socket connected');
     db.getVibes().then(vibes => {
       socket.emit('setVibes', vibes);
-    })
-  });
-});
+    });
 
-server.listen(port, function () {
-  console.log('listening on port ' + port);
-  setInterval(setVibes, 5000); //reset vibes list for everyone every 5 seconds
-});
+    socket.on('newVibe', function (vibe) {
+      validate(vibe.token).then(uid => {
+        if (uid) {
+          db.newVibe(vibe, uid).then(vibe => {
+            socket.emit('newVibe', vibe);
+          })
+        } else {
+          console.log("user credentials invalid");
+        }
+      });
+    });
+
+    socket.on('updateUser', function (user) {
+      console.log('update user', user);
+      validate(user.token).then(uid => {
+        user.fbId = uid;
+        user.updated = Date.now();
+        db.updateUser(user);
+      });
+    });
+
+    socket.on('getVibes', function () {
+      db.getVibes().then(vibes => {
+        socket.emit('setVibes', vibes);
+      })
+    });
+  });
+
+  server.listen(port, function () {
+    console.log('listening on port ' + port);
+    setInterval(setVibes, 5000); //reset vibes list for everyone every 5 seconds
+  });
