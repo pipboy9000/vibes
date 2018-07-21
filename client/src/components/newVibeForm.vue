@@ -84,10 +84,13 @@ export default {
         return;
       }
 
-      var location = {
-        lat: this.$store.state.location.coords.latitude,
-        lng: this.$store.state.location.coords.longitude
-      };
+      //development
+      var location = this.$store.state.location; 
+
+      // var location = {
+      //   lat: this.$store.state.location.coords.latitude,
+      //   lng: this.$store.state.location.coords.longitude
+      // };
 
       var vibe = {
         title: this.title,

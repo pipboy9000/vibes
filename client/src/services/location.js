@@ -3,8 +3,8 @@ import store from '../store.js';
 var watchID;
 
 function getLocation() {
-  navigator.geolocation.getCurrentPosition(function (position) {
-    store.commit('updateLocation', position);
+  navigator.geolocation.getCurrentPosition(function (location) {
+    store.commit('updateLocation', location);
   }, function (err) {
     console.log(err);
   }, null, {
@@ -16,16 +16,21 @@ function getLocation() {
 
 function watchLocation() {
   //for development
-  watchID = setInterval(function () {
-    var position = {
-      lat: 32.090032199999996,
-      lng: 34.768544399999996
-    }
-    store.dispatch('updateLocation', position);
-  }, 10000);
+  setTimeout(function () {
+    store.dispatch('setLocation', {
+      lat: 32.090032199999996 + Math.random(),
+      lng: 34.768544399999996 + Math.random()
+    })
+  }, 1000);
+  // watchID = setInterval(function () {
+  //   store.dispatch('setLocation', {
+  //     lat: 32.090032199999996 + Math.random(),
+  //     lng: 34.768544399999996 + Math.random()
+  //   });
+  // }, 5000);
 
-  // watchID = navigator.geolocation.watchPosition(function (position) {
-  //   store.dispatch('updateLocation', position);
+  // watchID = navigator.geolocation.watchPosition(function (location) {
+  //   store.commit('updateLocation', location);
   // }, function (err) {
   //   console.log(err);
   // }, null, {
@@ -40,7 +45,7 @@ function stopWatch() {
 }
 
 function init() {
-
+  watchLocation();
 }
 
 init();

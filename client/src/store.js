@@ -9,12 +9,10 @@ export default new Vuex.Store({
     fbDetails: null,
     socketConnected: false,
     location: null,
-    vibes: {}
+    vibes: null,
+    users: null
   },
   getters: {
-    myLocation: state => {
-      return state.location
-    },
     fbDetails: state => {
       return state.fbDetails
     },
@@ -22,45 +20,48 @@ export default new Vuex.Store({
       if (state.fbDetails)
         return state.fbDetails.authResponse.accessToken
       return null;
+    },
+    fbid: state => {
+      if (state.fbDetails)
+        return state.fbDetails.authResponse.userID
+      return null;
     }
   },
   mutations: {
+    setLocation: (state, location) => {
+      state.location = location;
+    },
     setFbDetails: (state, fbDetails) => {
       state.fbDetails = fbDetails;
-      //update server with location after login
-      if (state.location) {
-        var me = {
-          token: fbDetails.authResponse.accessToken,
-          location: state.location
-        }
-        socket.update(me);
-      }
-    },
-    updateLocation: (state, location) => {
-      state.location = location;
-      if (state.fbDetails) {
-        var me = {
-          token: state.fbDetails.authResponse.accessToken,
-          location: location
-        }
-        socket.update(me);
-      }
     },
     setVibes(state, vibes) {
       state.vibes = vibes;
     },
     newVibe(state, vibe) {
       this._vm.$set(state.vibes, vibe._id, vibe);
+    },
+    setUsers(state, users) {
+      state.users = users;
     }
   },
   actions: {
-    updateLocation(context, location) {
+    setFbDetails: (context, fbDetails) => {
+      context.commit('setFbDetails', fbDetails);
+      if (context.state.location && fbDetails != null) {
+        var me = {
+          token: fbDetails.authResponse.accessToken,
+          location: context.state.location
+        }
+        socket.update(me);
+      }
+    },
+    setLocation(context, location) {
+      context.commit('setLocation', location);
       if (context.state.fbDetails) {
         var me = {
           token: context.state.fbDetails.authResponse.accessToken,
           location: location
         }
-        context.commit('updateLocation', location);
         socket.update(me);
       }
     },
@@ -74,6 +75,9 @@ export default new Vuex.Store({
       }).then(vibes => {
         context.commit('setVibes', vibes);
       });
+    },
+    setUsers(context, users) {
+      context.commit('setUsers', users);
     }
   }
 })

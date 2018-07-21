@@ -40,15 +40,14 @@ async function getVibes() {
     try {
         client = await MongoClient.connect(url, connectSettings);
         db = client.db(dbName);
-        let cursor = await db.collection('vibe').find({
+        let res = await db.collection('vibe').find({
             lastJoined: {
                 $gt: from
             }
         }).sort({
             createdAt: 1
         });
-        var result = cursor.toArray();
-        return result;
+        return res.toArray();
     } catch (err) {
         console.log(err);
     }
@@ -58,6 +57,7 @@ async function updateUser(user) {
     try {
         client = await MongoClient.connect(url, connectSettings);
         db = client.db(dbName);
+        user.updatedAt = Date.now();
         await db.collection('user').update({
                 fbId: user.fbId
             },
@@ -69,8 +69,28 @@ async function updateUser(user) {
     }
 }
 
+async function getUsers() {
+    try {
+        client = await MongoClient.connect(url, connectSettings);
+        db = client.db(dbName);
+        let res = await db.collection('user').find({
+            updatedAt: {
+                $gt: Date.now() - 1000 * 60 * 60
+            }
+        }).project({
+            _id: 0,
+            location: 1,
+            fbId: 1
+        });
+        return res.toArray();
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 module.exports = {
     newVibe,
     getVibes,
+    getUsers,
     updateUser
 }

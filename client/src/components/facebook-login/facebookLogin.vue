@@ -56,7 +56,7 @@ export default {
       fbLogout().then(response => {
         this.isWorking = false;
         this.isConnected = false;
-        this.$store.commit("setFbDetails", null);
+        this.$store.dispatch("setFbDetails", null);
       });
     },
     login() {
@@ -64,7 +64,7 @@ export default {
       fbLogin(this.loginOptions).then(response => {
         if (response.status === "connected") {
           this.isConnected = true;
-          this.$store.commit("setFbDetails", response);
+          this.$store.dispatch("setFbDetails", response);
         } else {
           this.isConnected = false;
         }
@@ -80,7 +80,7 @@ export default {
       .then(response => {
         if (response.status === "connected") {
           this.isConnected = true;
-          this.$store.commit("setFbDetails", response);
+          this.$store.dispatch("setFbDetails", response);
         }
         this.isWorking = false;
       });
