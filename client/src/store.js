@@ -25,6 +25,14 @@ export default new Vuex.Store({
       if (state.fbDetails)
         return state.fbDetails.authResponse.userID
       return null;
+    },
+    me: state => {
+      if (state.fbDetails && state.location)
+        return {
+          fbid: state.fbDetails.authResponse.userID,
+          location: new google.maps.LatLng(state.location)
+        }
+      return null;
     }
   },
   mutations: {

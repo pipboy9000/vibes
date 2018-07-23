@@ -21,7 +21,8 @@ function watchLocation() {
       lat: 32.090032199999996 + Math.random(),
       lng: 34.768544399999996 + Math.random()
     })
-  }, 1000);
+  }, 2000);
+  
   // watchID = setInterval(function () {
   //   store.dispatch('setLocation', {
   //     lat: 32.090032199999996 + Math.random(),

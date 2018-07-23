@@ -1,38 +1,40 @@
 <template>
-<GmapMap class="map" :center="{lat:10, lng:10}" :zoom="7" map-type-id="terrain" ref="map" :options="{disableDefaultUI: true}">
-    <gmap-marker :v-if="location" :position="location" :clickable="true" :icon="'./assets/static/user_marker.png'"></gmap-marker>
-    <gmap-marker v-for="vibe in vibes" :key="vibe._id" :position="vibe.location"></gmap-marker>
-</GmapMap>
+  <div ref="map" class="map"></div>
 </template>
 
 <script>
 import location from "../services/location.js";
 import { EventBus } from "../event-bus.js";
-import { gmapApi } from "vue2-google-maps";
+import { CustomUserInfoWindow } from "../services/maps.js";
 
 export default {
   name: "Map",
   data() {
     return {
+      google: null,
       map: null,
       myMarker: null,
       circles: [],
       users: [],
-      userInfoWindow: null,
+      userInfoWindow: null
     };
   },
   mounted() {
-    this.$refs.map.$mapPromise.then(map => {
-      this.map = map;
-      EventBus.$on("listItemClicked", this.focusVibe);
-      EventBus.$on("zoomIn", this.zoomIn);
-      EventBus.$on("zoomOut", this.zoomOut);
-      EventBus.$on("focus", this.focusSelf);
+    EventBus.$on("listItemClicked", this.focusVibe);
+    EventBus.$on("zoomIn", this.zoomIn);
+    EventBus.$on("zoomOut", this.zoomOut);
+    EventBus.$on("focus", this.focusSelf);
 
-      this.userInfoWindow = new google.maps.InfoWindow({
-        content: "<p>hello world<//p>" + Date.now()
-      });
+    this.map = new google.maps.Map(this.$refs.map, {
+      zoom: 10,
+      center: this.$store.state.location
+        ? this.$store.state.location
+        : { lat: 0, lng: 0 },
+      disableDefaultUI: true
     });
+
+    //init the custom overlay object to use as an infowindow
+    this.userInfoWindow = new CustomUserInfoWindow(this.map);
   },
 
   methods: {
@@ -56,7 +58,6 @@ export default {
     }
   },
   computed: {
-    google: gmapApi,
     location() {
       return this.$store.state.location;
     },
@@ -74,13 +75,12 @@ export default {
         });
 
         this.myMarker.addListener("click", function() {
-          self.userInfoWindow.setContent("hello world " + Date.now());
-          self.userInfoWindow.open(self.map, self.myMarker);
+          self.userInfoWindow.setDetails(self.$store.getters.me);
         });
       }
 
       this.myMarker.setPosition(newLoc);
-      // this.focus(newLoc);
+      this.focus(newLoc);
     },
     vibes(newVibes, oldVibes) {
       var i = 0;
