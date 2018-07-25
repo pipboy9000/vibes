@@ -14,8 +14,11 @@ export function loadFbSdk(appId, version) {
     };
     (function (d, s, id) { // eslint-disable-line func-names
       const fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) { return; }
-      const js = d.createElement(s); js.id = id;
+      if (d.getElementById(id)) {
+        return;
+      }
+      const js = d.createElement(s);
+      js.id = id;
       js.src = '//connect.facebook.net/en_US/sdk.js';
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
@@ -39,4 +42,10 @@ export function fbLogout() {
   return new Promise(resolve => {
     window.FB.logout(response => resolve(response));
   });
+}
+
+export function fbGetUserDetails() {
+  return new Promise(resolve => {
+    window.FB.api('/me', details => resolve(details));
+  })
 }

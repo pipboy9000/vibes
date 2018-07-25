@@ -59,7 +59,7 @@ async function updateUser(user) {
         db = client.db(dbName);
         user.updatedAt = Date.now();
         await db.collection('user').update({
-                fbId: user.fbId
+                fbid: user.fbid
             },
             user, {
                 upsert: true
@@ -80,7 +80,8 @@ async function getUsers() {
         }).project({
             _id: 0,
             location: 1,
-            fbId: 1
+            fbid: 1,
+            name: 1
         });
         return res.toArray();
     } catch (err) {

@@ -9,7 +9,13 @@
   </div>
 </template>
 <script>
-import { loadFbSdk, getLoginStatus, fbLogout, fbLogin } from "./helpers.js";
+import {
+  loadFbSdk,
+  getLoginStatus,
+  fbLogout,
+  fbLogin,
+  fbGetUserDetails
+} from "./helpers.js";
 import icon from "./icon.png";
 export default {
   name: "facebook-login",
@@ -56,7 +62,7 @@ export default {
       fbLogout().then(response => {
         this.isWorking = false;
         this.isConnected = false;
-        this.$store.dispatch("setFbDetails", null);
+        this.$store.dispatch("setLoginDetails", null);
       });
     },
     login() {
@@ -64,7 +70,8 @@ export default {
       fbLogin(this.loginOptions).then(response => {
         if (response.status === "connected") {
           this.isConnected = true;
-          this.$store.dispatch("setFbDetails", response);
+          console.log("login response:", response);
+          this.$store.dispatch("setLoginDetails", response);
         } else {
           this.isConnected = false;
         }
@@ -80,7 +87,10 @@ export default {
       .then(response => {
         if (response.status === "connected") {
           this.isConnected = true;
-          this.$store.dispatch("setFbDetails", response);
+          this.$store.dispatch("setLoginDetails", response);
+          fbGetUserDetails().then(userDetails =>
+            this.$store.dispatch("setUserDetails", userDetails)
+          );
         }
         this.isWorking = false;
       });

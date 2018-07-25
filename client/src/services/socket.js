@@ -12,7 +12,7 @@ io.on('newVibe', vibe => {
   store.commit('newVibe', vibe);
 });
 
-io.on('setUsers', users =>{
+io.on('setUsers', users => {
   store.dispatch('setUsers', users);
 })
 

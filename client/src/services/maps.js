@@ -7,6 +7,10 @@ function CustomUserInfoWindow(map) {
   div.style.background = 'white';
   div.style.borderRadius = '5px';
   div.style.boxShadow = '0 2px 4px 1px #00000025';
+  div.style.visibility = 'hidden'
+  div.style.left = -2 + 'px';
+  div.style.top = -156 + 'px';
+  div.style.zIndex = 2;
   this.div = div;
 
   //triangle
@@ -36,26 +40,26 @@ function CustomUserInfoWindow(map) {
 
   //profile pic
   var profilePic = document.createElement('img');
-  profilePic.style.width = '70px';
-  profilePic.style.height = '70px';
+  profilePic.style.width = '65px';
+  profilePic.style.minWidth = '65px';
+  profilePic.style.height = '65px';
   profilePic.style.background = '#ddd';
-  profilePic.style.marginLeft = '5px';
+  profilePic.style.marginLeft = '10px';
   this.profilePic = profilePic;
   overlay.appendChild(profilePic);
 
   //name
-  // color: #8fd9ff;
-  // font-size: 28px;
-  // margin-left: 10px;
-  // font-family: "Pacifico", cursive;
   var name = document.createElement('div');
-  name.innerText = "Dan Levin";
+  name.innerText = "REeeeally loonngg NAME!";
   name.style.marginLeft = '8px';
-  name.style.color = '#8fd9ff';
+  name.style.marginRight = '8px';
+  name.style.color = '#3fb7f5';
   name.style.fontSize = '28px';
   name.style.fontFamily = '"Pacifico", cursive';
-  name.style.transform = 'translateY(-20px)';
-  
+  name.style.transform = 'translateY(-17px)';
+  name.style.whiteSpace = 'nowrap';
+  name.style.overflow = 'hidden';
+  name.style.textOverflow = 'ellipsis';
   this.name = name;
   overlay.appendChild(name);
 
@@ -79,37 +83,28 @@ CustomUserInfoWindow.prototype.draw = function () {
     return;
 
   var overlayProjection = this.getProjection();
-  var pos = overlayProjection.fromLatLngToDivPixel(this.details.location);
+  var pos = overlayProjection.fromLatLngToDivPixel(this.details.latLng);
 
   this.div.style.left = pos.x - 2 + 'px';
   this.div.style.top = pos.y - 156 + 'px';
 }
 
-CustomUserInfoWindow.prototype.show = function () {
+CustomUserInfoWindow.prototype.open = function () {
   this.div.style.visibility = 'visible';
 }
 
-CustomUserInfoWindow.prototype.hide = function () {
+CustomUserInfoWindow.prototype.close = function () {
   this.div.style.visibility = 'hidden'
 }
 
 CustomUserInfoWindow.prototype.setDetails = function (details) {
-
   this.details = details;
+  this.details.latLng = new google.maps.LatLng(details.location);
+  this.profilePic.src = '';
   this.profilePic.src = 'https://graph.facebook.com/' + details.fbid + '/picture?type=square&width=70&height=70';
-
-  var self = this;
-
-  FB.api(
-    '/' + details.fbid,
-    'GET', {},
-    function (response) {
-      debugger;
-      console.log(response);
-      self.details.name = response.name;
-      self.render();
-      self.draw();
-    });
+  this.details.name = details.name;
+  this.render();
+  this.draw();
 }
 
 export {

@@ -15,11 +15,12 @@ export default {
       map: null,
       myMarker: null,
       circles: [],
-      users: [],
+      userMarkers: [],
       userInfoWindow: null
     };
   },
   mounted() {
+    var self = this;
     EventBus.$on("listItemClicked", this.focusVibe);
     EventBus.$on("zoomIn", this.zoomIn);
     EventBus.$on("zoomOut", this.zoomOut);
@@ -31,6 +32,10 @@ export default {
         ? this.$store.state.location
         : { lat: 0, lng: 0 },
       disableDefaultUI: true
+    });
+
+    this.map.addListener("click", function(e) {
+      self.userInfoWindow.close();
     });
 
     //init the custom overlay object to use as an infowindow
@@ -63,6 +68,9 @@ export default {
     },
     vibes() {
       return this.$store.state.vibes;
+    },
+    users() {
+      return this.$store.state.users;
     }
   },
   watch: {
@@ -76,6 +84,7 @@ export default {
 
         this.myMarker.addListener("click", function() {
           self.userInfoWindow.setDetails(self.$store.getters.me);
+          self.userInfoWindow.open();
         });
       }
 
@@ -111,13 +120,53 @@ export default {
           this.circles[i] = null;
         }
       }
+    },
+    users(newUsers, oldUsers) {
+      var self = this;
+      newUsers.map((u, idx) => {
+        //skip own
+        if (self.$store.getters.me && u.fbid === self.$store.getters.me.fbid) {
+          return;
+        }
+
+        if (idx < self.userMarkers.length) {
+          self.userMarkers[idx].setPosition(u.location);
+        } else {
+          self.userMarkers[idx] = new google.maps.Marker({
+            icon: "./static/user_marker.png",
+            map: self.map,
+            position: u.location
+          });
+        }
+
+        //clear previous click listeners
+        google.maps.event.clearInstanceListeners(self.userMarkers[idx]);
+
+        self.userMarkers[idx].addListener("click", function() {
+          self.userInfoWindow.setDetails(u);
+          self.userInfoWindow.open();
+        });
+      });
+
+      //[0,1]   userMarkers
+      //[0]     new users
+
+      //remove unused markers
+      if (this.userMarkers.length > newUsers.length) {
+        for (var i = newUsers.length; i < this.userMarkers.length ; i++) {
+          debugger;
+          this.userMarkers[i].setMap(null);
+          this.userMarkers[i] = null;
+          this.userMarkers.pop();
+        }
+      }
     }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+
+<style scoped="true">
 .map {
   position: absolute;
   width: 100%;

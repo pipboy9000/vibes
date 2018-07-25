@@ -1,7 +1,7 @@
 <template>
   <div class="main">
       <Map class="map"></Map>
-        <div class="loginDiv" v-if="$store.state.fbDetails === null"> 
+        <div class="loginDiv" v-if="$store.state.loginDetails === null"> 
           <div class="overlay"></div>
           <div class="elements-wrapper">
             <Logo :size="200" style="padding-bottom:40px"></Logo>

@@ -6,32 +6,35 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    fbDetails: null,
-    socketConnected: false,
+    loginDetails: null,
+    userDetails: null,
     location: null,
     vibes: null,
     users: null
   },
   getters: {
-    fbDetails: state => {
-      return state.fbDetails
+    loginDetails: state => {
+      return state.loginDetails
     },
     token: state => {
-      if (state.fbDetails)
-        return state.fbDetails.authResponse.accessToken
+      if (state.loginDetails)
+        return state.loginDetails.authResponse.accessToken
       return null;
     },
     fbid: state => {
-      if (state.fbDetails)
-        return state.fbDetails.authResponse.userID
+      if (state.loginDetails)
+        return state.loginDetails.authResponse.userID
       return null;
     },
     me: state => {
-      if (state.fbDetails && state.location)
+      if (state.loginDetails && state.location && state.userDetails) {
         return {
-          fbid: state.fbDetails.authResponse.userID,
-          location: new google.maps.LatLng(state.location)
+          name: state.userDetails.name,
+          fbid: state.loginDetails.authResponse.userID,
+          token: state.loginDetails.authResponse.accessToken,
+          location: state.location
         }
+      }
       return null;
     }
   },
@@ -39,8 +42,11 @@ export default new Vuex.Store({
     setLocation: (state, location) => {
       state.location = location;
     },
-    setFbDetails: (state, fbDetails) => {
-      state.fbDetails = fbDetails;
+    setLoginDetails: (state, loginDetails) => {
+      state.loginDetails = loginDetails;
+    },
+    setUserDetails: (state, userDetails) => {
+      state.userDetails = userDetails;
     },
     setVibes(state, vibes) {
       state.vibes = vibes;
@@ -53,24 +59,22 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    setFbDetails: (context, fbDetails) => {
-      context.commit('setFbDetails', fbDetails);
-      if (context.state.location && fbDetails != null) {
-        var me = {
-          token: fbDetails.authResponse.accessToken,
-          location: context.state.location
-        }
-        socket.update(me);
+    setLoginDetails: (context, loginDetails) => {
+      context.commit('setLoginDetails', loginDetails);
+      if (context.getters.me) {
+        socket.update(context.getters.me);
+      }
+    },
+    setUserDetails: (context, userDetails) => {
+      context.commit('setUserDetails', userDetails);
+      if (context.getters.me) {
+        socket.update(context.getters.me);
       }
     },
     setLocation(context, location) {
       context.commit('setLocation', location);
-      if (context.state.fbDetails) {
-        var me = {
-          token: context.state.fbDetails.authResponse.accessToken,
-          location: location
-        }
-        socket.update(me);
+      if (context.getters.me) {
+        socket.update(context.getters.me);
       }
     },
     setVibes(context, vibesArray) {

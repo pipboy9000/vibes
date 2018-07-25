@@ -24,7 +24,8 @@ function setVibes() {
 
 function setUsers() {
   db.getUsers().then(users => {
-    console.log(users);
+    console.log(users.length + ' users connected');
+    users.map(u => console.log(JSON.stringify(u)));
     io.emit('setUsers', users);
   });
 }
@@ -48,10 +49,9 @@ io.on('connection', function (socket) {
   });
 
   socket.on('updateUser', function (user) {
-    validate(user.token).then(uid => {
-      if (uid) {
-        user.fbId = uid;
-        user.updated = Date.now();
+    validate(user.token, user.fbid).then(isValid => {
+      if (isValid) {
+        user.updatedAt = Date.now();
         db.updateUser(user);
       } else {
         console.log("user credentials invalid");
