@@ -4,36 +4,29 @@ import store from '../store';
 var io = socketio.connect('localhost:3000');
 
 //from server
-io.on('setVibes', vibes => {
-  store.dispatch('setVibes', vibes);
-});
+io.on('setVibes', vibes => store.dispatch('setVibes', vibes));
+io.on('newVibe', vibe => store.commit('newVibe', vibe));
+io.on('setUsers', users => store.dispatch('setUsers', users))
+io.on('setUser', user => store.dispatch('setUser', user))
+io.on('login', user => store.dispatch('setUser', user))
+io.on('updateLocation', user => store.commit('setServerLocation', user))
 
-io.on('newVibe', vibe => {
-  store.commit('newVibe', vibe);
-});
-
-io.on('setUsers', users => {
-  store.dispatch('setUsers', users);
-})
 
 //to server
 function newVibe(vibe) {
   io.emit('newVibe', vibe);
 }
 
-function update(me) {
-  io.emit('updateUser', me);
+function login(me) {
+  io.emit('login', me);
 }
 
-function getUsers() {
-  io.emit('getUsers');
-}
-
-function getVibes() {
-  io.emit('getVibes');
+function updateLocation(me) {
+  io.emit('updateLocation', me);
 }
 
 export default {
   newVibe,
-  update
+  login,
+  updateLocation
 }

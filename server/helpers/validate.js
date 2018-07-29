@@ -7,8 +7,10 @@ var {
 
 var accessTokens = {};
 
-function validate(token, id) {
+function validate(token) {
     //development
+    // return Promise.resolve(true);
+
     if (accessTokens[token] && accessTokens[token].createdAt > (Date.now() - 3600000))
         return Promise.resolve(accessTokens[token].uid);
 
@@ -19,7 +21,7 @@ function validate(token, id) {
                     uid: res.data.data.user_id,
                     createdAt: Date.now()
                 };
-                return res.data.data.user_id === id
+                return res.data.data.user_id
             }
         }).catch(err => {
             console.log(err.message);

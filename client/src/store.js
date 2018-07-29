@@ -6,13 +6,18 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    inVibe: null,
     loginDetails: null,
     userDetails: null,
     location: null,
-    vibes: null,
-    users: null
+    serverLocation: null, //user location on server
+    vibes: [],
+    users: []
   },
   getters: {
+    serverLocation: state => {
+      return state.serverLocation;
+    },
     loginDetails: state => {
       return state.loginDetails
     },
@@ -25,6 +30,14 @@ export default new Vuex.Store({
       if (state.loginDetails)
         return state.loginDetails.authResponse.userID
       return null;
+    },
+    inVibe: state => {
+      return state.inVibe;
+    },
+    name: state => {
+      if (state.userDetails)
+        return state.userDetails.name;
+      return null
     },
     me: state => {
       if (state.loginDetails && state.location && state.userDetails) {
@@ -42,39 +55,49 @@ export default new Vuex.Store({
     setLocation: (state, location) => {
       state.location = location;
     },
+    setServerLocation: (state, user) => {
+      state.serverLocation = user.location;
+    },
     setLoginDetails: (state, loginDetails) => {
       state.loginDetails = loginDetails;
     },
     setUserDetails: (state, userDetails) => {
       state.userDetails = userDetails;
     },
+    setUser: (state, user) => {
+      state.inVibe = user.inVibe
+    },
     setVibes(state, vibes) {
       state.vibes = vibes;
     },
     newVibe(state, vibe) {
       this._vm.$set(state.vibes, vibe._id, vibe);
+      state.inVibe = vibe.id;
     },
     setUsers(state, users) {
       state.users = users;
+    },
+    setInVibe(id) {
+      state.inVibe = id;
     }
   },
   actions: {
     setLoginDetails: (context, loginDetails) => {
       context.commit('setLoginDetails', loginDetails);
-      if (context.getters.me) {
-        socket.update(context.getters.me);
-      }
     },
     setUserDetails: (context, userDetails) => {
       context.commit('setUserDetails', userDetails);
       if (context.getters.me) {
-        socket.update(context.getters.me);
+        socket.login(context.getters.me);
       }
+    },
+    setUser: (context, user) => {
+      context.commit('setUser', user);
     },
     setLocation(context, location) {
       context.commit('setLocation', location);
       if (context.getters.me) {
-        socket.update(context.getters.me);
+        socket.updateLocation(context.getters.me);
       }
     },
     setVibes(context, vibesArray) {

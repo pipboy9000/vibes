@@ -14,21 +14,30 @@ function getLocation() {
   });
 }
 
+var count = 0;
+
 function watchLocation() {
   //for development
-  setTimeout(function () {
-    store.dispatch('setLocation', {
-      lat: 32.090032199999996 + Math.random(),
-      lng: 34.768544399999996 + Math.random()
-    })
-  }, 2000);
-  
-  // watchID = setInterval(function () {
+  // setTimeout(function () {
   //   store.dispatch('setLocation', {
   //     lat: 32.090032199999996 + Math.random(),
   //     lng: 34.768544399999996 + Math.random()
-  //   });
-  // }, 5000);
+  //   })
+  // }, 2000);
+
+
+  store.dispatch('setLocation', {
+    lat: 32.090032199999996 + Math.random(),
+    lng: 34.768544399999996 + Math.random()
+  });
+
+  watchID = setInterval(function (idx) {
+    count++;
+    store.dispatch('setLocation', {
+      lat: 32.090032199999996 + 0.0001 * count,
+      lng: 34.768544399999996 + 0.0001 * count
+    });
+  }, 10000);
 
   // watchID = navigator.geolocation.watchPosition(function (location) {
   //   store.commit('updateLocation', location);

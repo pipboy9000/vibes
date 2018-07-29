@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import location from "../services/location.js";
 import { EventBus } from "../event-bus.js";
 import { CustomUserInfoWindow } from "../services/maps.js";
 
@@ -38,6 +37,21 @@ export default {
       self.userInfoWindow.close();
     });
 
+    this.myMarker = new google.maps.Marker({
+      icon: "./static/user_marker.png",
+      map: this.map,
+      opacity: 0.3
+    });
+
+    this.myMarker.addListener("click", function() {
+      self.userInfoWindow.setDetails(self.$store.getters.me);
+      self.userInfoWindow.open();
+    });
+
+    if (this.location) {
+      this.myMarker.setPosition(this.location);
+    }
+
     //init the custom overlay object to use as an infowindow
     this.userInfoWindow = new CustomUserInfoWindow(this.map);
   },
@@ -60,41 +74,48 @@ export default {
     },
     zoomOut() {
       this.map.setZoom(this.map.getZoom() - 1);
-    }
-  },
-  computed: {
-    location() {
-      return this.$store.state.location;
     },
-    vibes() {
-      return this.$store.state.vibes;
+    getIcon(inVibe) {
+      if (inVibe) return "./static/user_marker_in_vibe.png";
+      return "./static/user_marker.png";
     },
-    users() {
-      return this.$store.state.users;
-    }
-  },
-  watch: {
-    location(newLoc, oldLoc) {
+    renderUsers(users) {
       var self = this;
-      if (!this.myMarker) {
-        this.myMarker = new google.maps.Marker({
-          icon: "./static/user_marker.png",
-          map: this.map
-        });
 
-        this.myMarker.addListener("click", function() {
-          self.userInfoWindow.setDetails(self.$store.getters.me);
+      users.map((u, idx) => {
+        if (idx < self.userMarkers.length) {
+          self.userMarkers[idx].setPosition(u.location);
+          self.userMarkers[idx].setIcon(self.getIcon(u.inVibe));
+        } else {
+          self.userMarkers[idx] = new google.maps.Marker({
+            icon: self.getIcon(u.inVibe),
+            map: self.map,
+            position: u.location
+          });
+        }
+
+        //clear previous click listeners
+        google.maps.event.clearInstanceListeners(self.userMarkers[idx]);
+
+        self.userMarkers[idx].addListener("click", function() {
+          self.userInfoWindow.setDetails(u);
           self.userInfoWindow.open();
         });
-      }
+      });
 
-      this.myMarker.setPosition(newLoc);
-      this.focus(newLoc);
+      //remove unused markers
+      if (this.userMarkers.length > users.length) {
+        for (var i = users.length; i < this.userMarkers.length; i++) {
+          this.userMarkers[i].setMap(null);
+          this.userMarkers[i] = null;
+        }
+        this.userMarkers = this.userMarkers.slice(0, users.length);
+      }
     },
-    vibes(newVibes, oldVibes) {
+    renderVibes(vibes) {
       var i = 0;
-      for (var vibeId in newVibes) {
-        var vibe = newVibes[vibeId];
+      for (var vibeId in vibes) {
+        var vibe = vibes[vibeId];
         if (i < this.circles.length) {
           this.circles[i].setCenter(vibe.location);
           this.circles[i].setRadius(vibe.users.length * 50);
@@ -118,47 +139,56 @@ export default {
         if (this.circles[i]) {
           this.circles[i].setMap(null);
           this.circles[i] = null;
+          this.circles.pop();
         }
       }
+    }
+  },
+  computed: {
+    location() {
+      return this.$store.state.location;
     },
-    users(newUsers, oldUsers) {
+    vibes() {
+      return this.$store.state.vibes;
+    },
+    users() {
+      return this.$store.state.users;
+    },
+    inVibe() {
+      return this.$store.state.inVibe;
+    },
+    serverLocation() {
+      debugger;
+      return this.$store.state.serverLocation;
+    }
+  },
+  watch: {
+    location(newLoc, oldLoc) {
+      this.myMarker.setPosition(newLoc);
+      this.focus(newLoc);
+    },
+    serverLocation(newLoc) {
+      debugger;
       var self = this;
-      newUsers.map((u, idx) => {
-        //skip own
-        if (self.$store.getters.me && u.fbid === self.$store.getters.me.fbid) {
-          return;
-        }
-
-        if (idx < self.userMarkers.length) {
-          self.userMarkers[idx].setPosition(u.location);
-        } else {
-          self.userMarkers[idx] = new google.maps.Marker({
-            icon: "./static/user_marker.png",
-            map: self.map,
-            position: u.location
-          });
-        }
-
-        //clear previous click listeners
-        google.maps.event.clearInstanceListeners(self.userMarkers[idx]);
-
-        self.userMarkers[idx].addListener("click", function() {
-          self.userInfoWindow.setDetails(u);
-          self.userInfoWindow.open();
-        });
+      var me = this.$store.state.users.find(function(u) {
+        return u.fbid === self.$store.getters.fbid;
       });
-
-      //[0,1]   userMarkers
-      //[0]     new users
-
-      //remove unused markers
-      if (this.userMarkers.length > newUsers.length) {
-        for (var i = newUsers.length; i < this.userMarkers.length ; i++) {
-          debugger;
-          this.userMarkers[i].setMap(null);
-          this.userMarkers[i] = null;
-          this.userMarkers.pop();
-        }
+      debugger;
+      me.location = newLoc;
+      this.renderUsers(this.$store.state.users);
+    },
+    vibes(newVibes) {
+      this.renderVibes(newVibes);
+    },
+    users(newUsers) {
+      this.renderUsers(newUsers);
+    },
+    inVibe(newInVibe, oldInVibe) {
+      debugger;
+      if (newInVibe) {
+        this.myMarker.setIcon("./static/user_marker_in_vibe.png");
+      } else {
+        this.myMarker.setIcon("./static/user_marker.png");
       }
     }
   }
