@@ -37,7 +37,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped="true">
 
 .sizer {
   width: min-content;

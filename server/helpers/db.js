@@ -6,6 +6,12 @@ var connectSettings = {
     useNewUrlParser: true
 };
 
+function getDb() {
+    return MongoClient.connect(url, connectSettings).then(client => {
+        return client.db(dbName)
+    })
+}
+
 async function newVibe(vibe, uid) {
     var now = Date.now();
     vibe.createdAt = now;
@@ -16,11 +22,7 @@ async function newVibe(vibe, uid) {
     let client;
 
     try {
-        client = await MongoClient.connect(
-            url,
-            connectSettings
-        );
-        const db = client.db(dbName);
+        const db = await getDb();
         let res = await db.collection("vibe").insertOne(vibe);
         await db.collection("user").updateOne({
             fbid: uid
@@ -44,21 +46,11 @@ async function newVibe(vibe, uid) {
 }
 
 async function getVibes() {
-    var from = Date.now() - 3600000; //last 2 hours
-
-    let client;
-
     try {
-        client = await MongoClient.connect(
-            url,
-            connectSettings
-        );
-        db = client.db(dbName);
-        let res = await db
-            .collection("vibe")
-            .find({
+        const db = await getDb();
+        let res = await db.collection("vibe").find({
                 lastJoined: {
-                    $gt: from
+                    $gt: Date.now() - 3600000 //last 2 hours
                 }
             })
             .sort({
@@ -72,12 +64,8 @@ async function getVibes() {
 
 async function updateLocation(user) {
     try {
-        client = await MongoClient.connect(
-            url,
-            connectSettings
-        );
-        db = client.db(dbName);
         user.updatedAt = Date.now();
+        db = await getDb();
         return await db.collection("user").findOneAndUpdate({
             fbid: user.fbid
         }, {
@@ -89,7 +77,10 @@ async function updateLocation(user) {
             returnOriginal: false,
             projection: {
                 _id: 0,
-                location: 1
+                fbid: 1,
+                name: 1,
+                location: 1,
+                inVibe: 1,
             }
         }).then(res => {
             return res.value
@@ -101,11 +92,7 @@ async function updateLocation(user) {
 
 async function login(user) {
     try {
-        client = await MongoClient.connect(
-            url,
-            connectSettings
-        );
-        db = client.db(dbName);
+        const db = await getDb();
         return db.collection("user").findOneAndUpdate({
             fbid: user.fbid
         }, {
@@ -136,14 +123,8 @@ async function login(user) {
 
 async function getUsers() {
     try {
-        client = await MongoClient.connect(
-            url,
-            connectSettings
-        );
-        db = client.db(dbName);
-        let res = await db
-            .collection("user")
-            .find({
+        const db = await getDb();
+        let res = await db.collection("user").find({
                 updatedAt: {
                     $gt: Date.now() - 1000 * 60 * 90
                 }

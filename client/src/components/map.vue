@@ -57,6 +57,9 @@ export default {
   },
 
   methods: {
+    getVibeSize(numUsers) {
+      return Math.round(numUsers * 150 * 0.8);
+    },
     focus(location) {
       if (location) {
         this.map.panTo(location);
@@ -79,6 +82,25 @@ export default {
       if (inVibe) return "./static/user_marker_in_vibe.png";
       return "./static/user_marker.png";
     },
+    getNewMarker(user) {
+      return new google.maps.Marker({
+        icon: this.getIcon(user.inVibe),
+        map: this.map,
+        position: user.location
+      });
+    },
+    getNewCircle(vibe) {
+      return new google.maps.Circle({
+        strokeColor: "#ff13c4",
+        strokeOpacity: 0.5,
+        strokeWeight: 3,
+        fillColor: "#ff6ada",
+        fillOpacity: 0.25,
+        map: this.map,
+        center: vibe.location,
+        radius: this.getVibeSize(vibe.users.length)
+      });
+    },
     renderUsers(users) {
       var self = this;
 
@@ -87,11 +109,7 @@ export default {
           self.userMarkers[idx].setPosition(u.location);
           self.userMarkers[idx].setIcon(self.getIcon(u.inVibe));
         } else {
-          self.userMarkers[idx] = new google.maps.Marker({
-            icon: self.getIcon(u.inVibe),
-            map: self.map,
-            position: u.location
-          });
+          self.userMarkers[idx] = self.getNewMarker(u);
         }
 
         //clear previous click listeners
@@ -113,23 +131,15 @@ export default {
       }
     },
     renderVibes(vibes) {
+      debugger;
       var i = 0;
       for (var vibeId in vibes) {
         var vibe = vibes[vibeId];
         if (i < this.circles.length) {
           this.circles[i].setCenter(vibe.location);
-          this.circles[i].setRadius(vibe.users.length * 50);
+          this.circles[i].setRadius(this.getVibeSize(vibe.users.length));
         } else {
-          var circle = new google.maps.Circle({
-            strokeColor: "#ff13c4",
-            strokeOpacity: 0.5,
-            strokeWeight: 3,
-            fillColor: "#ff6ada",
-            fillOpacity: 0.25,
-            map: this.map,
-            center: vibe.location,
-            radius: vibe.users.length * 50
-          });
+          var circle = this.getNewCircle(vibe);
           this.circles.push(circle);
         }
         i++;
@@ -158,7 +168,6 @@ export default {
       return this.$store.state.inVibe;
     },
     serverLocation() {
-      debugger;
       return this.$store.state.serverLocation;
     }
   },
@@ -168,13 +177,16 @@ export default {
       this.focus(newLoc);
     },
     serverLocation(newLoc) {
-      debugger;
-      var self = this;
+      var fbid = this.$store.getters.fbid;
       var me = this.$store.state.users.find(function(u) {
-        return u.fbid === self.$store.getters.fbid;
+        return u.fbid === fbid;
       });
-      debugger;
-      me.location = newLoc;
+      if (me) {
+        me.location = newLoc;
+      } else {
+        me = this.getNewMarker(this.$store.getters.me);
+        this.userMarkers.push(me);
+      }
       this.renderUsers(this.$store.state.users);
     },
     vibes(newVibes) {
@@ -185,6 +197,7 @@ export default {
     },
     inVibe(newInVibe, oldInVibe) {
       debugger;
+      console.log(newInVibe);
       if (newInVibe) {
         this.myMarker.setIcon("./static/user_marker_in_vibe.png");
       } else {

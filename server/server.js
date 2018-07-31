@@ -58,7 +58,7 @@ io.on('connection', function (socket) {
   socket.on('login', function (user) {
     validate(user.token).then(uid => {
       if (uid) {
-        db.login(user).then(user => socket.emit('login', user));
+        db.login(user).then(user => socket.emit('setUser', user));
       } else {
         console.log("user credentials invalid");
       }
@@ -70,7 +70,7 @@ io.on('connection', function (socket) {
     validate(user.token).then(uid => {
       if (uid) {
         db.updateLocation(user).then(user => {
-          socket.emit('updateLocation', user);
+          socket.emit('setUser', user);
         })
       } else {
         console.log("user credentials invalid");
@@ -106,5 +106,5 @@ io.on('connection', function (socket) {
 server.listen(port, function () {
   console.log('listening on port ' + port);
   setInterval(setVibes, 15000); //reset vibes list for everyone every 5 seconds
-  setInterval(setUsers, 7500);
+  setInterval(setUsers, 15000);
 });

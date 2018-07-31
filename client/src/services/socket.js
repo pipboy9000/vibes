@@ -8,9 +8,6 @@ io.on('setVibes', vibes => store.dispatch('setVibes', vibes));
 io.on('newVibe', vibe => store.commit('newVibe', vibe));
 io.on('setUsers', users => store.dispatch('setUsers', users))
 io.on('setUser', user => store.dispatch('setUser', user))
-io.on('login', user => store.dispatch('setUser', user))
-io.on('updateLocation', user => store.commit('setServerLocation', user))
-
 
 //to server
 function newVibe(vibe) {

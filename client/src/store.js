@@ -11,7 +11,7 @@ export default new Vuex.Store({
     userDetails: null,
     location: null,
     serverLocation: null, //user location on server
-    vibes: [],
+    vibes: {},
     users: []
   },
   getters: {
@@ -65,14 +65,16 @@ export default new Vuex.Store({
       state.userDetails = userDetails;
     },
     setUser: (state, user) => {
-      state.inVibe = user.inVibe
+      state.inVibe = user.inVibe;
+      state.serverLocation = user.location;
     },
     setVibes(state, vibes) {
       state.vibes = vibes;
     },
     newVibe(state, vibe) {
+      debugger;
       this._vm.$set(state.vibes, vibe._id, vibe);
-      state.inVibe = vibe.id;
+      state.inVibe = vibe._id;
     },
     setUsers(state, users) {
       state.users = users;
