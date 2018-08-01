@@ -1,5 +1,5 @@
 <template>
-    <div v-if="hasVibes" class="wrapper" :class="{open: isOpen, closed: !isOpen}">
+    <div v-show="hasVibes" class="wrapper" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}">
       <div class="list">
         <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
       </div>
@@ -21,10 +21,19 @@ export default {
   name: "list",
   data() {
     return {
-      isOpen: false
+      isOpen: false,
+      ready: false //used to fix animations
     };
   },
   components: { listItem },
+  mounted() {
+    var self = this;
+    if (this.hasVibes) {
+      setTimeout(function() {
+        self.ready = true;
+      }, 500);
+    }
+  },
   methods: {
     open() {
       this.isOpen = true;
@@ -35,8 +44,20 @@ export default {
   },
   computed: {
     hasVibes() {
-      console.log(Object.keys(this.$store.state.vibes).length);
       return Object.keys(this.$store.state.vibes).length;
+    }
+  },
+  watch: {
+    hasVibes(newVibesCount, oldVibesCount) {
+      var self = this;
+      if (newVibesCount > 0 && oldVibesCount === 0) {
+        setTimeout(function() {
+          self.ready = true;
+        }, 500);
+      } else if (newVibesCount === 0 && oldVibesCount > 0) {
+        this.ready = false;
+        this.close();
+      }
     }
   }
 };
@@ -45,6 +66,7 @@ export default {
 <style scoped="true">
 .wrapper {
   position: absolute;
+  left: -550px;
   margin: 10px;
 }
 
@@ -69,13 +91,19 @@ export default {
 .open {
   left: 0px;
   animation: openAnim;
-  animation-duration: 0.2s;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-out;
 }
 
 .closed {
   left: -550px;
   animation: closeAnim;
-  animation-duration: 0.2s;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-out;
+}
+
+.noAnim {
+  animation-duration: 0s;
 }
 
 .list {

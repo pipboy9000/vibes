@@ -131,7 +131,6 @@ export default {
       }
     },
     renderVibes(vibes) {
-      debugger;
       var i = 0;
       for (var vibeId in vibes) {
         var vibe = vibes[vibeId];
@@ -196,8 +195,6 @@ export default {
       this.renderUsers(newUsers);
     },
     inVibe(newInVibe, oldInVibe) {
-      debugger;
-      console.log(newInVibe);
       if (newInVibe) {
         this.myMarker.setIcon("./static/user_marker_in_vibe.png");
       } else {

@@ -72,7 +72,6 @@ export default new Vuex.Store({
       state.vibes = vibes;
     },
     newVibe(state, vibe) {
-      debugger;
       this._vm.$set(state.vibes, vibe._id, vibe);
       state.inVibe = vibe._id;
     },
