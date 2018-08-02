@@ -96,10 +96,15 @@ export default {
 }
 
 .closed {
+  transform: translateX(-10px);
   left: -550px;
   animation: closeAnim;
   animation-duration: 0.25s;
   animation-timing-function: ease-out;
+}
+
+.closed > .openBtn {
+  margin-left: 10px;
 }
 
 .noAnim {
@@ -107,7 +112,7 @@ export default {
 }
 
 .list {
-  max-height: 90vh;
+  max-height: 50vh;
   padding-right: 8px;
   overflow-y: scroll;
   float: left;
