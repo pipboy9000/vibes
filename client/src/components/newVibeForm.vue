@@ -12,7 +12,7 @@
                 <div @click="selectEmoji(1)" :class="{addTagBtn: emojis[1] === '+' , emoji:emojis[1] !== '+'}">{{emojis[1]}}</div>
                 <div @click="selectEmoji(2)" :class="{addTagBtn: emojis[2] === '+' , emoji:emojis[2] !== '+'}">{{emojis[2]}}</div>
             </div>
-              <textarea class="description" rows="10" placeholder="description" v-model="description"></textarea>
+              <!-- <textarea class="description" rows="10" placeholder="description" v-model="description"></textarea> -->
               <div class="startBtn" @click="startVibe">Start</div>
         </div>
     </div>
@@ -24,7 +24,7 @@ import { EventBus } from "../event-bus";
 import socket from "../services/socket.js";
 import location from "../services/location.js";
 export default {
-  name: "newVibeForm",
+  name: "NewVibeForm",
   mounted() {},
   created() {
     EventBus.$on("openNewVibeForm", this.open);
@@ -33,7 +33,6 @@ export default {
     return {
       show: false,
       title: "",
-      description: "",
       emojis: ["+", "+", "+"],
       titleWidth: null,
       titlePxSize: 65,
@@ -85,7 +84,7 @@ export default {
       }
 
       //development
-      var location = this.$store.state.location; 
+      var location = this.$store.state.location;
 
       // var location = {
       //   lat: this.$store.state.location.coords.latitude,
@@ -94,7 +93,6 @@ export default {
 
       var vibe = {
         title: this.title,
-        description: this.description,
         emojis: this.emojis,
         location,
         token: this.$store.getters.token
@@ -128,7 +126,7 @@ export default {
   width: 100%;
   max-width: 487px;
   height: 100%;
-  max-height: 520px;
+  max-height: min-content;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -136,6 +134,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 30px;
 }
 
 .titleWRapper {
@@ -144,6 +143,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .titleBg {
@@ -223,7 +223,7 @@ export default {
   font-size: 90px;
 }
 
-.description {
+/* .description {
   width: 88%;
   height: 180px;
   resize: none;
@@ -231,12 +231,12 @@ export default {
   font-family: unset;
   font-size: 22px;
   border: none;
-  /* background: hsla(196, 0%, 91%, 1); */
+  background: hsla(196, 0%, 91%, 1);
   border-radius: 5px;
   outline: none;
   color: #62caff;
   padding: 10px;
-}
+} */
 
 .description::placeholder {
   color: #d0d0d0;

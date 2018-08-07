@@ -71,6 +71,7 @@ async function updateLocation(user) {
         }, {
             $set: {
                 location: user.location,
+                updatedAt: Date.now()
             }
         }, {
             upsert: true,
@@ -121,6 +122,28 @@ async function login(user) {
     }
 }
 
+async function saveToken(token) {
+    try {
+        const db = await getDb();
+        return db.collection("token").save(token);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function getTokens() {
+    try {
+        const db = await getDb();
+        return db.collection("token").find({
+            createdAt: {
+                $gt: Date.now() - (1000 * 60 * 60 * 24 * 10) //in the last 10 days
+            }
+        })
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 async function getUsers() {
     try {
         const db = await getDb();
@@ -147,5 +170,7 @@ module.exports = {
     getVibes,
     getUsers,
     login,
-    updateLocation
+    updateLocation,
+    saveToken,
+    getTokens
 };

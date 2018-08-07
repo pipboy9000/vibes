@@ -5,7 +5,7 @@ function CustomUserInfoWindow(map) {
   div.style.width = '260px';
   div.style.height = '80px';
   div.style.background = 'white';
-  div.style.borderRadius = '5px';
+  div.style.borderRadius = '10px';
   div.style.boxShadow = '0 2px 4px 1px #00000025';
   div.style.visibility = 'hidden'
   div.style.left = -2 + 'px';
@@ -42,16 +42,18 @@ function CustomUserInfoWindow(map) {
   var profilePic = document.createElement('img');
   profilePic.style.width = '65px';
   profilePic.style.minWidth = '65px';
+  profilePic.style.borderRadius = "65px";
+  // profilePic.style.border = "4px solid #3fb7f5"
   profilePic.style.height = '65px';
   profilePic.style.background = '#ddd';
-  profilePic.style.marginLeft = '10px';
+  profilePic.style.marginLeft = '7px';
   this.profilePic = profilePic;
   overlay.appendChild(profilePic);
 
   //name
   var name = document.createElement('div');
   name.innerText = "REeeeally loonngg NAME!";
-  name.style.marginLeft = '8px';
+  name.style.marginLeft = '12px';
   name.style.marginRight = '8px';
   name.style.color = '#3fb7f5';
   name.style.fontSize = '28px';

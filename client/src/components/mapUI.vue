@@ -14,7 +14,7 @@
 <script>
 import { EventBus } from "../event-bus";
 export default {
-  name: "mapUI",
+  name: "MapUI",
   methods: {
     zoomIn() {
       EventBus.$emit("zoomIn");

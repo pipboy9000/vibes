@@ -11,6 +11,7 @@
         <div v-else>
           <div class="newVibeBtn" @click="openNewVibeForm">+</div>
           <list class="list"></list>
+          <vibe-details></vibe-details>
           <NewVibeForm class="newVibeForm"></NewVibeForm>
           <mapUI></mapUI>
         </div>
@@ -21,9 +22,11 @@
 import Map from "./map";
 import FacebookLogin from "./facebook-login/facebookLogin";
 import Logo from "./logo";
-import list from "./list";
-import mapUI from "./mapUI";
+import List from "./list";
+import MapUI from "./mapUI";
 import NewVibeForm from "./newVibeForm";
+import VibeDetails from "./vibeDetails";
+
 import { EventBus } from "../event-bus";
 
 export default {
@@ -33,8 +36,9 @@ export default {
     FacebookLogin,
     Logo,
     NewVibeForm,
-    list,
-    mapUI
+    List,
+    VibeDetails,
+    MapUI
   },
   methods: {
     openNewVibeForm() {

@@ -18,7 +18,7 @@ import listItem from "./listItem";
 import { EventBus } from "../event-bus";
 
 export default {
-  name: "list",
+  name: "List",
   data() {
     return {
       isOpen: false,

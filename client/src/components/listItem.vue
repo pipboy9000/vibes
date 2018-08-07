@@ -107,4 +107,8 @@ export default {
   height: 90%;
   opacity: 0.9;
 }
+
+.details {
+  font-style: italic;
+}
 </style>

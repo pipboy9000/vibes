@@ -14,6 +14,7 @@ export default {
       map: null,
       myMarker: null,
       circles: [],
+      vibeMarkers: [],
       userMarkers: [],
       userInfoWindow: null
     };
@@ -82,11 +83,19 @@ export default {
       if (inVibe) return "./static/user_marker_in_vibe.png";
       return "./static/user_marker.png";
     },
-    getNewMarker(user) {
+    getNewUserMarker(user) {
       return new google.maps.Marker({
         icon: this.getIcon(user.inVibe),
         map: this.map,
-        position: user.location
+        position: user.location,
+        zIndex: 1
+      });
+    },
+    getNewVibeMarker(vibe) {
+      return new google.maps.Marker({
+        icon: "./static/vibe_marker.png",
+        map: this.map,
+        position: vibe.location
       });
     },
     getNewCircle(vibe) {
@@ -109,7 +118,7 @@ export default {
           self.userMarkers[idx].setPosition(u.location);
           self.userMarkers[idx].setIcon(self.getIcon(u.inVibe));
         } else {
-          self.userMarkers[idx] = self.getNewMarker(u);
+          self.userMarkers[idx] = self.getNewUserMarker(u);
         }
 
         //clear previous click listeners
@@ -130,7 +139,7 @@ export default {
         this.userMarkers = this.userMarkers.slice(0, users.length);
       }
     },
-    renderVibes(vibes) {
+    renderCircles(vibes) {
       var i = 0;
       for (var vibeId in vibes) {
         var vibe = vibes[vibeId];
@@ -150,6 +159,29 @@ export default {
           this.circles[i] = null;
           this.circles.pop();
         }
+      }
+    },
+    renderVibeMarkers(vibes) {
+      var i = 0;
+      for (var vibeId in vibes) {
+        var vibe = vibes[vibeId];
+        if (i < this.vibes.length) {
+          this.vibes[i].setCenter(vibe.location);
+        } else {
+          var marker = this.getNewVibeMarker(vibe);
+          this.vibeMarkers.push(marker);
+        }
+        i++;
+      }
+
+      //remove unused markers
+      var len = Object.keys(vibes).length;
+      if (this.vibeMarkers.length > len) {
+        for (var i = len; i < this.vibeMarkers.length; i++) {
+          this.vibeMarkers[i].setMap(null);
+          this.vibeMarkers[i] = null;
+        }
+        this.vibeMarkers = this.vibeMarkers.slice(0, len);
       }
     }
   },
@@ -183,13 +215,14 @@ export default {
       if (me) {
         me.location = newLoc;
       } else {
-        me = this.getNewMarker(this.$store.getters.me);
+        me = this.getNewUserMarker(this.$store.getters.me);
         this.userMarkers.push(me);
       }
       this.renderUsers(this.$store.state.users);
     },
     vibes(newVibes) {
-      this.renderVibes(newVibes);
+      this.renderCircles(newVibes);
+      this.renderVibeMarkers(newVibes);
     },
     users(newUsers) {
       this.renderUsers(newUsers);
