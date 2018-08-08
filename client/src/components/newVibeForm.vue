@@ -95,7 +95,11 @@ export default {
         title: this.title,
         emojis: this.emojis,
         location,
-        token: this.$store.getters.token
+        token: this.$store.getters.token,
+        createdBy: {
+          uid: this.$store.getters.fbid,
+          name: this.$store.getters.name
+        }
       };
 
       socket.newVibe(vibe);

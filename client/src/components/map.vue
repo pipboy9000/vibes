@@ -162,15 +162,26 @@ export default {
       }
     },
     renderVibeMarkers(vibes) {
+      var self = this;
       var i = 0;
       for (var vibeId in vibes) {
-        var vibe = vibes[vibeId];
-        if (i < this.vibes.length) {
-          this.vibes[i].setCenter(vibe.location);
+        let vibe = vibes[vibeId];
+        if (i < this.vibeMarkers.length) {
+          this.vibeMarkers[i].setPosition(vibe.location);
         } else {
           var marker = this.getNewVibeMarker(vibe);
           this.vibeMarkers.push(marker);
         }
+
+        //clear previous click listeners
+        google.maps.event.clearInstanceListeners(this.vibeMarkers[i]);
+        //set click listeners
+        this.vibeMarkers[i].addListener("click", function() {
+          self.$store.commit("setSelectedVibe", vibe);
+          EventBus.$emit("vibeMarkerClicked", vibe);
+          self.focusVibe(vibe);
+        });
+
         i++;
       }
 
@@ -205,7 +216,7 @@ export default {
   watch: {
     location(newLoc, oldLoc) {
       this.myMarker.setPosition(newLoc);
-      this.focus(newLoc);
+      // this.focus(newLoc);
     },
     serverLocation(newLoc) {
       var fbid = this.$store.getters.fbid;

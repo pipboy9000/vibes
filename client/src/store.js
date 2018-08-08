@@ -9,6 +9,7 @@ export default new Vuex.Store({
     inVibe: null,
     loginDetails: null,
     userDetails: null,
+    selectedVibe: null,
     location: null,
     serverLocation: null, //user location on server
     vibes: {},
@@ -52,6 +53,9 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setSelectedVibe: (state, vibe) => {
+      state.selectedVibe = vibe
+    },
     setLocation: (state, location) => {
       state.location = location;
     },

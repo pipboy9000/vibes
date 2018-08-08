@@ -15,7 +15,6 @@ function getDb() {
 async function newVibe(vibe, uid) {
     var now = Date.now();
     vibe.createdAt = now;
-    vibe.createdBy = uid;
     vibe.users = [uid];
     vibe.lastJoined = now;
 

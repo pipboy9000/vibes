@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import store from "../store";
 import listItem from "./listItem";
 import { EventBus } from "../event-bus";
 
@@ -33,6 +32,8 @@ export default {
         self.ready = true;
       }, 500);
     }
+
+    EventBus.$on("listItemClicked", this.close);
   },
   methods: {
     open() {

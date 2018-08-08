@@ -1,5 +1,5 @@
 var axios = require("axios");
-var db = require("./db.js");
+var chalk = require("chalk");
 
 var {
   appId,
@@ -10,12 +10,12 @@ var accessTokens = {};
 
 function validate(token) {
   //development
-  // return Promise.resolve(true);
+  return Promise.resolve(true);
 
   if (accessTokens[token] && accessTokens[token].createdAt > Date.now() - 3600000)
     return Promise.resolve(accessTokens[token].uid);
 
-  console.log("validate token with fb");
+  console.log(chalk.blue("validate token with fb"));
   return axios.get("https://graph.facebook.com/debug_token?&input_token=" + token + "&access_token=" + appId + "|" + appSecret)
     .then(res => {
       if (res.data.data.is_valid) {

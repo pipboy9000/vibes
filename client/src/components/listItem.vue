@@ -35,6 +35,7 @@ export default {
   methods: {
     clicked() {
       {
+        this.$store.commit("setSelectedVibe", this.vibe);
         EventBus.$emit("listItemClicked", this.vibe);
       }
     }
