@@ -34,8 +34,8 @@ function watchLocation() {
   watchID = setInterval(function (idx) {
     count++;
     store.dispatch('setLocation', {
-      lat: 32.090032199999996 + 0.0001 * count,
-      lng: 34.768544399999996 + 0.0001 * count
+      lat: 32.090032199999996 + 0.0005 * count,
+      lng: 34.768544399999996 + 0.0008 * count
     });
   }, 10000);
 

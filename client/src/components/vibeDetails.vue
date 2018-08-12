@@ -1,18 +1,19 @@
 <template>
     <div v-if="vibe" class="wrapper" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}">
         <div class="bg">
-            <div class="titleWrapper">
+            <div class="titleWrapper" ref="titleWrapper">
                 <div class="titleBg"></div>
-                <div class="titleStroke">{{vibe.title}}</div>
-                <div class="title">{{vibe.title}}</div>
+                <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
+                <div class="title" ref="title">{{vibe.title}}</div>
             </div>
             <div class="pictures">
                 
             </div>
             <div class="info">
                 <div class="details">
+                    <img :src="profilePicSrc" class="profilePic">
                     <div class="createdBy">
-                        Created by: Dan Levin
+                        Created by: {{vibe.createdBy.name}}
                     </div>
                     <br>
                     <div class="users">
@@ -27,6 +28,10 @@
                 </div>
             </div>
             <hr>
+            <div class="newComment">
+              <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
+              <button>></button>
+            </div>
         </div>
         <div class="closeBtn" @click="close">X</div>
     </div>
@@ -35,18 +40,22 @@
 <script>
 import { EventBus } from "../event-bus.js";
 import { timeAgo } from "../services/timeAgo.js";
+import socket from "../services/socket.js";
+
 export default {
   name: "VibeDetails",
   data() {
     return {
       isOpen: false,
       ready: false, //used to fix animations
-      time: null
+      time: null,
+      commentTxt: ""
     };
   },
   mounted() {
     var self = this;
 
+    //keep timeago updated
     setInterval(function() {
       if (self.vibe) {
         self.time = timeAgo.format(self.vibe.createdAt);
@@ -62,11 +71,28 @@ export default {
     },
     close() {
       this.isOpen = false;
+    },
+    sendNewComment() {
+      var comment = {
+        text: this.commentTxt,
+        vibeId: this.$store.state.inVibe,
+        token: this.$store.getters.token
+      };
+      socket.newComment(comment);
     }
   },
   computed: {
     vibe() {
       return this.$store.state.selectedVibe;
+    },
+    profilePicSrc() {
+      if (this.vibe) {
+        return (
+          "https://graph.facebook.com/" +
+          this.vibe.createdBy.uid +
+          "/picture?type=square&width=70&height=70"
+        );
+      }
     }
   },
   watch: {
@@ -127,6 +153,7 @@ export default {
   background: white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   float: left;
+  position: relative;
 }
 
 .closeBtn {
@@ -172,6 +199,9 @@ export default {
   width: 100%;
   display: flex;
   align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .titleBg {
@@ -182,34 +212,43 @@ export default {
 }
 
 .title {
-  margin-left: 20px;
-  font-size: 65px;
-  text-align: center;
+  width: 80%;
+  padding-left: 15px;
+  text-align: left;
+  font-size: 60px;
   font-family: "Pacifico", cursive;
   color: white;
   position: absolute;
   transform: translateY(-10px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .titleStroke {
-  margin-left: 20px;
-  font-size: 65px;
-  text-align: center;
+  width: 80%;
+  text-align: left;
+  padding-left: 15px;
+  font-size: 60px;
   font-family: "Pacifico", cursive;
   color: white;
   position: absolute;
   -webkit-text-stroke-width: 5px;
   -webkit-text-stroke-color: #3fb7f5;
   transform: translateY(-10px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .info {
+  background: #f2faff;
   height: 75px;
   display: flex;
   align-items: center;
-  padding: 5px;
+  width: 100%;
   height: fit-content;
-  margin-top: 10px;
+  padding: 5px 0 5px;
 }
 
 .details {
@@ -228,6 +267,14 @@ export default {
 .createdBy {
   display: inline-block;
   margin-bottom: 10px;
+  max-width: 65%;
+  margin-left: 10px;
+}
+
+.profilePic {
+  border-radius: 70px;
+  display: inline-block;
+  max-width: 15%;
 }
 
 .users {
@@ -250,6 +297,50 @@ export default {
 .emoji {
   margin-left: 5px;
   margin-right: 5px;
+}
+
+.comments {
+  width: 100%;
+}
+
+.newComment {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 8%;
+  display: flex;
+  align-items: center;
+}
+
+.newComment > input {
+  width: 70%;
+  height: 40%;
+  background: #dddddd;
+  border: 1px solid #c7c7c7;
+  outline: none;
+  margin-left: 2%;
+  padding: 10px;
+  border-radius: 100px;
+  color: #373737;
+  font-family: "ABeeZee", sans-serif;
+  font-size: 1.1em;
+}
+
+.newComment > button {
+  padding: 10px;
+  font-size: 1.1em;
+  font-family: "ABeeZee", sans-serif;
+  border-radius: 100px;
+  position: relative;
+  width: 10%;
+  margin-left: 2%;
+  border: 1px solid #c7c7c7;
+  height: 80%;
+  padding: 10px;
+  outline: none;
+  font-size: 24px;
+  line-height: 10px;
+  text-align: center;
 }
 
 hr {

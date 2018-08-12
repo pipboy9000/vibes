@@ -69,6 +69,7 @@ export default {
   position: absolute;
   left: -550px;
   margin: 10px;
+  overflow: hidden;
 }
 
 @keyframes openAnim {

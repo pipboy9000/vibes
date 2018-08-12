@@ -1,3 +1,5 @@
+var chalk = require("chalk");
+
 const MongoClient = require("mongodb").MongoClient;
 const url = "mongodb://localhost:27017";
 const dbName = "vibes";
@@ -12,10 +14,14 @@ function getDb() {
     })
 }
 
-async function newVibe(vibe, uid) {
+async function newVibe(vibe, user) {
     var now = Date.now();
     vibe.createdAt = now;
-    vibe.users = [uid];
+    vibe.createdBy = {
+        uid: user.uid,
+        name: user.name
+    };
+    vibe.users = [user.uid];
     vibe.lastJoined = now;
 
     let client;
@@ -24,7 +30,7 @@ async function newVibe(vibe, uid) {
         const db = await getDb();
         let res = await db.collection("vibe").insertOne(vibe);
         await db.collection("user").updateOne({
-            fbid: uid
+            fbid: user.uid
         }, {
             $set: {
                 inVibe: res.insertedId
@@ -66,7 +72,7 @@ async function updateLocation(user) {
         user.updatedAt = Date.now();
         db = await getDb();
         return await db.collection("user").findOneAndUpdate({
-            fbid: user.fbid
+            fbid: user.uid
         }, {
             $set: {
                 location: user.location,
@@ -164,6 +170,32 @@ async function getUsers() {
     }
 }
 
+async function newComment(comment, uid) {
+    const db = await getDb();
+    var user = await db.collection('user').findOne({
+        fbid: uid
+    });
+
+    if (comment.vibeId != user.inVibe.toString()) {
+        console.log(chalk.red(uid, " can't comment on vibe if not in it"));
+        return;
+    }
+
+    var c = {
+        text: comment.text,
+        uid,
+        createdAt: Date.now(),
+    }
+
+    var res = await db.collection('vibe').findOneAndUpdate({
+        _id: comment.vibeId
+    }, {
+        $push: {
+            comments: c
+        }
+    })
+}
+
 module.exports = {
     newVibe,
     getVibes,
@@ -171,5 +203,6 @@ module.exports = {
     login,
     updateLocation,
     saveToken,
-    getTokens
+    getTokens,
+    newComment
 };

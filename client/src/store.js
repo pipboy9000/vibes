@@ -101,8 +101,11 @@ export default new Vuex.Store({
     },
     setLocation(context, location) {
       context.commit('setLocation', location);
-      if (context.getters.me) {
-        socket.updateLocation(context.getters.me);
+      if (context.getters.token) {
+        socket.updateLocation({
+          location,
+          token: context.getters.token
+        });
       }
     },
     setVibes(context, vibesArray) {

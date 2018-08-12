@@ -5,7 +5,14 @@
             <div class="titleWRapper">
                 <div ref="titleBg" class="titleBg"></div>
                 <div ref="titleStroke" class="titleStroke">{{title}}</div>
-                <input ref="titleInput" class="title input" placeholder="Title" v-model="title" @input="resizeTitle" @keydown="resizeTitle" maxlength="50">
+                <input ref="titleInput" 
+                       class="title input" 
+                       placeholder="Title" 
+                       v-model="title" 
+                       @input="resizeTitle" 
+                       @paste="onPaste" 
+                       @keydown="resizeTitle" 
+                       maxlength="25">
             </div>
             <div class="tagsWrapper">
                 <div @click="selectEmoji(0)" :class="{addTagBtn: emojis[0] === '+' , emoji:emojis[0] !== '+'}">{{emojis[0]}}</div>
@@ -40,6 +47,9 @@ export default {
     };
   },
   methods: {
+    onPaste() {
+      console.log("pasted");
+    },
     open() {
       this.show = true;
       if (!this.titleWidth) {
@@ -94,15 +104,12 @@ export default {
       var vibe = {
         title: this.title,
         emojis: this.emojis,
-        location,
-        token: this.$store.getters.token,
-        createdBy: {
-          uid: this.$store.getters.fbid,
-          name: this.$store.getters.name
-        }
+        location
       };
 
-      socket.newVibe(vibe);
+      var token = this.$store.getters.token;
+
+      socket.newVibe({ vibe, token });
       this.close();
     }
   },

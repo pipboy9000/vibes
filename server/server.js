@@ -56,8 +56,8 @@ io.on('connection', function (socket) {
 
 
   socket.on('login', function (user) {
-    validate(user.token).then(uid => {
-      if (uid) {
+    validate(user.token).then(user => {
+      if (user) {
         db.login(user).then(user => socket.emit('setUser', user));
       } else {
         console.log("user credentials invalid");
@@ -65,29 +65,42 @@ io.on('connection', function (socket) {
     });
   });
 
-  socket.on('updateLocation', function (user) {
+  socket.on('updateLocation', function ({
+    token,
+    location
+  }) {
     console.log('update location')
-    validate(user.token).then(uid => {
-      if (uid) {
+    validate(token).then(user => {
+      if (user) {
+        user.location = location
         db.updateLocation(user).then(user => {
           socket.emit('setUser', user);
         })
-      } else {
-        console.log("user credentials invalid");
       }
     });
   });
 
-  socket.on('newVibe', function (vibe) {
-    validate(vibe.token).then(uid => {
-      if (uid) {
-        db.newVibe(vibe, uid).then(vibe => {
+  socket.on('newVibe', function ({
+    vibe,
+    token
+  }) {
+    validate(token).then(user => {
+      if (user) {
+        db.newVibe(vibe, user).then(vibe => {
           socket.emit('newVibe', vibe);
         })
-      } else {
-        console.log("user credentials invalid");
       }
     });
+  });
+
+  socket.on('newComment', function (comment) {
+    validate(comment.token).then(user => {
+      if (user) {
+        db.newComment(comment, uid).then(comments => {
+          socket.emit('setComments', comments);
+        })
+      }
+    })
   });
 
   socket.on('getVibes', function () {
