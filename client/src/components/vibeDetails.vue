@@ -28,11 +28,9 @@
                 </div>
             </div>
             <hr>
-            <ul>
-              <li v-for="(comment, idx) in comments" :key="idx">
-                {{comment.text}}
-              </li>
-            </ul>
+            <div class="comments">
+              <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
+            </div>
             <div class="newComment">
               <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
               <button>></button>
@@ -46,9 +44,13 @@
 import { EventBus } from "../event-bus.js";
 import { timeAgo } from "../services/timeAgo.js";
 import socket from "../services/socket.js";
+import comment from "./comment";
 
 export default {
   name: "VibeDetails",
+  components: {
+    comment
+  },
   data() {
     return {
       isOpen: false,
@@ -79,7 +81,7 @@ export default {
     },
     sendNewComment() {
       var comment = {
-        vibeId: this.$store.state.inVibe,
+        vibeId: this.$store.state.selectedVibe._id,
         text: this.commentTxt
       };
       socket.newComment({ comment, token: this.$store.getters.token });
@@ -97,10 +99,6 @@ export default {
           "/picture?type=square&width=70&height=70"
         );
       }
-    },
-    comments() {
-      debugger;
-      if (this.vibe) return this.vibe.comments;
     }
   },
   watch: {

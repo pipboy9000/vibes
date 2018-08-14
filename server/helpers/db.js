@@ -30,6 +30,23 @@ async function newVibe(vibe, user) {
     try {
         const db = await getDb();
         let res = await db.collection("vibe").insertOne(vibe);
+
+        //remove user from old vibe if necessary
+        var dbUser = await db.collection("user").findOne({
+            fbid: user.uid
+        });
+
+        //if user was already in a vibe when creating the new vibe, remove the user from previous vibe
+        if (dbUser.inVibe) {
+            await db.collection("vibe").updateOne({
+                "_id": dbUser.inVibe
+            }, {
+                $pull: {
+                    users: user.uid
+                }
+            })
+        }
+
         await db.collection("user").updateOne({
             fbid: user.uid
         }, {
@@ -171,7 +188,8 @@ async function newComment(comment, user) {
     //check if user is in the vibe
     var vibe = await db.collection('vibe').findOne(ObjectID(comment.vibeId));
     if (!vibe.users.includes(user.uid)) {
-        console.log(chalk.red(uid, " can't comment on vibe if not in it"));
+        console.log(chalk.red(user.uid, " can't comment on vibe if not in it"));
+        return;
     }
 
     var c = {
@@ -182,21 +200,23 @@ async function newComment(comment, user) {
     }
 
     //insert comment to vibe
-    var res = await db.collection('vibe').findOneAndUpdate(ObjectID(comment.vibeId), {
+    var res = await db.collection('vibe').findOneAndUpdate({
+        "_id": ObjectID(comment.vibeId)
+    }, {
         $push: {
             comments: c
         }
     }, {
         returnOriginal: false,
         projection: {
-            _id: 0,
+            _id: 1,
             comments: 1
         }
     })
 
     return {
         comments: res.value.comments,
-        vibeId: comment.vibeId
+        vibeId: res.value._id.toString()
     }
 }
 

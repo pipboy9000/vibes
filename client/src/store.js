@@ -89,11 +89,9 @@ export default new Vuex.Store({
       comments,
       vibeId
     }) {
-      debugger;
       state.vibes[vibeId].comments = comments;
-      if (vibeId === state.selectedVibe._id) {
-        state.selectedVibe = state.vibes[vibeId];
-      }
+      if (state.selectedVibe._id === vibeId)
+        state.selectedVibe.comments = comments;
     }
   },
   actions: {
