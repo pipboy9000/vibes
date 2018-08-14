@@ -13,7 +13,12 @@ var accessTokens = {};
 
 function validate(token) {
   //development
-  // return Promise.resolve("10156492526329808");
+  var user = {
+    uid: "10156492526329808",
+    name: "Dan Levin",
+    createdAt: Date.now()
+  };
+  return Promise.resolve(user);
 
   if (accessTokens[token] && accessTokens[token].createdAt > Date.now() - 3600000)
     return Promise.resolve(accessTokens[token]);
@@ -39,7 +44,8 @@ function validate(token) {
           return false;
         })
       } else {
-        console.log("user credentials invalid");
+        console.log(chalk.red("user credentials invalid-"));
+        console.log(res.data.data.error);
         return false;
       }
     }).catch(err => {

@@ -84,6 +84,16 @@ export default new Vuex.Store({
     },
     setInVibe(id) {
       state.inVibe = id;
+    },
+    setComments(state, {
+      comments,
+      vibeId
+    }) {
+      debugger;
+      state.vibes[vibeId].comments = comments;
+      if (vibeId === state.selectedVibe._id) {
+        state.selectedVibe = state.vibes[vibeId];
+      }
     }
   },
   actions: {
@@ -91,6 +101,7 @@ export default new Vuex.Store({
       context.commit('setLoginDetails', loginDetails);
     },
     setUserDetails: (context, userDetails) => {
+      console.log('set user details');
       context.commit('setUserDetails', userDetails);
       if (context.getters.me) {
         socket.login(context.getters.me);

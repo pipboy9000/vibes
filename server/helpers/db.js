@@ -1,6 +1,7 @@
 var chalk = require("chalk");
 
 const MongoClient = require("mongodb").MongoClient;
+const ObjectID = require('mongodb').ObjectID
 const url = "mongodb://localhost:27017";
 const dbName = "vibes";
 
@@ -23,8 +24,8 @@ async function newVibe(vibe, user) {
     };
     vibe.users = [user.uid];
     vibe.lastJoined = now;
-
-    let client;
+    vibe.comments = [];
+    vibe.pictures = [];
 
     try {
         const db = await getDb();
@@ -45,9 +46,6 @@ async function newVibe(vibe, user) {
     } catch (err) {
         console.log(err.stack);
     }
-
-    // Close connection
-    client.close();
 }
 
 async function getVibes() {
@@ -79,7 +77,6 @@ async function updateLocation(user) {
                 updatedAt: Date.now()
             }
         }, {
-            upsert: true,
             returnOriginal: false,
             projection: {
                 _id: 0,
@@ -103,10 +100,8 @@ async function login(user) {
             fbid: user.fbid
         }, {
             $set: {
-                fbid: user.fbid,
+                fbid: user.uid,
                 name: user.name,
-                token: user.token,
-                location: user.location,
                 updatedAt: Date.now()
             }
         }, {
@@ -170,30 +165,39 @@ async function getUsers() {
     }
 }
 
-async function newComment(comment, uid) {
+async function newComment(comment, user) {
     const db = await getDb();
-    var user = await db.collection('user').findOne({
-        fbid: uid
-    });
 
-    if (comment.vibeId != user.inVibe.toString()) {
+    //check if user is in the vibe
+    var vibe = await db.collection('vibe').findOne(ObjectID(comment.vibeId));
+    if (!vibe.users.includes(user.uid)) {
         console.log(chalk.red(uid, " can't comment on vibe if not in it"));
-        return;
     }
 
     var c = {
         text: comment.text,
-        uid,
+        name: user.name,
+        uid: user.uid,
         createdAt: Date.now(),
     }
 
-    var res = await db.collection('vibe').findOneAndUpdate({
-        _id: comment.vibeId
-    }, {
+    //insert comment to vibe
+    var res = await db.collection('vibe').findOneAndUpdate(ObjectID(comment.vibeId), {
         $push: {
             comments: c
         }
+    }, {
+        returnOriginal: false,
+        projection: {
+            _id: 0,
+            comments: 1
+        }
     })
+
+    return {
+        comments: res.value.comments,
+        vibeId: comment.vibeId
+    }
 }
 
 module.exports = {

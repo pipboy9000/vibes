@@ -18,7 +18,7 @@
                     <br>
                     <div class="users">
                         <img src="../assets/users_icon.png">
-                        <p> 9 - {{time}}.</p>
+                        <p> {{vibe.users.length}} - {{time}}.</p>
                     </div>
                 </div>
                 <div class="emojis">
@@ -28,6 +28,11 @@
                 </div>
             </div>
             <hr>
+            <ul>
+              <li v-for="(comment, idx) in comments" :key="idx">
+                {{comment.text}}
+              </li>
+            </ul>
             <div class="newComment">
               <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
               <button>></button>
@@ -74,11 +79,10 @@ export default {
     },
     sendNewComment() {
       var comment = {
-        text: this.commentTxt,
         vibeId: this.$store.state.inVibe,
-        token: this.$store.getters.token
+        text: this.commentTxt
       };
-      socket.newComment(comment);
+      socket.newComment({ comment, token: this.$store.getters.token });
     }
   },
   computed: {
@@ -93,11 +97,14 @@ export default {
           "/picture?type=square&width=70&height=70"
         );
       }
+    },
+    comments() {
+      debugger;
+      if (this.vibe) return this.vibe.comments;
     }
   },
   watch: {
     vibe(newVibe) {
-      debugger;
       this.time = timeAgo.format(this.vibe.createdAt);
     }
   }

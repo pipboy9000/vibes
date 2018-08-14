@@ -56,6 +56,7 @@ io.on('connection', function (socket) {
 
 
   socket.on('login', function (user) {
+    console.log("login: ", user);
     validate(user.token).then(user => {
       if (user) {
         db.login(user).then(user => socket.emit('setUser', user));
@@ -93,10 +94,13 @@ io.on('connection', function (socket) {
     });
   });
 
-  socket.on('newComment', function (comment) {
-    validate(comment.token).then(user => {
+  socket.on('newComment', function ({
+    comment,
+    token
+  }) {
+    validate(token).then(user => {
       if (user) {
-        db.newComment(comment, uid).then(comments => {
+        db.newComment(comment, user).then(comments => {
           socket.emit('setComments', comments);
         })
       }
