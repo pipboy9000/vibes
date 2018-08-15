@@ -29,13 +29,34 @@ export default {
 
 <style scoped="true">
 .wrapper {
+  margin-top: 30px;
+  text-align: left;
+  display: flex;
   position: relative;
   width: 100%;
   height: fit-content;
 }
 
 .profilePic {
-  width: 70px;
-  height: 70px;
+  border-radius: 100px;
+  margin-left: 15px;
+  width: 40px;
+  height: 40px;
+}
+
+.details {
+  margin-left: 15px;
+  font-family: "ABeeZee", sans-serif;
+}
+
+.title {
+  color: #838383;
+  font-style: italic;
+}
+
+.text {
+  margin-left: 10px;
+  margin-top: 5px;
+  color: #5a5959;
 }
 </style>

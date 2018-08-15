@@ -1,14 +1,13 @@
 <template>
     <div v-if="vibe" class="wrapper" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}">
         <div class="bg">
+          <div class="main">
             <div class="titleWrapper" ref="titleWrapper">
                 <div class="titleBg"></div>
                 <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
                 <div class="title" ref="title">{{vibe.title}}</div>
             </div>
-            <div class="pictures">
-                
-            </div>
+            <div class="pictures"></div>
             <div class="info">
                 <div class="details">
                     <img :src="profilePicSrc" class="profilePic">
@@ -31,11 +30,12 @@
             <div class="comments">
               <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
             </div>
+          </div>
+        </div>
             <div class="newComment">
               <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
               <button>></button>
             </div>
-        </div>
         <div class="closeBtn" @click="close">X</div>
     </div>
 </template>
@@ -152,6 +152,7 @@ export default {
   height: 100%;
 }
 
+/* items */
 .bg {
   height: 100%;
   width: 480px;
@@ -159,6 +160,11 @@ export default {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   float: left;
   position: relative;
+}
+
+.main {
+  height: 90%;
+  overflow-y: scroll;
 }
 
 .closeBtn {
@@ -200,6 +206,7 @@ export default {
 }
 
 .titleWrapper {
+  position: relative;
   height: 110px;
   width: 100%;
   display: flex;
@@ -226,7 +233,6 @@ export default {
   position: absolute;
   transform: translateY(-10px);
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 
@@ -242,7 +248,6 @@ export default {
   -webkit-text-stroke-color: #3fb7f5;
   transform: translateY(-10px);
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 
@@ -309,10 +314,12 @@ export default {
 }
 
 .newComment {
-  position: absolute;
+  display: inline-block;
   bottom: 0;
+  left: 0;
+  position: absolute;
   width: 100%;
-  height: 8%;
+  height: 10%;
   display: flex;
   align-items: center;
 }
