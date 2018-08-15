@@ -361,4 +361,27 @@ hr {
   background-image: linear-gradient(to right, #e4e4e410, #e4e4e4, #e4e4e410);
   width: 95%;
 }
+
+.main::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.main::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+.main::-webkit-scrollbar-thumb {
+  background: #d2d2d2;
+  border: 1px none #f00;
+  border-radius: 50px;
+}
+
+.main::-webkit-scrollbar-track {
+  background: #0000;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+.main::-webkit-scrollbar-corner {
+  background: transparent;
+}
 </style>
