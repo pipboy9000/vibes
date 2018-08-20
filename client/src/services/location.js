@@ -1,6 +1,8 @@
 import store from '../store.js';
 
 var watchID;
+var mockX = 32.090032199999996;
+var mockY = 34.768544399999996;
 
 function getLocation() {
   navigator.geolocation.getCurrentPosition(function (location) {
@@ -18,29 +20,27 @@ var count = 0;
 
 function watchLocation() {
   //for development
-  // setTimeout(function () {
-  //   store.dispatch('setLocation', {
-  //     lat: 32.090032199999996 + Math.random(),
-  //     lng: 34.768544399999996 + Math.random()
-  //   })
-  // }, 2000);
-
-
   store.dispatch('setLocation', {
-    lat: 32.090032199999996 + Math.random(),
-    lng: 34.768544399999996 + Math.random()
+    lat: mockX,
+    lng: mockY
   });
 
   watchID = setInterval(function (idx) {
-    count++;
+    mockX += Math.random() / 5000;
+    mockY += Math.random() / 5000;
+
     store.dispatch('setLocation', {
-      lat: 32.090032199999996 + 0.0005 * count,
-      lng: 34.768544399999996 + 0.0008 * count
+      lat: mockX,
+      lng: mockY
     });
-  }, 10000);
+  }, 5000);
 
   // watchID = navigator.geolocation.watchPosition(function (location) {
-  //   store.commit('updateLocation', location);
+  //   var loc = {
+  //     lat: location.coords.latitude,
+  //     lng: location.coords.longitude
+  //   }
+  //   store.dispatch('setLocation', loc);
   // }, function (err) {
   //   console.log(err);
   // }, null, {

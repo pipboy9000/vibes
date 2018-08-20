@@ -226,8 +226,7 @@ export default {
       if (me) {
         me.location = newLoc;
       } else {
-        me = this.getNewUserMarker(this.$store.getters.me);
-        this.userMarkers.push(me);
+        this.$store.state.users.push(this.$store.getters.me);
       }
       this.renderUsers(this.$store.state.users);
     },

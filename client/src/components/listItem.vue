@@ -5,7 +5,9 @@
             <div class="details">
                 <div class="users">
                     <img src="../assets/users_icon.png">
-                    <p>{{vibe.users.length}}    {{time}}</p>
+                    <p>{{vibe.users.length}}    {{time}}
+                      {{distance}}
+                    </p>
                 </div>
                 <div class="time"></div>
             </div>
@@ -24,12 +26,18 @@
 <script>
 import { timeAgo } from "../services/timeAgo";
 import { EventBus } from "../event-bus";
+import { getDistance, formatDistance } from "../services/maps.js";
 
 export default {
   props: ["vibe"],
   computed: {
     time() {
       return timeAgo.format(this.vibe.createdAt);
+    },
+    distance() {
+      if (this.vibe.distance) {
+        return formatDistance(this.vibe.distance);
+      }
     }
   },
   methods: {

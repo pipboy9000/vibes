@@ -43,7 +43,6 @@ function CustomUserInfoWindow(map) {
   profilePic.style.width = '65px';
   profilePic.style.minWidth = '65px';
   profilePic.style.borderRadius = "65px";
-  // profilePic.style.border = "4px solid #3fb7f5"
   profilePic.style.height = '65px';
   profilePic.style.background = '#ddd';
   profilePic.style.marginLeft = '7px';
@@ -109,6 +108,21 @@ CustomUserInfoWindow.prototype.setDetails = function (details) {
   this.draw();
 }
 
+function getDistance(a, b) {
+  a = new google.maps.LatLng(a.lat, a.lng);
+  b = new google.maps.LatLng(b.lat, b.lng);
+  return google.maps.geometry.spherical.computeDistanceBetween(myLocation, vibeLocation);
+}
+
+function formatDistance(distance) {
+  if (distance > 1000) {
+    return Math.round(distance * 10) / 10000 + "Km";
+  }
+  return Math.round(distance) + "m";
+}
+
 export {
-  CustomUserInfoWindow
+  CustomUserInfoWindow,
+  getDistance,
+  formatDistance
 }

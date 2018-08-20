@@ -4,6 +4,8 @@ import socket from './services/socket';
 
 Vue.use(Vuex);
 
+
+
 export default new Vuex.Store({
   state: {
     inVibe: null,
@@ -11,9 +13,10 @@ export default new Vuex.Store({
     userDetails: null,
     selectedVibe: null,
     location: null,
-    serverLocation: null, //user location on server
-    vibes: {},
-    users: []
+    serverLocation: undefined, //user location on server
+    vibes: [],
+    users: [],
+    loggedIn: false
   },
   getters: {
     serverLocation: state => {
@@ -58,9 +61,18 @@ export default new Vuex.Store({
     },
     setLocation: (state, location) => {
       state.location = location;
+      //calculate distances
+      for (var id in state.vibes) {
+        var vibe = state.vibes[id];
+        var myLocation = new google.maps.LatLng(location.lat, location.lng);
+        var vibeLocation = new google.maps.LatLng(vibe.location.lat, vibe.location.lng);
+        var distance = google.maps.geometry.spherical.computeDistanceBetween(myLocation, vibeLocation);
+        vibe.distance = distance;
+      }
     },
     setServerLocation: (state, user) => {
       state.serverLocation = user.location;
+      state.inVibe = user.inVibe;
     },
     setLoginDetails: (state, loginDetails) => {
       state.loginDetails = loginDetails;
@@ -69,6 +81,7 @@ export default new Vuex.Store({
       state.userDetails = userDetails;
     },
     setUser: (state, user) => {
+      state.loggedIn = true;
       state.inVibe = user.inVibe;
       state.serverLocation = user.location;
     },
@@ -76,7 +89,13 @@ export default new Vuex.Store({
       state.vibes = vibes;
     },
     newVibe(state, vibe) {
-      this._vm.$set(state.vibes, vibe._id, vibe);
+      if (state.location) {
+        var myLocation = new google.maps.LatLng(state.location.lat, state.location.lng);
+        var vibeLocation = new google.maps.LatLng(vibe.location.lat, vibe.location.lng);
+        var distance = google.maps.geometry.spherical.computeDistanceBetween(myLocation, vibeLocation);
+        vibe.distance = distance;
+      }
+      state.vibes.push(vibe);
       state.inVibe = vibe._id;
     },
     setUsers(state, users) {
@@ -99,7 +118,6 @@ export default new Vuex.Store({
       context.commit('setLoginDetails', loginDetails);
     },
     setUserDetails: (context, userDetails) => {
-      console.log('set user details');
       context.commit('setUserDetails', userDetails);
       if (context.getters.me) {
         socket.login(context.getters.me);
@@ -107,23 +125,36 @@ export default new Vuex.Store({
     },
     setUser: (context, user) => {
       context.commit('setUser', user);
+      if (context.state.location && context.getters.me) {
+        socket.updateLocation({
+          location: context.state.location,
+          token: context.getters.token
+        });
+      }
     },
     setLocation(context, location) {
       context.commit('setLocation', location);
-      if (context.getters.token) {
+      if (context.state.loggedIn && context.getters.me) {
         socket.updateLocation({
-          location,
+          location: context.state.location,
           token: context.getters.token
         });
       }
     },
     setVibes(context, vibesArray) {
       new Promise(function (res, rej) {
-        var vibes = {};
         vibesArray.forEach(vibe => {
-          vibes[vibe._id] = vibe;
+          if (context.getters.me) {
+            var myLocation = new google.maps.LatLng(context.getters.me.location.lat, context.getters.me.location.lng)
+            var vibeLocation = new google.maps.LatLng(vibe.location.lat, vibe.location.lng);
+            var distance = google.maps.geometry.spherical.computeDistanceBetween(myLocation, vibeLocation);
+            vibe.distance = distance;
+          }
         });
-        res(vibes);
+        vibesArray.sort(function (a, b) {
+          return a.distance - b.distance;
+        });
+        res(vibesArray);
       }).then(vibes => {
         context.commit('setVibes', vibes);
       });

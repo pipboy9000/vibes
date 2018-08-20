@@ -19,10 +19,10 @@ async function newVibe(vibe, user) {
     var now = Date.now();
     vibe.createdAt = now;
     vibe.createdBy = {
-        uid: user.uid,
+        fbid: user.fbid,
         name: user.name
     };
-    vibe.users = [user.uid];
+    vibe.users = [user.fbid];
     vibe.lastJoined = now;
     vibe.comments = [];
     vibe.pictures = [];
@@ -33,7 +33,7 @@ async function newVibe(vibe, user) {
 
         //remove user from old vibe if necessary
         var dbUser = await db.collection("user").findOne({
-            fbid: user.uid
+            fbid: user.fbid
         });
 
         //if user was already in a vibe when creating the new vibe, remove the user from previous vibe
@@ -42,13 +42,13 @@ async function newVibe(vibe, user) {
                 "_id": dbUser.inVibe
             }, {
                 $pull: {
-                    users: user.uid
+                    users: user.fbid
                 }
             })
         }
 
         await db.collection("user").updateOne({
-            fbid: user.uid
+            fbid: user.fbid
         }, {
             $set: {
                 inVibe: res.insertedId
@@ -87,7 +87,7 @@ async function updateLocation(user) {
         user.updatedAt = Date.now();
         db = await getDb();
         return await db.collection("user").findOneAndUpdate({
-            fbid: user.uid
+            fbid: user.fbid
         }, {
             $set: {
                 location: user.location,
@@ -117,7 +117,7 @@ async function login(user) {
             fbid: user.fbid
         }, {
             $set: {
-                fbid: user.uid,
+                fbid: user.fbid,
                 name: user.name,
                 updatedAt: Date.now()
             }
@@ -139,27 +139,6 @@ async function login(user) {
     }
 }
 
-async function saveToken(token) {
-    try {
-        const db = await getDb();
-        return db.collection("token").save(token);
-    } catch (err) {
-        console.log(err);
-    }
-}
-
-async function getTokens() {
-    try {
-        const db = await getDb();
-        return db.collection("token").find({
-            createdAt: {
-                $gt: Date.now() - (1000 * 60 * 60 * 24 * 10) //in the last 10 days
-            }
-        })
-    } catch (err) {
-        console.log(err);
-    }
-}
 
 async function getUsers() {
     try {
@@ -187,15 +166,15 @@ async function newComment(comment, user) {
 
     //check if user is in the vibe
     var vibe = await db.collection('vibe').findOne(ObjectID(comment.vibeId));
-    if (!vibe.users.includes(user.uid)) {
-        console.log(chalk.red(user.uid, " can't comment on vibe if not in it"));
+    if (!vibe.users.includes(user.fbid)) {
+        console.log(chalk.red(user.fbid, " can't comment on vibe if not in it"));
         return;
     }
 
     var c = {
         text: comment.text,
         name: user.name,
-        uid: user.uid,
+        fbid: user.fbid,
         createdAt: Date.now(),
     }
 
@@ -226,7 +205,5 @@ module.exports = {
     getUsers,
     login,
     updateLocation,
-    saveToken,
-    getTokens,
     newComment
 };

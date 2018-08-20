@@ -12,7 +12,7 @@
                 <div class="details">
                     <img :src="profilePicSrc" class="profilePic">
                     <div class="createdBy">
-                        Created by: {{vibe.createdBy.name}}
+                        Created by: {{vibe.createdBy.name}} - {{distance}}
                     </div>
                     <br>
                     <div class="users">
@@ -43,6 +43,7 @@
 <script>
 import { EventBus } from "../event-bus.js";
 import { timeAgo } from "../services/timeAgo.js";
+import { formatDistance } from "../services/maps.js";
 import socket from "../services/socket.js";
 import comment from "./comment";
 
@@ -95,10 +96,13 @@ export default {
       if (this.vibe) {
         return (
           "https://graph.facebook.com/" +
-          this.vibe.createdBy.uid +
+          this.vibe.createdBy.fbid +
           "/picture?type=square&width=70&height=70"
         );
       }
+    },
+    distance() {
+      return formatDistance(this.vibe.distance);
     }
   },
   watch: {

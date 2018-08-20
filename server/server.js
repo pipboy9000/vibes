@@ -4,6 +4,8 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 var db = require('./helpers/db');
+var cache = require('./helpers/cache');
+
 var {
   validate
 } = require('./helpers/validate');
@@ -15,24 +17,6 @@ app.use(express.static('public'))
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
-
-//TODO: do we really need sqrt?
-function getDistance(c1, c2) {
-  var dx = c2.lat - c1.lat;
-  var dy = c2.lng - c1.lng;
-
-  var d = Math.hypot(dx, dy);
-  console.log(d);
-  return d;
-}
-
-function joinVibe() {
-
-}
-
-function newVibe() {
-
-}
 
 function setVibes() {
   db.getVibes().then(vibes => {
@@ -75,7 +59,7 @@ io.on('connection', function (socket) {
       if (user) {
         user.location = location
         db.updateLocation(user).then(user => {
-          socket.emit('setUser', user);
+          socket.emit('setServerLocation', user);
         })
       }
     });
@@ -123,5 +107,5 @@ io.on('connection', function (socket) {
 server.listen(port, function () {
   console.log('listening on port ' + port);
   setInterval(setVibes, 15000); //reset vibes list for everyone every 5 seconds
-  setInterval(setUsers, 15000);
+  setInterval(setUsers, 5000);
 });

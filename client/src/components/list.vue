@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     hasVibes() {
-      return Object.keys(this.$store.state.vibes).length;
+      return this.$store.state.vibes.length;
     }
   },
   watch: {

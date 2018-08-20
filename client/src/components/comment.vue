@@ -19,7 +19,7 @@ export default {
     profilePicSrc() {
       var src =
         "https://graph.facebook.com/" +
-        this.comment.uid +
+        this.comment.fbid +
         "/picture?type=square&width=70&height=70";
       return src;
     },

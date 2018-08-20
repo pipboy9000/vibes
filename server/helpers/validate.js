@@ -13,31 +13,31 @@ var accessTokens = {};
 
 function validate(token) {
   //development
-  var user = {
-    uid: "10156492526329808",
-    name: "Dan Levin",
-    createdAt: Date.now()
-  };
-  return Promise.resolve(user);
+  // var user = {
+  //   fbid: "10156492526329808",
+  //   name: "Dan Levin",
+  //   createdAt: Date.now()
+  // };
+  // return Promise.resolve(user);
 
-  if (accessTokens[token] && accessTokens[token].createdAt > Date.now() - 3600000)
+  if (accessTokens[token] && accessTokens[token].createdAt > Date.now() - 86400000)
     return Promise.resolve(accessTokens[token]);
 
   console.log(chalk.blue("validate token with fb"));
   return axios.get("https://graph.facebook.com/debug_token?&input_token=" + token + "&access_token=" + appId + "|" + appSecret)
     .then(res => {
       if (res.data.data.is_valid) {
-        var uid = res.data.data.user_id;
-        return axios.get("https://graph.facebook.com/" + uid + "?fields=name&access_token=" + token).then(res => {
+        var fbid = res.data.data.user_id;
+        return axios.get("https://graph.facebook.com/" + fbid + "?fields=name&access_token=" + token).then(res => {
 
           var user = {
-            uid: res.data.id,
+            fbid: res.data.id,
             name: res.data.name,
             createdAt: Date.now()
           };
           //cache it in accessToken
           accessTokens[token] = user;
-
+          console.log(chalk.green("valid"));
           return user;
         }).catch(err => {
           console.log(err)
@@ -49,7 +49,7 @@ function validate(token) {
         return false;
       }
     }).catch(err => {
-      console.log(err.message);
+      console.log(chalk.red(err.message));
       return false;
     });
 }
