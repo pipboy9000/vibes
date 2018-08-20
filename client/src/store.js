@@ -96,7 +96,7 @@ export default new Vuex.Store({
         vibe.distance = distance;
       }
       state.vibes.push(vibe);
-      state.inVibe = vibe._id;
+      state.inVibe = vibe.id;
     },
     setUsers(state, users) {
       state.users = users;

@@ -19,31 +19,38 @@ app.get('/', function (req, res) {
 });
 
 function setVibes() {
-  db.getVibes().then(vibes => {
-    io.emit('setVibes', vibes);
-  });
+  io.emit('setVibes', cache.getVibes());
+  // db.getVibes().then(vibes => {
+  //   io.emit('setVibes', vibes);
+  // });
 }
 
 function setUsers() {
-  db.getUsers().then(users => {
-    console.log(users.length + ' users connected');
-    users.map(u => console.log(u));
-    io.emit('setUsers', users);
-  });
+  io.emit('setUsers', cache.getUsers());
+  // db.getUsers().then(users => {
+  //   console.log(users.length + ' users connected');
+  //   users.map(u => console.log(u));
+  //   io.emit('setUsers', users);
+  // });
 }
 
 io.on('connection', function (socket) {
   console.log('socket connected');
-  db.getVibes().then(vibes => {
-    socket.emit('setVibes', vibes);
-  });
+  socket.emit('setVibes', cache.getVibes());
+
+  // db.getVibes().then(vibes => {
+  //   socket.emit('setVibes', vibes);
+  // });
 
 
   socket.on('login', function (user) {
     console.log("login: ", user);
     validate(user.token).then(user => {
       if (user) {
-        db.login(user).then(user => socket.emit('setUser', user));
+        user = cache.login(user);
+        socket.emit('setUser', user);
+
+        // db.login(user).then(user => socket.emit('setUser', user));
       } else {
         console.log("user credentials invalid");
       }
@@ -58,9 +65,11 @@ io.on('connection', function (socket) {
     validate(token).then(user => {
       if (user) {
         user.location = location
-        db.updateLocation(user).then(user => {
-          socket.emit('setServerLocation', user);
-        })
+        user = cache.updateLocation(user);
+        socket.emit('setServerLocation', user);
+        // db.updateLocation(user).then(user => {
+        //   socket.emit('setServerLocation', user);
+        // })
       }
     });
   });
@@ -71,9 +80,12 @@ io.on('connection', function (socket) {
   }) {
     validate(token).then(user => {
       if (user) {
-        db.newVibe(vibe, user).then(vibe => {
-          socket.emit('newVibe', vibe);
-        })
+        vibe = cache.newVibe(vibe, user)
+        socket.emit('newVibe', vibe);
+
+        // db.newVibe(vibe, user).then(vibe => {
+        //   socket.emit('newVibe', vibe);
+        // })
       }
     });
   });
@@ -84,23 +96,28 @@ io.on('connection', function (socket) {
   }) {
     validate(token).then(user => {
       if (user) {
-        db.newComment(comment, user).then(comments => {
-          socket.emit('setComments', comments);
-        })
+        var comments = cache.newComment(comment, user);
+        socket.emit('setComments', comments);
+
+        // db.newComment(comment, user).then(comments => {
+        //   socket.emit('setComments', comments);
+        // })
       }
     })
   });
 
   socket.on('getVibes', function () {
-    db.getVibes().then(vibes => {
-      socket.emit('setVibes', vibes);
-    })
+    socket.emit('setVibes', cache.getVibes());
+    // db.getVibes().then(vibes => {
+    //   socket.emit('setVibes', vibes);
+    // })
   });
 
   socket.on('getUsers', function () {
-    db.getUsers().then(users => {
-      socket.emit('setUsers', users);
-    })
+    socket.emit('setUsers', cache.getUsers());
+    // db.getUsers().then(users => {
+    //   socket.emit('setUsers', users);
+    // })
   });
 });
 

@@ -33,7 +33,7 @@ function watchLocation() {
       lat: mockX,
       lng: mockY
     });
-  }, 5000);
+  }, 7500);
 
   // watchID = navigator.geolocation.watchPosition(function (location) {
   //   var loc = {

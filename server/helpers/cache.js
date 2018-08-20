@@ -1,37 +1,9 @@
 var chalk = require("chalk");
 
-var users = {};
-var vibes = {};
-
-function login({
-    fbid,
-    name
-}) {
-    if (!users[fbid]) {
-        var user = {
-            name,
-            updatedAt: Date.now()
-        }
-        users[fbid] = user;
-        return user;
-    } else {
-        return users[fbid];
-    }
-}
-
-function updateLocation({
-    fbid,
-    location
-}) {
-    var user = users[fbid];
-    if (user) {
-        user.updatedAt = Date.now();
-        user.location = location;
-        return user;
-    } else {
-        console.log(chalk.orange("update location: user not found " + fbid));
-    }
-}
+var users = [];
+var usersMap = {};
+var vibes = [];
+var vibesMap = {};
 
 function generateID() {
     var r = Math.round(Math.random() * 1632960 + 46655);
@@ -41,10 +13,45 @@ function generateID() {
 
 function generateVibeID() {
     var id = generateID();
-    while (vibes[id]) {
+    while (vibesMap[id]) {
         id = generateID();
     }
+    return id;
 }
+
+function login({
+    fbid,
+    name
+}) {
+    if (!usersMap[fbid]) {
+        var user = {
+            name,
+            fbid,
+            invibe: "",
+            updatedAt: Date.now()
+        }
+        usersMap[fbid] = user;
+        users.push(user);
+        return user;
+    } else {
+        return usersMap[fbid];
+    }
+}
+
+function updateLocation({
+    fbid,
+    location
+}) {
+    var user = usersMap[fbid];
+    if (user) {
+        user.updatedAt = Date.now();
+        user.location = location;
+        return user;
+    } else {
+        console.log(chalk.yellow("update location: user not found " + fbid));
+    }
+}
+
 
 function newVibe(vibe, user) {
     var now = Date.now();
@@ -58,15 +65,18 @@ function newVibe(vibe, user) {
     vibe.comments = [];
     vibe.pictures = [];
 
-    var id = generateVibeID();
-    vibes[id] = vibe;
+    vibeId = generateVibeID();
+    vibe.id = vibeId;
+    vibesMap[vibeId] = vibe;
+    vibes.push(vibe);
 
+    usersMap[user.fbid].inVibe = vibeId;
     return vibe;
 }
 
 function newComment(comment, user) {
 
-    var vibe = vibes[comment.vibeId];
+    var vibe = vibesMap[comment.vibeId];
     if (!vibe) {
         console.log(chalk.red("new comment: vibe doesn't exist " + comment.vibeId));
         return;
