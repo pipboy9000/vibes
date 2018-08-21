@@ -82,7 +82,7 @@ export default {
     },
     sendNewComment() {
       var comment = {
-        vibeId: this.$store.state.selectedVibe._id,
+        vibeId: this.$store.state.selectedVibe.id,
         text: this.commentTxt
       };
       socket.newComment({ comment, token: this.$store.getters.token });

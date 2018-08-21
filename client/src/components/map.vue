@@ -45,6 +45,7 @@ export default {
     });
 
     this.myMarker.addListener("click", function() {
+      debugger;
       self.userInfoWindow.setDetails(self.$store.getters.me);
       self.userInfoWindow.open();
     });

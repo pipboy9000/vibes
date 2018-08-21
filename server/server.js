@@ -3,8 +3,8 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-var db = require('./helpers/db');
 var cache = require('./helpers/cache');
+var piggyBack = require('./helpers/piggyback');
 
 var {
   validate
@@ -18,39 +18,24 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
-function setVibes() {
-  io.emit('setVibes', cache.getVibes());
-  // db.getVibes().then(vibes => {
-  //   io.emit('setVibes', vibes);
-  // });
-}
-
-function setUsers() {
-  io.emit('setUsers', cache.getUsers());
-  // db.getUsers().then(users => {
-  //   console.log(users.length + ' users connected');
-  //   users.map(u => console.log(u));
-  //   io.emit('setUsers', users);
-  // });
-}
-
 io.on('connection', function (socket) {
   console.log('socket connected');
   socket.emit('setVibes', cache.getVibes());
-
-  // db.getVibes().then(vibes => {
-  //   socket.emit('setVibes', vibes);
-  // });
-
 
   socket.on('login', function (user) {
     console.log("login: ", user);
     validate(user.token).then(user => {
       if (user) {
         user = cache.login(user);
-        socket.emit('setUser', user);
+        piggyBack.login();
 
-        // db.login(user).then(user => socket.emit('setUser', user));
+        var data = {
+          user,
+          users: cache.getUsers(),
+          vibes: cache.getVibes(),
+        }
+
+        socket.emit('login', data);
       } else {
         console.log("user credentials invalid");
       }
@@ -66,10 +51,8 @@ io.on('connection', function (socket) {
       if (user) {
         user.location = location
         user = cache.updateLocation(user);
+        piggyBack.updateLocation(user);
         socket.emit('setServerLocation', user);
-        // db.updateLocation(user).then(user => {
-        //   socket.emit('setServerLocation', user);
-        // })
       }
     });
   });
@@ -81,11 +64,8 @@ io.on('connection', function (socket) {
     validate(token).then(user => {
       if (user) {
         vibe = cache.newVibe(vibe, user)
+        piggyBack.newVibe();
         socket.emit('newVibe', vibe);
-
-        // db.newVibe(vibe, user).then(vibe => {
-        //   socket.emit('newVibe', vibe);
-        // })
       }
     });
   });
@@ -97,32 +77,24 @@ io.on('connection', function (socket) {
     validate(token).then(user => {
       if (user) {
         var comments = cache.newComment(comment, user);
-        socket.emit('setComments', comments);
-
-        // db.newComment(comment, user).then(comments => {
-        //   socket.emit('setComments', comments);
-        // })
+        if (comments) {
+          piggyBack.newComment(comment);
+          socket.emit('setComments', comments);
+        }
       }
     })
   });
-
-  socket.on('getVibes', function () {
-    socket.emit('setVibes', cache.getVibes());
-    // db.getVibes().then(vibes => {
-    //   socket.emit('setVibes', vibes);
-    // })
-  });
-
-  socket.on('getUsers', function () {
-    socket.emit('setUsers', cache.getUsers());
-    // db.getUsers().then(users => {
-    //   socket.emit('setUsers', users);
-    // })
-  });
 });
+
+function checkPiggyBack() {
+  if (piggyBack.isFull()) {
+    console.log('send piggyBack');
+    io.emit('setData', piggyBack.getData());
+    piggyBack.clear();
+  }
+}
 
 server.listen(port, function () {
   console.log('listening on port ' + port);
-  setInterval(setVibes, 15000); //reset vibes list for everyone every 5 seconds
-  setInterval(setUsers, 5000);
+  setInterval(checkPiggyBack, 5000);
 });

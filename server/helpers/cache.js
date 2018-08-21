@@ -27,7 +27,7 @@ function login({
         var user = {
             name,
             fbid,
-            invibe: "",
+            inVibe: "",
             updatedAt: Date.now()
         }
         usersMap[fbid] = user;
@@ -111,11 +111,16 @@ function getUsers() {
     return users;
 }
 
+function getComments(vibeId) {
+    return vibesMap[vibeId].comments;
+}
+
 module.exports = {
     newVibe,
     getVibes,
     getUsers,
     login,
     updateLocation,
-    newComment
+    newComment,
+    getComments
 };
