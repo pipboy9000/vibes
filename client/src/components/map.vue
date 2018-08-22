@@ -45,7 +45,6 @@ export default {
     });
 
     this.myMarker.addListener("click", function() {
-      debugger;
       self.userInfoWindow.setDetails(self.$store.getters.me);
       self.userInfoWindow.open();
     });
@@ -88,8 +87,11 @@ export default {
       return new google.maps.Marker({
         icon: this.getIcon(user.inVibe),
         map: this.map,
-        position: user.location,
-        zIndex: 1
+        position: {
+          lat: user.location.lat,
+          lng: user.location.lng
+        },
+        zIndex: 999
       });
     },
     getNewVibeMarker(vibe) {
@@ -116,7 +118,10 @@ export default {
 
       users.map((u, idx) => {
         if (idx < self.userMarkers.length) {
-          self.userMarkers[idx].setPosition(u.location);
+          self.userMarkers[idx].setPosition({
+            lat: u.location.lat,
+            lng: u.location.lng
+          });
           self.userMarkers[idx].setIcon(self.getIcon(u.inVibe));
         } else {
           self.userMarkers[idx] = self.getNewUserMarker(u);
@@ -219,7 +224,8 @@ export default {
       this.myMarker.setPosition(newLoc);
       // this.focus(newLoc);
     },
-    serverLocation(newLoc) {
+    serverLocation(newLoc, oldLoc) {
+      if (!newLoc) return;
       var fbid = this.$store.getters.fbid;
       var me = this.$store.state.users.find(function(u) {
         return u.fbid === fbid;

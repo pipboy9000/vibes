@@ -72,8 +72,8 @@ export default new Vuex.Store({
         vibe.distance = distance;
       }
     },
-    setServerLocation: (state, user) => {
-      state.serverLocation = user.location;
+    setServerLocation: (state, location) => {
+      state.serverLocation = location;
     },
     setInVibe(state, id) {
       state.inVibe = id;
@@ -133,8 +133,8 @@ export default new Vuex.Store({
   actions: {
     login: (context, data) => {
       context.commit("setUser", data.user);
-      context.commit("setVibes", data.vibes);
       context.commit("setUsers", data.users);
+      context.dispatch("setVibes", data.vibes);
       if (context.state.location && context.getters.me) {
         socket.updateLocation({
           location: context.state.location,
@@ -161,6 +161,7 @@ export default new Vuex.Store({
       }
     },
     setServerLocation: (context, user) => {
+      console.log("server location");
       context.commit('setServerLocation', user.location);
       context.commit('setInVibe', user.inVibe);
     },
