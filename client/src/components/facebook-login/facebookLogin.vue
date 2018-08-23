@@ -72,6 +72,9 @@ export default {
           this.isConnected = true;
           console.log("login response:", response);
           this.$store.dispatch("setLoginDetails", response);
+          fbGetUserDetails().then(userDetails =>
+            this.$store.dispatch("setUserDetails", userDetails)
+          );
         } else {
           this.isConnected = false;
         }

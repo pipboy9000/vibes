@@ -175,6 +175,7 @@ export default new Vuex.Store({
       context.commit("setLoginDetails", loginDetails);
     },
     setUserDetails: (context, userDetails) => {
+      debugger;
       context.commit("setUserDetails", userDetails);
       if (context.getters.me) {
         socket.login(context.getters.me);
