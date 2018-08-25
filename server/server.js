@@ -95,11 +95,11 @@ io.on('connection', function (socket) {
   }) {
     validate(token).then(user => {
       if (user) {
-        var user = cache.joinVibe(user, vibeId);
-        if (user) {
+        var success = cache.joinVibe(user, vibeId);
+        if (success) {
           piggyBack.joinVibe();
+          socket.emit("joinVibe", vibeId);
         }
-        socket.emit("joinVibe", user);
       }
     })
   });

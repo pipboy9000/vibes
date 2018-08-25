@@ -136,8 +136,13 @@ function joinVibe(user, vibeId) {
     var oldVibe = usersMap[user.fbid].inVibe
     if (oldVibe) {
         var removeIdx = vibesMap[oldVibe].users.indexOf(user.fbid);
-        vibesMap[oldVibe].users.splice(removeIdx, 1);
+        if (removeIdx >= 0)
+            vibesMap[oldVibe].users.splice(removeIdx, 1);
     }
+
+    vibesMap[vibeId].users.push(user.fbid);
+
+    return true;
 }
 
 function getVibes() {

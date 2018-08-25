@@ -131,12 +131,23 @@ export default new Vuex.Store({
 
       if (state.selectedVibe.id === vibeId)
         state.selectedVibe.comments = comments;
+    },
+    addUser(state, {
+      vibeId,
+      fbid
+    }) {
+      debugger;
+      var vibe = state.vibes.find(function (v) {
+        return v.id === vibeId
+      });
+      vibe.users.push(fbid);
     }
   },
   actions: {
     login: (context, data) => {
       context.commit("setUser", data.user);
       context.commit("setUsers", data.users);
+      debugger;
       context.dispatch("setVibes", data.vibes);
       if (context.state.location && context.getters.me) {
         socket.updateLocation({
@@ -151,6 +162,7 @@ export default new Vuex.Store({
       }
 
       if (data.hasOwnProperty("vibes")) {
+        debugger;
         context.dispatch("setVibes", data.vibes);
       }
 
@@ -210,6 +222,7 @@ export default new Vuex.Store({
         });
       }
       context.dispatch("calculateDistances", context.state.vibes).then(sorted => {
+        debugger;
         context.commit("setVibes", sorted);
       })
     },
@@ -240,11 +253,34 @@ export default new Vuex.Store({
     },
     setVibes(context, vibesArray) {
       context.dispatch("calculateDistances", vibesArray).then(sorted => {
+        debugger;
         context.commit("setVibes", sorted);
       });
     },
     setUsers(context, users) {
       context.commit("setUsers", users);
     },
+
+    joinVibe(context, vibeId) {
+      //remove from old vibe
+      debugger;
+      if (context.state.inVibe) {
+        var vibe = context.state.vibes.find(function (v) {
+          return v.id === context.state.inVibe
+        });
+        var removeIdx = vibe.users.indexOf(context.getters.fbid);
+        if (removeIdx != -1)
+          vibe.users.splice(removeIdx, 1);
+      }
+
+      var vibe = context.state.vibes.find(function (v) {
+        return v.id === vibeId
+      });
+      context.commit("addUser", {
+        vibeId,
+        fbid: context.getters.fbid
+      });
+      context.commit("setInVibe", vibeId)
+    }
   }
 });

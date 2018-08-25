@@ -9,6 +9,7 @@ io.on("setData", data => store.dispatch("setData", data));
 io.on("setServerLocation", user => store.dispatch("setServerLocation", user));
 io.on("newVibe", vibe => store.dispatch("newVibe", vibe));
 io.on("setComments", comments => store.dispatch("setComments", comments));
+io.on("joinVibe", vibeId => store.dispatch("joinVibe", vibeId));
 
 //to server
 function newVibe(vibe) {
