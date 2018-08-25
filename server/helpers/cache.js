@@ -141,7 +141,19 @@ function joinVibe(user, vibeId) {
     }
 
     vibesMap[vibeId].users.push(user.fbid);
+    usersMap[user.fbid].inVibe = vibeId;
 
+    return true;
+}
+
+function leaveVibe(user) {
+    user = usersMap[user.fbid];
+    var vibe = vibesMap[user.inVibe];
+    var removeIdx = vibe.users.indexOf(user.fbid);
+    if (removeIdx != -1)
+        vibe.users.splice(removeIdx, 1);
+
+    usersMap[user.fbid].inVibe = "";
     return true;
 }
 
@@ -165,5 +177,6 @@ module.exports = {
     updateLocation,
     newComment,
     getComments,
-    joinVibe
+    joinVibe,
+    leaveVibe
 };

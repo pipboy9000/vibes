@@ -29,6 +29,13 @@ function newComment(comment) {
 function joinVibe() {
     full = true;
     data.vibes = cache.getVibes();
+    data.users = cache.getUsers();
+}
+
+function leaveVibe() {
+    full = true;
+    data.vibes = cache.getVibes();
+    data.users = cache.getUsers();
 }
 
 function clear() {
@@ -52,5 +59,6 @@ module.exports = {
     getData,
     login,
     joinVibe,
+    leaveVibe,
     clear
 }

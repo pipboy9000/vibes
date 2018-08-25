@@ -136,18 +136,19 @@ export default new Vuex.Store({
       vibeId,
       fbid
     }) {
-      debugger;
       var vibe = state.vibes.find(function (v) {
         return v.id === vibeId
       });
       vibe.users.push(fbid);
+    },
+    leaveVibe(state) {
+      state.inVibe = "";
     }
   },
   actions: {
     login: (context, data) => {
       context.commit("setUser", data.user);
       context.commit("setUsers", data.users);
-      debugger;
       context.dispatch("setVibes", data.vibes);
       if (context.state.location && context.getters.me) {
         socket.updateLocation({
@@ -162,7 +163,6 @@ export default new Vuex.Store({
       }
 
       if (data.hasOwnProperty("vibes")) {
-        debugger;
         context.dispatch("setVibes", data.vibes);
       }
 
@@ -222,7 +222,6 @@ export default new Vuex.Store({
         });
       }
       context.dispatch("calculateDistances", context.state.vibes).then(sorted => {
-        debugger;
         context.commit("setVibes", sorted);
       })
     },
@@ -253,7 +252,6 @@ export default new Vuex.Store({
     },
     setVibes(context, vibesArray) {
       context.dispatch("calculateDistances", vibesArray).then(sorted => {
-        debugger;
         context.commit("setVibes", sorted);
       });
     },
@@ -263,7 +261,6 @@ export default new Vuex.Store({
 
     joinVibe(context, vibeId) {
       //remove from old vibe
-      debugger;
       if (context.state.inVibe) {
         var vibe = context.state.vibes.find(function (v) {
           return v.id === context.state.inVibe
@@ -281,6 +278,10 @@ export default new Vuex.Store({
         fbid: context.getters.fbid
       });
       context.commit("setInVibe", vibeId)
+    },
+
+    leaveVibe(context) {
+      context.commit("leaveVibe");
     }
   }
 });

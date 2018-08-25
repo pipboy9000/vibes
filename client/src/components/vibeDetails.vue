@@ -22,7 +22,7 @@
                     <div class="join" v-if="vibe.distance < 50 && !inVibe" @click="joinVibe">
                       <img src="../assets/join_vibe_btn.png">
                     </div>
-                    <div class="leave" v-else-if="inVibe">
+                    <div class="leave" v-else-if="inVibe" @click="leaveVibe">
                       <img src="../assets/leave_vibe_btn.png">
                     </div>
                 </div>
@@ -98,6 +98,9 @@ export default {
         token: this.$store.getters.token,
         vibeId: this.vibe.id
       });
+    },
+    leaveVibe() {
+      socket.leaveVibe(this.$store.getters.token);
     }
   },
   computed: {

@@ -10,6 +10,7 @@ io.on("setServerLocation", user => store.dispatch("setServerLocation", user));
 io.on("newVibe", vibe => store.dispatch("newVibe", vibe));
 io.on("setComments", comments => store.dispatch("setComments", comments));
 io.on("joinVibe", vibeId => store.dispatch("joinVibe", vibeId));
+io.on("leaveVibe", store.dispatch("leaveVibe"));
 
 //to server
 function newVibe(vibe) {
@@ -32,10 +33,15 @@ function joinVibe(vibe) {
   io.emit("joinVibe", vibe);
 }
 
+function leaveVibe(token) {
+  io.emit("leaveVibe", token);
+}
+
 export default {
   newVibe,
   login,
   updateLocation,
   newComment,
-  joinVibe
+  joinVibe,
+  leaveVibe
 };

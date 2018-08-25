@@ -103,6 +103,16 @@ io.on('connection', function (socket) {
       }
     })
   });
+
+  socket.on("leaveVibe", function (token) {
+    validate(token).then(user => {
+      var success = cache.leaveVibe(user);
+      if (success) {
+        piggyBack.leaveVibe();
+        socket.emit("leaveVibe");
+      }
+    });
+  });
 });
 
 function checkPiggyBack() {
