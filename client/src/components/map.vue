@@ -12,7 +12,8 @@ export default {
     return {
       google: null,
       map: null,
-      myMarker: null,
+      myGhost: null, //represents local location
+      myMarker: null, //represents server location
       circles: [],
       vibeMarkers: [],
       userMarkers: [],
@@ -38,19 +39,19 @@ export default {
       self.userInfoWindow.close();
     });
 
-    this.myMarker = new google.maps.Marker({
+    this.myGhost = new google.maps.Marker({
       icon: "./static/user_marker.png",
       map: this.map,
       opacity: 0.3
     });
 
-    this.myMarker.addListener("click", function() {
+    this.myGhost.addListener("click", function() {
       self.userInfoWindow.setDetails(self.$store.getters.me);
       self.userInfoWindow.open();
     });
 
     if (this.location) {
-      this.myMarker.setPosition(this.location);
+      this.myGhost.setPosition(this.location);
     }
 
     //init the custom overlay object to use as an infowindow
@@ -125,6 +126,10 @@ export default {
           self.userMarkers[idx].setIcon(self.getIcon(u.inVibe));
         } else {
           self.userMarkers[idx] = self.getNewUserMarker(u);
+        }
+
+        if (u.fbid === self.$store.getters.fbid) {
+          self.myMarker = self.userMarkers[idx];
         }
 
         //clear previous click listeners
@@ -221,7 +226,7 @@ export default {
   },
   watch: {
     location(newLoc, oldLoc) {
-      this.myMarker.setPosition(newLoc);
+      this.myGhost.setPosition(newLoc);
       // this.focus(newLoc);
     },
     serverLocation(newLoc, oldLoc) {
@@ -246,8 +251,10 @@ export default {
     },
     inVibe(newInVibe, oldInVibe) {
       if (newInVibe) {
+        this.myGhost.setIcon("./static/user_marker_in_vibe.png");
         this.myMarker.setIcon("./static/user_marker_in_vibe.png");
       } else {
+        this.myGhost.setIcon("./static/user_marker.png");
         this.myMarker.setIcon("./static/user_marker.png");
       }
     }

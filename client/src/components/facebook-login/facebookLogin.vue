@@ -70,7 +70,6 @@ export default {
       fbLogin(this.loginOptions).then(response => {
         if (response.status === "connected") {
           this.isConnected = true;
-          console.log("login response:", response);
           this.$store.dispatch("setLoginDetails", response);
           fbGetUserDetails().then(userDetails =>
             this.$store.dispatch("setUserDetails", userDetails)

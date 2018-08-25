@@ -109,7 +109,9 @@ export default {
 
       var token = this.$store.getters.token;
 
-      socket.newVibe({ vibe, token });
+      var inVibe = this.$store.state.inVibe;
+
+      socket.newVibe({ vibe, token, inVibe });
       this.close();
     }
   },

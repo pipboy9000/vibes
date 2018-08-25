@@ -1,4 +1,5 @@
 var chalk = require("chalk");
+var distance = require("fast-haversine");
 
 var users = [];
 var usersMap = {};
@@ -21,19 +22,23 @@ function generateVibeID() {
 
 function login({
     fbid,
-    name
+    name,
+    location,
+
 }) {
     if (!usersMap[fbid]) {
         var user = {
             name,
             fbid,
             inVibe: "",
+            location,
             updatedAt: Date.now()
         }
         usersMap[fbid] = user;
         users.push(user);
         return user;
     } else {
+        usersMap[fbid].location = location;
         return usersMap[fbid];
     }
 }
@@ -53,7 +58,7 @@ function updateLocation({
 }
 
 
-function newVibe(vibe, user) {
+function newVibe(vibe, user, inVibe) {
     var now = Date.now();
     vibe.createdAt = now;
     vibe.createdBy = {
@@ -69,6 +74,12 @@ function newVibe(vibe, user) {
     vibe.id = vibeId;
     vibesMap[vibeId] = vibe;
     vibes.push(vibe);
+
+    //if user was already in a vibe then remove from old vibe
+    if (inVibe) {
+        removeIdx = vibesMap[inVibe].users.indexOf(user.fbid)
+        vibesMap[inVibe].users.splice(removeIdx, 1);
+    }
 
     usersMap[user.fbid].inVibe = vibeId;
     return vibe;
@@ -103,6 +114,32 @@ function newComment(comment, user) {
     }
 }
 
+function joinVibe(user, vibeId) {
+    //chekc if close enough
+    var from = {
+        lat: vibesMap[vibeId].location.lat,
+        lon: vibesMap[vibeId].location.lng
+    };
+
+    var to = {
+        lat: user.location.lat,
+        lon: user.location.lng
+    }
+
+    var d = distance(from, to);
+    if (d > 50) {
+        console.log(chalk.red("can't join vibe, too far"));
+        return;
+    }
+
+    //leave old vibe
+    var oldVibe = usersMap[user.fbid].inVibe
+    if (oldVibe) {
+        var removeIdx = vibesMap[oldVibe].users.indexOf(user.fbid);
+        vibesMap[oldVibe].users.splice(removeIdx, 1);
+    }
+}
+
 function getVibes() {
     return vibes;
 }
@@ -122,5 +159,6 @@ module.exports = {
     login,
     updateLocation,
     newComment,
-    getComments
+    getComments,
+    joinVibe
 };

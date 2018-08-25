@@ -22,10 +22,13 @@ io.on('connection', function (socket) {
   console.log('socket connected');
   socket.emit('setVibes', cache.getVibes());
 
-  socket.on('login', function (user) {
-    console.log("login: ", user);
-    validate(user.token).then(user => {
+  socket.on('login', function ({
+    token,
+    location
+  }) {
+    validate(token).then(user => {
       if (user) {
+        user.location = location;
         user = cache.login(user);
         piggyBack.login();
 
@@ -59,11 +62,12 @@ io.on('connection', function (socket) {
 
   socket.on('newVibe', function ({
     vibe,
-    token
+    token,
+    inVibe
   }) {
     validate(token).then(user => {
       if (user) {
-        vibe = cache.newVibe(vibe, user)
+        vibe = cache.newVibe(vibe, user, inVibe);
         piggyBack.newVibe();
         socket.emit('newVibe', vibe);
       }
@@ -81,6 +85,21 @@ io.on('connection', function (socket) {
           piggyBack.newComment(comment);
           socket.emit('setComments', comments);
         }
+      }
+    })
+  });
+
+  socket.on('joinVibe', function ({
+    token,
+    vibeId
+  }) {
+    validate(token).then(user => {
+      if (user) {
+        var user = cache.joinVibe(user, vibeId);
+        if (user) {
+          piggyBack.joinVibe();
+        }
+        socket.emit("joinVibe", user);
       }
     })
   });

@@ -19,6 +19,12 @@
                         <img src="../assets/users_icon.png">
                         <p> {{vibe.users.length}} - {{time}}.</p>
                     </div>
+                    <div class="join" v-if="vibe.distance < 50 && !inVibe" @click="joinVibe">
+                      <img src="../assets/join_vibe_btn.png">
+                    </div>
+                    <div class="leave" v-else-if="inVibe">
+                      <img src="../assets/leave_vibe_btn.png">
+                    </div>
                 </div>
                 <div class="emojis">
                     <div class="emoji">{{vibe.emojis[0]}}</div>
@@ -85,12 +91,21 @@ export default {
         vibeId: this.$store.state.selectedVibe.id,
         text: this.commentTxt
       };
-      socket.newComment({ comment, token: this.$store.getters.token });
+      socket.newComment({ token: this.$store.getters.token, comment });
+    },
+    joinVibe() {
+      socket.joinVibe({
+        token: this.$store.getters.token,
+        vibeId: this.vibe.id
+      });
     }
   },
   computed: {
     vibe() {
       return this.$store.state.selectedVibe;
+    },
+    inVibe() {
+      return this.$store.state.selectedVibe.id === this.$store.state.inVibe;
     },
     profilePicSrc() {
       if (this.vibe) {

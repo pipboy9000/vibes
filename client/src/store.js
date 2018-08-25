@@ -109,6 +109,9 @@ export default new Vuex.Store({
         vibe.distance = distance;
       }
       state.vibes.push(vibe);
+      state.vibes.sort(function (a, b) {
+        return a.distance - b.distance;
+      })
       state.inVibe = vibe.id;
     },
     setUsers(state, users) {
@@ -161,12 +164,30 @@ export default new Vuex.Store({
       }
     },
     setServerLocation: (context, user) => {
-      console.log("server location");
+      if (context.state.users.length > 0) {
+        var me = context.state.users.find(function (u) {
+          return u.fbid === user.fbid
+        });
+        if (me) {
+          me.inVibe = user.inVibe;
+          me.location = user.location;
+        }
+      }
+
       context.commit('setServerLocation', user.location);
       context.commit('setInVibe', user.inVibe);
     },
     newVibe: (context, vibe) => {
+      //remove from old vibe
+      if (context.state.inVibe) {
+        let vibe = context.state.vibes.find(function (v) {
+          return v.id === context.state.inVibe
+        });
+        var removeIdx = vibe.users.indexOf(context.getters.fbid);
+        vibe.users.splice(removeIdx, 1);
+      }
       context.commit("newVibe", vibe);
+      context.commit("setInVibe", vibe.id);
     },
     setComments: (context, comments) => {
       context.commit("setComments", comments);
@@ -175,7 +196,6 @@ export default new Vuex.Store({
       context.commit("setLoginDetails", loginDetails);
     },
     setUserDetails: (context, userDetails) => {
-      debugger;
       context.commit("setUserDetails", userDetails);
       if (context.getters.me) {
         socket.login(context.getters.me);
@@ -189,9 +209,12 @@ export default new Vuex.Store({
           token: context.getters.token
         });
       }
+      context.dispatch("calculateDistances", context.state.vibes).then(sorted => {
+        context.commit("setVibes", sorted);
+      })
     },
-    setVibes(context, vibesArray) {
-      new Promise(function (res) {
+    calculateDistances(context, vibesArray) {
+      return new Promise(function (res) {
         vibesArray.forEach(vibe => {
           if (context.getters.me) {
             var myLocation = new google.maps.LatLng(
@@ -213,8 +236,11 @@ export default new Vuex.Store({
           return a.distance - b.distance;
         });
         res(vibesArray);
-      }).then(vibes => {
-        context.commit("setVibes", vibes);
+      })
+    },
+    setVibes(context, vibesArray) {
+      context.dispatch("calculateDistances", vibesArray).then(sorted => {
+        context.commit("setVibes", sorted);
       });
     },
     setUsers(context, users) {

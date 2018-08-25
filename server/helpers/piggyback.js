@@ -26,6 +26,11 @@ function newComment(comment) {
     data.comments[comment.vibeId] = cache.getComments(comment.vibeId);
 }
 
+function joinVibe() {
+    full = true;
+    data.vibes = cache.getVibes();
+}
+
 function clear() {
     full = false;
     data = {}
@@ -46,5 +51,6 @@ module.exports = {
     newComment,
     getData,
     login,
+    joinVibe,
     clear
 }

@@ -27,9 +27,14 @@ function newComment(comment) {
   io.emit("newComment", comment);
 }
 
+function joinVibe(vibe) {
+  io.emit("joinVibe", vibe);
+}
+
 export default {
   newVibe,
   login,
   updateLocation,
-  newComment
+  newComment,
+  joinVibe
 };

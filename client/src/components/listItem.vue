@@ -5,8 +5,7 @@
             <div class="details">
                 <div class="users">
                     <img src="../assets/users_icon.png">
-                    <p>{{vibe.users.length}}    {{time}}
-                      {{distance}}
+                    <p>{{vibe.users.length}} - {{time}} - {{distance}}
                     </p>
                 </div>
                 <div class="time"></div>
@@ -35,7 +34,7 @@ export default {
       return timeAgo.format(this.vibe.createdAt);
     },
     distance() {
-      if (this.vibe.distance) {
+      if (this.vibe.distance || this.vibe.distance === 0) {
         return formatDistance(this.vibe.distance);
       }
     }
@@ -94,17 +93,16 @@ export default {
   align-items: center;
   margin-left: 12px;
   font-family: "ABeeZee", sans-serif;
-  color: #b3b3b3;
+  color: #8d8d8d;
   font-size: 12px;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .users > p {
   margin: 0;
   display: inline-block;
   margin-left: 4px;
-  font-size: 11px;
-  white-space: pre-wrap;
+  font-size: 13px;
 }
 
 .emojis {
