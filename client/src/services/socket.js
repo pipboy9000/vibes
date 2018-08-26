@@ -1,8 +1,13 @@
 import socketio from "socket.io-client";
 import store from "../store";
 
-var io = socketio.connect("localhost:3000");
+//developement 
+// var socketAdress = window.location.origin;
+// var port = window.location.port;
+// socketAdress = socketAdress.replace(port, "8080");
+// var io = socketio.connect(socketAdress);
 
+var io = socketio.connect();
 //from server
 io.on("login", data => store.dispatch("login", data));
 io.on("setData", data => store.dispatch("setData", data));
@@ -10,7 +15,7 @@ io.on("setServerLocation", user => store.dispatch("setServerLocation", user));
 io.on("newVibe", vibe => store.dispatch("newVibe", vibe));
 io.on("setComments", comments => store.dispatch("setComments", comments));
 io.on("joinVibe", vibeId => store.dispatch("joinVibe", vibeId));
-io.on("leaveVibe", store.dispatch("leaveVibe"));
+io.on("leaveVibe", _ => store.dispatch("leaveVibe"));
 
 //to server
 function newVibe(vibe) {

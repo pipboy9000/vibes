@@ -20,34 +20,34 @@ var count = 0;
 
 function watchLocation() {
   //for development
-  store.dispatch('setLocation', {
-    lat: mockX,
-    lng: mockY
-  });
-
-  watchID = setInterval(function (idx) {
-    mockX += Math.random() / 5000;
-    mockY += Math.random() / 5000;
-
-    store.dispatch('setLocation', {
-      lat: mockX,
-      lng: mockY
-    });
-  }, 15000);
-
-  // watchID = navigator.geolocation.watchPosition(function (location) {
-  //   var loc = {
-  //     lat: location.coords.latitude,
-  //     lng: location.coords.longitude
-  //   }
-  //   store.dispatch('setLocation', loc);
-  // }, function (err) {
-  //   console.log(err);
-  // }, null, {
-  //   enableHighAccuracy: true,
-  //   timeout: 5000,
-  //   maximumAge: 0
+  // store.dispatch('setLocation', {
+  //   lat: mockX,
+  //   lng: mockY
   // });
+
+  // watchID = setInterval(function (idx) {
+  //   mockX += Math.random() / 5000;
+  //   mockY += Math.random() / 5000;
+
+  //   store.dispatch('setLocation', {
+  //     lat: mockX,
+  //     lng: mockY
+  //   });
+  // }, 15000);
+
+  watchID = navigator.geolocation.watchPosition(function (location) {
+    var loc = {
+      lat: location.coords.latitude,
+      lng: location.coords.longitude
+    }
+    store.dispatch('setLocation', loc);
+  }, function (err) {
+    console.log(err);
+  }, null, {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+  });
 };
 
 function stopWatch() {

@@ -10,7 +10,7 @@ var {
   validate
 } = require('./helpers/validate');
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8080;
 
 app.use(express.static('public'))
 
