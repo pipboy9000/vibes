@@ -62,17 +62,21 @@ export default {
     getVibeSize(numUsers) {
       return Math.round(numUsers * 150 * 0.8);
     },
-    focus(location) {
+    focus(location, zoom) {
       if (location) {
-        this.map.panTo(location);
-        // this.map.setZoom(15);
+        if (zoom) {
+          this.map.panTo(location);
+          this.map.setZoom(zoom);
+        } else {
+          this.map.panTo(location);
+        }
       }
     },
     focusVibe(vibe) {
       this.focus(vibe.location);
     },
-    focusSelf() {
-      this.focus(this.location);
+    focusSelf(zoom) {
+      this.focus(this.location, zoom);
     },
     zoomIn() {
       this.map.setZoom(this.map.getZoom() + 1);
@@ -227,7 +231,9 @@ export default {
   watch: {
     location(newLoc, oldLoc) {
       this.myGhost.setPosition(newLoc);
-      // this.focus(newLoc);
+      if (!oldLoc) {
+        this.focus(newLoc, 17);
+      }
     },
     serverLocation(newLoc, oldLoc) {
       if (!newLoc) return;

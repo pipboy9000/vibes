@@ -2,12 +2,14 @@ import socketio from "socket.io-client";
 import store from "../store";
 
 //developement 
-// var socketAdress = window.location.origin;
-// var port = window.location.port;
-// socketAdress = socketAdress.replace(port, "8080");
-// var io = socketio.connect(socketAdress);
+var socketAdress = window.location.origin;
+var port = window.location.port;
+socketAdress = socketAdress.replace(port, "8080");
+var io = socketio.connect(socketAdress);
 
-var io = socketio.connect();
+//prod
+// var io = socketio.connect();
+
 //from server
 io.on("login", data => store.dispatch("login", data));
 io.on("setData", data => store.dispatch("setData", data));
