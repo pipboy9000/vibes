@@ -24,7 +24,8 @@ export default {
       isWorking: false,
       isConnected: false,
       icon,
-      appId: "1033690713453013",
+      // appId: "1033690713453013", //prod
+      appId: "2192681937654200", //dev
       version: "v2.10",
       logoutLabel: "Logout of Facebook",
       loginLabel: "Login with Facebook",

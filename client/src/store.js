@@ -164,6 +164,8 @@ export default new Vuex.Store({
 
       if (data.hasOwnProperty("vibes")) {
         context.dispatch("setVibes", data.vibes);
+      } else {
+        context.dispatch("setVibes", []);
       }
 
       if (data.hasOwnProperty("comments")) {
@@ -195,8 +197,10 @@ export default new Vuex.Store({
         let vibe = context.state.vibes.find(function (v) {
           return v.id === context.state.inVibe
         });
-        var removeIdx = vibe.users.indexOf(context.getters.fbid);
-        vibe.users.splice(removeIdx, 1);
+        if (vibe) {
+          var removeIdx = vibe.users.indexOf(context.getters.fbid);
+          vibe.users.splice(removeIdx, 1);
+        }
       }
       context.commit("newVibe", vibe);
       context.commit("setInVibe", vibe.id);
@@ -215,12 +219,17 @@ export default new Vuex.Store({
     },
     setLocation(context, location) {
       context.commit("setLocation", location);
-      if (context.state.loggedIn && context.getters.me) {
-        socket.updateLocation({
-          location: context.state.location,
-          token: context.getters.token
-        });
+      if (context.state.loggedIn) {
+        if (context.getters.me) {
+          socket.updateLocation({
+            location: context.state.location,
+            token: context.getters.token
+          });
+        }
+      } else if (context.getters.me) {
+        socket.login(context.getters.me);
       }
+
       context.dispatch("calculateDistances", context.state.vibes).then(sorted => {
         context.commit("setVibes", sorted);
       })

@@ -1,5 +1,6 @@
 var axios = require("axios");
 var chalk = require("chalk");
+var fs = require("fs");
 
 var {
   appId,
@@ -10,6 +11,7 @@ var {
 //https: //graph.facebook.com/debug_token?&input_token=EAAOsItZCIcdUBABmObiBzvc46tCNZChZBpzxmmYIw6TwLEfYlpOSbQgS8a6DdM3BO3C2s1JqQn2ox5frRx5oIoLDqx5lgzB0Cb4ezD7i4yU96KPhwXq8550keIGUj2xywO2AEKmv8OHGMkpkzxeC5LZCOtE1ZBLQL753qTXIXwS9ZCXJZAA6rZACi1K07krCyqViHhcwHVNvZCAZDZD&access_token=1033690713453013|e8408dd116c7abe3d6242969b9bf4b6c
 
 var accessTokens = {};
+var userTokensMap = {};
 
 function validate(token) {
   //development
@@ -35,8 +37,15 @@ function validate(token) {
             name: res.data.name,
             createdAt: Date.now()
           };
-          //cache it in accessToken
+
+          //remove old access token
+          if (userTokensMap[user.fbid])
+            delete accessTokens[userTokensMap[user.fbid]]
+
+          //cache it in accessToken and userTokensMap
           accessTokens[token] = user;
+          userTokensMap[user.fbid] = token;
+
           console.log(chalk.green("valid"));
           return user;
         }).catch(err => {
@@ -53,6 +62,38 @@ function validate(token) {
       return false;
     });
 }
+
+function save() {
+  var data = {
+    accessTokens,
+    userTokensMap
+  }
+  fs.writeFile("tokens.json", JSON.stringify(data), err => {
+    if (err)
+      throw err;
+  })
+}
+
+function load() {
+  fs.readFile("tokens.json", (err, str) => {
+    if (err)
+      throw err;
+
+    data = JSON.parse(str);
+    if (data.hasOwnProperty(accessTokens))
+      accessTokens = data.accessTokens;
+
+    if (data.hasOwnProperty(userTokensMap))
+      userTokensMap = data.userTokensMap;
+  })
+}
+
+function init() {
+  load();
+  setInterval(save, 5000);
+}
+
+init();
 
 module.exports = {
   validate

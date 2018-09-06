@@ -117,13 +117,19 @@ io.on('connection', function (socket) {
 
 function checkPiggyBack() {
   if (piggyBack.isFull()) {
-    console.log('send piggyBack');
     io.emit('setData', piggyBack.getData());
     piggyBack.clear();
   }
 }
 
+function clearVibes() {
+  if (cache.clear())
+    piggyBack.vibeRemoved();
+}
+
 server.listen(port, function () {
   console.log('listening on port ' + port);
   setInterval(checkPiggyBack, 5000);
+  setInterval(cache.save, 30000); //save cache state
+  setInterval(clearVibes, 20000);
 });

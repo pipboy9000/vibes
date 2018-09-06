@@ -1,10 +1,47 @@
 var chalk = require("chalk");
 var distance = require("fast-haversine");
+var fs = require("fs")
 
 var users = [];
 var usersMap = {};
 var vibes = [];
 var vibesMap = {};
+
+var vibeTimout = 1000 * 30; //1 hour
+
+function save() {
+    var data = JSON.stringify({
+        users,
+        vibes
+    });
+    fs.writeFile('cache.json', data, function (err) {
+        if (err)
+            throw err
+    })
+}
+
+function load() {
+    fs.readFile('cache.json', (err, str) => {
+        if (err)
+            throw err;
+
+        var data = JSON.parse(str);
+
+        if (data.hasOwnProperty("vibes"))
+            vibes = data.vibes;
+
+        if (data.hasOwnProperty("users"))
+            users = data.users;
+
+        users.forEach(u => {
+            usersMap[u.fbid] = u;
+        });
+
+        vibes.forEach(v => {
+            vibesMap[v.id] = v
+        })
+    })
+}
 
 function generateID() {
     var r = Math.round(Math.random() * 1632960 + 46655);
@@ -76,7 +113,7 @@ function newVibe(vibe, user, inVibe) {
     vibes.push(vibe);
 
     //if user was already in a vibe then remove from old vibe
-    if (inVibe) {
+    if (inVibe && vibesMap[inVibe]) {
         removeIdx = vibesMap[inVibe].users.indexOf(user.fbid)
         vibesMap[inVibe].users.splice(removeIdx, 1);
     }
@@ -115,6 +152,12 @@ function newComment(comment, user) {
 }
 
 function joinVibe(user, vibeId) {
+    if (!vibesMap[vibeId]) {
+        console.log(chalk.red("join vibe - vibe doesn't exists"))
+        return
+    }
+
+
     //chekc if close enough
     var from = {
         lat: vibesMap[vibeId].location.lat,
@@ -140,13 +183,19 @@ function joinVibe(user, vibeId) {
             vibesMap[oldVibe].users.splice(removeIdx, 1);
     }
 
-    vibesMap[vibeId].users.push(user.fbid);
+    if (!vibesMap[vibeId].users.includes(user.fbid))
+        vibesMap[vibeId].users.push(user.fbid);
     usersMap[user.fbid].inVibe = vibeId;
 
     return true;
 }
 
 function leaveVibe(user) {
+    var vibeId = usersMap[user.fbid].inVibe;
+    if (!vibesMap[vibeId]) {
+        console.log(chalk.red("leave vibe - vibe doesn't exists"))
+        return
+    }
     user = usersMap[user.fbid];
     var vibe = vibesMap[user.inVibe];
     var removeIdx = vibe.users.indexOf(user.fbid);
@@ -169,6 +218,45 @@ function getComments(vibeId) {
     return vibesMap[vibeId].comments;
 }
 
+function clear() {
+    var from = Date.now() - vibeTimout;
+
+    var shouldSave = false;
+
+    //remove from map
+    vibes.forEach(v => {
+        if (v.lastJoined < from) {
+            v.users.forEach(fbid => {
+                if (usersMap[fbid])
+                    usersMap[fbid].inVibe = "";
+            })
+            delete vibesMap[v.id];
+            shouldSave = true;
+        }
+    });
+
+    //remove from array
+    vibes = vibes.filter(v => {
+        return !(v.lastJoined < from)
+    })
+
+    //TODO:
+    //users - remove only users that are not inside a vibe that have been inactive for time period
+
+    if (shouldSave) {
+        console.log('clear true');
+        save();
+        return true;
+    }
+    return false;
+}
+
+function init() {
+    load();
+}
+
+init();
+
 module.exports = {
     newVibe,
     getVibes,
@@ -178,5 +266,7 @@ module.exports = {
     newComment,
     getComments,
     joinVibe,
-    leaveVibe
+    leaveVibe,
+    save,
+    clear
 };

@@ -7,16 +7,19 @@ var full = false;
 function login() {
     full = true;
     data.users = cache.getUsers();
+    data.vibes = cache.getVibes();
 }
 
 function newVibe() {
     full = true;
+    data.vibes = cache.getVibes();
     data.vibes = cache.getVibes();
 }
 
 function updateLocation() {
     full = true;
     data.users = cache.getUsers();
+    data.vibes = cache.getVibes();
 }
 
 function newComment(comment) {
@@ -38,9 +41,15 @@ function leaveVibe() {
     data.users = cache.getUsers();
 }
 
+function vibeRemoved() {
+    full = true;
+    data.vibes = cache.getVibes();
+    data.users = cache.getUsers();
+}
+
 function clear() {
     full = false;
-    data = {}
+    data = {};
 }
 
 function isFull() {
@@ -60,5 +69,6 @@ module.exports = {
     login,
     joinVibe,
     leaveVibe,
+    vibeRemoved,
     clear
 }
