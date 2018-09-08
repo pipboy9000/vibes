@@ -100,7 +100,6 @@ export default {
       });
     },
     leaveVibe() {
-      debugger;
       socket.leaveVibe(this.$store.getters.token);
     }
   },

@@ -4,16 +4,15 @@
         <div class="loginDiv" v-if="$store.state.loginDetails === null"> 
           <div class="overlay"></div>
           <div class="elements-wrapper">
-            <Logo :size="200" style="padding-bottom:40px"></Logo>
+            <Logo class="logo"></Logo>
             <FacebookLogin></FacebookLogin>
           </div>
         </div>
-        <div v-else>
-          <div class="newVibeBtn" @click="openNewVibeForm">+</div>
+        <div>
           <list class="list"></list>
           <vibe-details></vibe-details>
-          <NewVibeForm class="newVibeForm"></NewVibeForm>
           <mapUI></mapUI>
+          <NewVibeForm class="newVibeForm"></NewVibeForm>
         </div>
   </div>
 </template>
@@ -39,11 +38,6 @@ export default {
     List,
     VibeDetails,
     MapUI
-  },
-  methods: {
-    openNewVibeForm() {
-      EventBus.$emit("openNewVibeForm");
-    }
   }
 };
 </script>
@@ -60,10 +54,11 @@ export default {
   flex-direction: column;
   align-items: center;
   padding-bottom: 100px;
+  width: 100%;
 }
 
 .logo {
-  padding-bottom: 15px;
+  padding-bottom: 40px;
 }
 
 .map {
@@ -97,25 +92,6 @@ export default {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
-}
-
-.newVibeBtn {
-  user-select: none;
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  background-color: #22dbe3;
-  border: 5px solid white;
-  left: 50%;
-  -webkit-transform: translateX (-50%);
-  transform: translateX (-50%);
-  bottom: 50px;
-  border-radius: 80px;
-  font-family: cursive;
-  font-size: 70px;
-  line-height: 70px;
-  color: white;
-  box-shadow: 0px 8px 10px -1px #0004;
 }
 
 .newVibeForm {
