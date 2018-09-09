@@ -12,7 +12,7 @@
                        @input="resizeTitle" 
                        @paste="onPaste" 
                        @keydown="resizeTitle" 
-                       maxlength="25">
+                       maxlength="35">
             </div>
             <div class="tagsWrapper">
                 <div @click="selectEmoji(0)" :class="{addTagBtn: emojis[0] === '+' , emoji:emojis[0] !== '+'}">{{emojis[0]}}</div>
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     onPaste() {
-      console.log("pasted");
+      setTimeout(this.resizeTitle, 0);
     },
     open() {
       this.show = true;
@@ -69,6 +69,9 @@ export default {
         this.titlePxSize--;
         this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
         this.$refs.titleInput.style.fontSize = this.titlePxSize + "px";
+        var marginTop = (65 - this.titlePxSize) / 65 * 20;
+        this.$refs.titleStroke.style.marginTop = marginTop + "px";
+        this.$refs.titleInput.style.marginTop = marginTop + "px";
         this.$nextTick(this.resizeTitle);
       } else if (
         this.$refs.titleStroke.clientWidth - this.titleWidth < -10 &&
@@ -93,13 +96,7 @@ export default {
         return;
       }
 
-      //development
       var location = this.$store.state.location;
-
-      // var location = {
-      //   lat: this.$store.state.location.coords.latitude,
-      //   lng: this.$store.state.location.coords.longitude
-      // };
 
       var vibe = {
         title: this.title,
@@ -143,7 +140,7 @@ export default {
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  min-width: 420px;
+  /* min-width: 420px; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -274,6 +271,19 @@ export default {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+@media (max-width: 510px) {
+  .bg {
+    width: 90%;
+  }
+
+  .addTagBtn {
+    width: 75px;
+    height: 75px;
+    min-width: 75px;
+    line-height: 66px;
+  }
 }
 </style>
 
