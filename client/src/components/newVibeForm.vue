@@ -284,6 +284,18 @@ export default {
     min-width: 75px;
     line-height: 66px;
   }
+
+  .titleBg {
+    margin: 12px;
+  }
+
+  .tagsWrapper {
+    height: 90px;
+  }
+
+  .bg {
+    margin-bottom: 100px;
+  }
 }
 </style>
 
