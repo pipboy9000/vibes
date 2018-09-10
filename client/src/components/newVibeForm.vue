@@ -296,6 +296,10 @@ export default {
   .bg {
     margin-bottom: 100px;
   }
+
+  .emoji {
+    font-size: 75px;
+  }
 }
 </style>
 
