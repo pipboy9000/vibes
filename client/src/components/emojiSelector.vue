@@ -106,6 +106,16 @@ export default {
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
+
+@media (max-width: 510px) {
+  .bg {
+    padding: 15px 2px 2px 2px;
+  }
+
+  .emoji {
+    padding: 2px;
+  }
+}
 </style>
 
 
