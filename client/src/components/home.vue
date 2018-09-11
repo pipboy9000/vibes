@@ -9,7 +9,7 @@
           </div>
         </div>
         <div>
-          <list class="list"></list>
+          <list></list>
           <vibe-details></vibe-details>
           <mapUI></mapUI>
           <NewVibeForm class="newVibeForm"></NewVibeForm>
@@ -90,6 +90,7 @@ export default {
 .fade-leave-active {
   transition: opacity 0.25s;
 }
+
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
@@ -97,10 +98,6 @@ export default {
 .newVibeForm {
   width: 100%;
   height: 100%;
-}
-
-.list {
-  margin: 20px;
 }
 </style>
 

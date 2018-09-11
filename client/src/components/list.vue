@@ -1,6 +1,10 @@
 <template>
-    <div v-show="hasVibes" class="wrapper" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}">
-      <div class="list">
+    <!-- <div v-show="hasVibes" class="wrapper" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}"> -->
+    <div v-show="hasVibes" class="wrapper open">
+      <div class="listBig">
+        <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
+      </div>
+      <div class="listSmall">
         <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
       </div>
       <div v-if="isOpen" class="closeBtn" @click="close">X</div>
@@ -70,6 +74,7 @@ export default {
   left: -550px;
   margin: 10px;
   overflow: hidden;
+  height: 100%;
 }
 
 @keyframes openAnim {
@@ -113,11 +118,12 @@ export default {
   animation-duration: 0s;
 }
 
-.list {
+.listBig {
   max-height: 50vh;
   padding-right: 8px;
   overflow-y: scroll;
   float: left;
+  clear: none;
 }
 
 .closeBtn {
@@ -144,7 +150,7 @@ export default {
   width: 50px;
   height: 50px;
   background: #91daffc9;
-  float: left;
+  float: right;
   color: white;
   display: flex;
   flex-direction: column;
@@ -160,32 +166,65 @@ export default {
   border-radius: 10px;
 }
 
-.list::-webkit-scrollbar {
+.listBig,
+.listSmall::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
-.list::-webkit-scrollbar-button {
+.listBig,
+.listSmall::-webkit-scrollbar-button {
   width: 0px;
   height: 0px;
 }
-.list::-webkit-scrollbar-thumb {
+.listBig,
+.listSmall::-webkit-scrollbar-thumb {
   background: #fffd;
   border: 0px none #ffffff;
   border-radius: 50px;
 }
-.list::-webkit-scrollbar-thumb:hover {
+.listBig,
+.listSmall::-webkit-scrollbar-thumb:hover {
   background: #fff;
 }
-.list::-webkit-scrollbar-thumb:active {
+.listBig,
+.listSmall::-webkit-scrollbar-thumb:active {
   background: #ffff;
 }
-.list::-webkit-scrollbar-track {
+.listBig,
+.listSmall::-webkit-scrollbar-track {
   background: #0000;
   border: 0px none #ffffff;
   border-radius: 50px;
 }
-.list::-webkit-scrollbar-corner {
+.listBig,
+.listSmall::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+.listSmall {
+  visibility: visible;
+  display: none;
+  width: 85%;
+  float: left;
+  clear: none;
+}
+
+@media (max-width: 650px) {
+  .wrapper {
+    margin: 0;
+  }
+
+  .listBig {
+    visibility: collapse;
+    display: none;
+  }
+
+  .listSmall {
+    visibility: visible;
+    display: inline-block;
+    height: 100%;
+    overflow-y: scroll;
+  }
 }
 </style>
 
