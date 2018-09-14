@@ -57,6 +57,7 @@ export default {
           this.titleWidth = this.$refs.titleBg.clientWidth - 30;
         });
       }
+      setTimeout(this.resizeTitle, 0);
     },
     close() {
       this.show = false;

@@ -1,23 +1,22 @@
 <template>
-    <!-- <div v-show="hasVibes" class="wrapper" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}"> -->
-    <div v-show="hasVibes" class="wrapper open">
-      <div class="listBig">
-        <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
-      </div>
-      <div class="listSmall">
-        <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
-      </div>
-      <div v-if="isOpen" class="closeBtn" @click="close">X</div>
-      <div v-else class="openBtn" @click="open">
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
+  <div class="list" v-if="hasVibes" :class="{open :isOpen, closed: !isOpen && ready}">
+    <div class="items">
+      <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
     </div>
+    <div v-if="isOpen" class="closeBtn" @click="close">
+      <div></div>
+      <div></div>
+    </div>
+    <div v-else class="openBtn" @click="open">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
 </template>
 
 <script>
-import listItem from "./listItem";
+import ListItem from "./listItem";
 import { EventBus } from "../event-bus";
 
 export default {
@@ -28,15 +27,8 @@ export default {
       ready: false //used to fix animations
     };
   },
-  components: { listItem },
+  components: { ListItem },
   mounted() {
-    var self = this;
-    if (this.hasVibes) {
-      setTimeout(function() {
-        self.ready = true;
-      }, 500);
-    }
-
     EventBus.$on("listItemClicked", this.close);
   },
   methods: {
@@ -45,11 +37,12 @@ export default {
     },
     close() {
       this.isOpen = false;
+      this.ready = true;
     }
   },
   computed: {
     hasVibes() {
-      return this.$store.state.vibes.length;
+      return this.$store.state.vibes.length > 0;
     }
   },
   watch: {
@@ -69,45 +62,51 @@ export default {
 </script>
 
 <style scoped="true">
-.wrapper {
+.list {
+  padding: 10px;
+  transform: translateX(-555px);
   position: absolute;
-  left: -550px;
-  margin: 10px;
-  overflow: hidden;
-  height: 100%;
+  float: left;
+  left: 0px;
+}
+
+.items {
+  float: left;
+  max-height: 536px;
+  overflow-y: scroll;
+  padding-right: 5px;
+}
+
+.closed {
+  animation: closeAnim;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-out;
+  transform: translateX(-555px);
+}
+
+.open {
+  animation: openAnim;
+  animation-duration: 0.25s;
+  animation-timing-function: ease-out;
+  transform: translateX(0px);
 }
 
 @keyframes openAnim {
   from {
-    left: -550px;
+    transform: translateX(-540px);
   }
   to {
-    left: 0px;
+    transform: translateX(0);
   }
 }
 
 @keyframes closeAnim {
   from {
-    left: 0px;
+    transform: translateX(0px);
   }
   to {
-    left: -550px;
+    transform: translateX(-540px);
   }
-}
-
-.open {
-  left: 0px;
-  animation: openAnim;
-  animation-duration: 0.25s;
-  animation-timing-function: ease-out;
-}
-
-.closed {
-  transform: translateX(-10px);
-  left: -550px;
-  animation: closeAnim;
-  animation-duration: 0.25s;
-  animation-timing-function: ease-out;
 }
 
 .closed > .openBtn {
@@ -118,45 +117,20 @@ export default {
   animation-duration: 0s;
 }
 
-.listBig {
-  max-height: 50vh;
-  padding-right: 8px;
-  overflow-y: scroll;
-  float: left;
-  clear: none;
-}
-
-.closeBtn {
-  margin-left: 6px;
-  border-radius: 50px;
-  border: 3px white solid;
-  width: 50px;
-  height: 50px;
-  line-height: 43px;
-  font-size: 20px;
-  background: #91daffc9;
-  font-family: cursive;
-  font-weight: 900;
-  float: left;
-  color: white;
-  user-select: none;
-  box-sizing: border-box;
-}
-
 .openBtn {
-  margin-left: 6px;
   border-radius: 50px;
   border: 3px white solid;
   width: 50px;
   height: 50px;
   background: #91daffc9;
-  float: right;
+  float: left;
   color: white;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   justify-content: space-evenly;
   padding: 10px;
   box-sizing: border-box;
+  margin-left: 10px;
 }
 
 .openBtn > div {
@@ -166,38 +140,64 @@ export default {
   border-radius: 10px;
 }
 
-.listBig,
-.listSmall::-webkit-scrollbar {
+.closeBtn {
+  border-radius: 50px;
+  border: 3px white solid;
+  width: 50px;
+  height: 50px;
+  background: #91daffc9;
+  float: left;
+  color: white;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-left: 5px;
+  align-items: center;
+}
+
+.closeBtn > div {
+  position: absolute;
+  width: 25px;
+  height: 5px;
+  background: white;
+  border-radius: 10px;
+}
+
+.closeBtn > div:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.closeBtn > div:nth-child(2) {
+  transform: rotate(-45deg);
+}
+
+.items::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
-.listBig,
-.listSmall::-webkit-scrollbar-button {
+.items::-webkit-scrollbar-button {
   width: 0px;
   height: 0px;
 }
-.listBig,
-.listSmall::-webkit-scrollbar-thumb {
+.items::-webkit-scrollbar-thumb {
   background: #fffd;
   border: 0px none #ffffff;
   border-radius: 50px;
 }
-.listBig,
-.listSmall::-webkit-scrollbar-thumb:hover {
+.items::-webkit-scrollbar-thumb:hover {
   background: #fff;
 }
-.listBig,
-.listSmall::-webkit-scrollbar-thumb:active {
+.items::-webkit-scrollbar-thumb:active {
   background: #ffff;
 }
-.listBig,
-.listSmall::-webkit-scrollbar-track {
+.items::-webkit-scrollbar-track {
   background: #0000;
   border: 0px none #ffffff;
   border-radius: 50px;
 }
-.listBig,
-.listSmall::-webkit-scrollbar-corner {
+.items::-webkit-scrollbar-corner {
   background: transparent;
 }
 
@@ -210,20 +210,66 @@ export default {
 }
 
 @media (max-width: 650px) {
+  .list {
+    width: 100%;
+    padding: 0;
+    transform: translateX(-80%);
+  }
   .wrapper {
     margin: 0;
+    width: 95%;
+    box-shadow: -18px 10px 56px;
   }
 
-  .listBig {
-    visibility: collapse;
-    display: none;
+  .items {
+    max-height: 100vh;
+    transform: translateX(-5px);
   }
 
-  .listSmall {
-    visibility: visible;
-    display: inline-block;
-    height: 100%;
-    overflow-y: scroll;
+  @keyframes openAnim {
+    from {
+      transform: translateX(-80%);
+    }
+    to {
+      transform: translateX(-20px);
+    }
+  }
+
+  @keyframes closeAnim {
+    from {
+      transform: translateX(-20px);
+    }
+    to {
+      transform: translateX(80%px);
+    }
+  }
+
+  .closed {
+    animation: closeAnim;
+    animation-duration: 0.25s;
+    animation-timing-function: ease-out;
+    transform: translateX(-80%);
+  }
+
+  .open {
+    animation: openAnim;
+    animation-duration: 0.25s;
+    animation-timing-function: ease-out;
+    transform: translateX(0);
+  }
+
+  .items {
+    width: 80%;
+  }
+
+  .openBtn {
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+
+  .closeBtn {
+    margin-right: 10px;
+    margin-top: 10px;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-      <Map class="map"></Map>
+      <Map></Map>
         <div class="loginDiv" v-if="$store.state.loginDetails === null"> 
           <div class="overlay"></div>
           <div class="elements-wrapper">
@@ -8,12 +8,10 @@
             <FacebookLogin></FacebookLogin>
           </div>
         </div>
-        <div>
-          <list></list>
           <vibe-details></vibe-details>
           <mapUI></mapUI>
-          <NewVibeForm class="newVibeForm"></NewVibeForm>
-        </div>
+          <list></list>
+          <NewVibeForm></NewVibeForm>
   </div>
 </template>
 
@@ -21,10 +19,10 @@
 import Map from "./map";
 import FacebookLogin from "./facebook-login/facebookLogin";
 import Logo from "./logo";
-import List from "./list";
 import MapUI from "./mapUI";
 import NewVibeForm from "./newVibeForm";
 import VibeDetails from "./vibeDetails";
+import List from "./list";
 
 import { EventBus } from "../event-bus";
 
@@ -93,11 +91,6 @@ export default {
 
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
-}
-
-.newVibeForm {
-  width: 100%;
-  height: 100%;
 }
 </style>
 
