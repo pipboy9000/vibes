@@ -7,6 +7,16 @@
                 <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
                 <div class="title" ref="title">{{vibe.title}}</div>
             </div>
+            <div class="joinLeave">
+                <div class="join" v-if="vibe.distance < 50 && !inVibe" @click="joinVibe">
+                    <img src="../assets/join_vibe_btn.png">
+                    <p>Join Vibe!</p>
+                </div>
+                <div class="leave" v-else-if="inVibe" @click="leaveVibe">
+                  <img src="../assets/leave_vibe_btn.png">
+                    <p>Leave Vibe :( </p>
+                </div>
+            </div>
             <div class="pictures"></div>
             <div class="info">
                 <div class="details">
@@ -19,12 +29,7 @@
                         <img src="../assets/users_icon.png">
                         <p> {{vibe.users.length}} - {{time}}.</p>
                     </div>
-                    <div class="join" v-if="vibe.distance < 50 && !inVibe" @click="joinVibe">
-                      <img src="../assets/join_vibe_btn.png">
-                    </div>
-                    <div class="leave" v-else-if="inVibe" @click="leaveVibe">
-                      <img src="../assets/leave_vibe_btn.png">
-                    </div>
+            
                 </div>
                 <div class="emojis">
                     <div class="emoji">{{vibe.emojis[0]}}</div>
@@ -260,7 +265,8 @@ export default {
 
 .titleWrapper {
   position: relative;
-  height: 110px;
+  height: 75px;
+  padding-top: 22px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -302,6 +308,44 @@ export default {
   transform: translateY(-10px);
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.joinLeave {
+  width: max-content;
+  padding-left: 12px;
+  padding-bottom: 15px;
+  font-size: 15px;
+  padding: 10px;
+  background: deepskyblue;
+  border-radius: 10px;
+  font-size: 20px;
+  padding-right: 36px;
+  font-weight: 700;
+  margin: 15px;
+  margin-bottom: 30px;
+  box-shadow: 0px 7px 0px 0px #1495c0;
+  min-width: 40%;
+}
+
+.joinLeave:hover {
+}
+
+.join,
+.leave {
+  display: flex;
+  align-items: center;
+}
+
+.join > p,
+.leave > p {
+  margin-left: 15px;
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  padding: 0;
+  color: white;
+  text-shadow: -1px -1px 0px #86e0ff;
+  width: 100%;
 }
 
 .info {
