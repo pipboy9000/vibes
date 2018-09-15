@@ -130,12 +130,26 @@ export default {
     width: 65%;
   }
 
+  .title {
+    font-size: 25px;
+    margin-left: 15px;
+  }
+
   .right {
     width: 35%;
   }
 
+  .users {
+    margin-left: 20px;
+  }
+
+  .users > p {
+    font-size: 12px;
+  }
+
   .emojis {
     width: 100%;
+    font-size: 30px;
   }
 
   .emoji {

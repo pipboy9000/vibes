@@ -110,7 +110,7 @@ export default {
 }
 
 .closed > .openBtn {
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 .noAnim {
@@ -130,7 +130,7 @@ export default {
   justify-content: space-evenly;
   padding: 10px;
   box-sizing: border-box;
-  margin-left: 10px;
+  margin-left: 15px;
 }
 
 .openBtn > div {
@@ -260,6 +260,8 @@ export default {
 
   .items {
     width: 80%;
+    padding-bottom: 10px;
+    max-height: 97vh;
   }
 
   .openBtn {
@@ -270,6 +272,10 @@ export default {
   .closeBtn {
     margin-right: 10px;
     margin-top: 10px;
+  }
+
+  .items > .bg:last-child {
+    border-radius: 0px 0px 10px 10px;
   }
 }
 </style>
