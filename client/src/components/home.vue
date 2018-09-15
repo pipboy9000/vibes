@@ -8,9 +8,9 @@
             <FacebookLogin></FacebookLogin>
           </div>
         </div>
-          <vibe-details></vibe-details>
           <mapUI></mapUI>
           <list></list>
+          <vibe-details></vibe-details>
           <NewVibeForm></NewVibeForm>
   </div>
 </template>
