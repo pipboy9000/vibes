@@ -2,9 +2,9 @@ import socketio from "socket.io-client";
 import store from "../store";
 
 //developement 
-var socketAdress = window.location.origin;
-var port = window.location.port;
-socketAdress = socketAdress.replace(port, "8080");
+var socketAdress = "https://vibes-web.herokuapp.com";
+var port = 80;
+//socketAdress = socketAdress.replace(port, "8080");
 var io = socketio.connect(socketAdress);
 
 //prod

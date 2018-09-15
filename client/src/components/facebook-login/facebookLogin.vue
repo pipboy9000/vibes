@@ -9,6 +9,8 @@
   </div>
 </template>
 <script>
+import Vue from 'vue'
+
 import {
   loadFbSdk,
   getLoginStatus,
@@ -68,7 +70,7 @@ export default {
     },
     login() {
       this.isWorking = true;
-      fbLogin(this.loginOptions).then(response => {
+      fbLogin(this.$root, this.loginOptions).then(response => {
         if (response.status === "connected") {
           this.isConnected = true;
           this.$store.dispatch("setLoginDetails", response);
@@ -84,19 +86,25 @@ export default {
   },
   mounted() {
     this.isWorking = true;
-    loadFbSdk(this.appId, this.version)
-      .then(loadingResult => {})
-      .then(() => getLoginStatus())
-      .then(response => {
-        if (response.status === "connected") {
-          this.isConnected = true;
-          this.$store.dispatch("setLoginDetails", response);
-          fbGetUserDetails().then(userDetails =>
-            this.$store.dispatch("setUserDetails", userDetails)
-          );
-        }
-        this.isWorking = false;
-      });
+    debugger;
+    console.log('waiting for device ready')
+    this.$root.cordova.on('deviceready', () => {
+      debugger;
+      console.log('device ready called')
+      loadFbSdk(this.appId, this.version)
+        .then(loadingResult => {})
+        .then(() => getLoginStatus(this.$root))
+        .then(response => {
+          if (response.status === "connected") {
+            this.isConnected = true;
+            this.$store.dispatch("setLoginDetails", response);
+            fbGetUserDetails().then(userDetails =>
+              this.$store.dispatch("setUserDetails", userDetails)
+            );
+          }
+          this.isWorking = false;
+        });
+    });
   }
 };
 </script>

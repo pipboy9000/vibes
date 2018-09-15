@@ -1,6 +1,11 @@
 /* global window, FB, document */
 
+
 export function loadFbSdk(appId, version) {
+  return new Promise(resolve => {
+    resolve();
+  });
+
   return new Promise(resolve => {
     window.fbAsyncInit = function () { // eslint-disable-line func-names
       FB.init({
@@ -19,21 +24,27 @@ export function loadFbSdk(appId, version) {
       }
       const js = d.createElement(s);
       js.id = id;
-      js.src = '//connect.facebook.net/en_US/sdk.js';
+      js.src = 'https://connect.facebook.net/en_US/sdk.js';
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
   });
 }
 
-export function getLoginStatus() {
+export function getLoginStatus(Vue) {
   return new Promise(resolve => {
-    window.FB.getLoginStatus(responseStatus => {
+    debugger;
+    Vue.cordova.facebookConnectPlugin.getLoginStatus(responseStatus => {
       resolve(responseStatus);
     });
   });
 }
 
-export function fbLogin(options) {
+export function fbLogin(Vue, options) {
+  return new Promise(resolve => {
+    debugger;
+    Vue.cordova.facebookConnectPlugin.login(['email'], response => resolve(response));
+  });
+
   return new Promise(resolve => {
     window.FB.login(response => resolve(response), options);
   });
