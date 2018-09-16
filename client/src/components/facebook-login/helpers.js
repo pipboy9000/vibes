@@ -6,57 +6,55 @@ export function loadFbSdk(appId, version) {
     resolve();
   });
 
-  return new Promise(resolve => {
-    window.fbAsyncInit = function () { // eslint-disable-line func-names
-      FB.init({
-        appId,
-        xfbml: false,
-        version,
-        cookie: true
-      });
-      FB.AppEvents.logPageView();
-      resolve('SDK Loaded!');
-    };
-    (function (d, s, id) { // eslint-disable-line func-names
-      const fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) {
-        return;
-      }
-      const js = d.createElement(s);
-      js.id = id;
-      js.src = 'https://connect.facebook.net/en_US/sdk.js';
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-  });
+  // return new Promise(resolve => {
+  //   window.fbAsyncInit = function () { // eslint-disable-line func-names
+  //     FB.init({
+  //       appId,
+  //       xfbml: false,
+  //       version,
+  //       cookie: true
+  //     });
+  //     FB.AppEvents.logPageView();
+  //     resolve('SDK Loaded!');
+  //   };
+  //   (function (d, s, id) { // eslint-disable-line func-names
+  //     const fjs = d.getElementsByTagName(s)[0];
+  //     if (d.getElementById(id)) {
+  //       return;
+  //     }
+  //     const js = d.createElement(s);
+  //     js.id = id;
+  //     js.src = 'https://connect.facebook.net/en_US/sdk.js';
+  //     fjs.parentNode.insertBefore(js, fjs);
+  //   }(document, 'script', 'facebook-jssdk'));
+  // });
 }
 
-export function getLoginStatus(Vue) {
+export function getLoginStatus() {
   return new Promise(resolve => {
-    debugger;
-    Vue.cordova.facebookConnectPlugin.getLoginStatus(responseStatus => {
+    facebookConnectPlugin.getLoginStatus(responseStatus => {
       resolve(responseStatus);
     });
   });
 }
 
-export function fbLogin(Vue, options) {
+export function fbLogin(options) {
   return new Promise(resolve => {
-    debugger;
-    Vue.cordova.facebookConnectPlugin.login(['email'], response => resolve(response));
+    facebookConnectPlugin.login(['email'], response => resolve(response));
   });
 
   return new Promise(resolve => {
-    window.FB.login(response => resolve(response), options);
+    facebookConnectPlugin.login(response => resolve(response), options);
   });
 }
 export function fbLogout() {
   return new Promise(resolve => {
-    window.FB.logout(response => resolve(response));
+    facebookConnectPlugin.logout(response => resolve(response));
   });
 }
 
 export function fbGetUserDetails() {
   return new Promise(resolve => {
-    window.FB.api('/me', details => resolve(details));
+    facebookConnectPlugin.api('/me', details => resolve(details));
   })
 }

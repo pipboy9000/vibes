@@ -70,7 +70,7 @@ export default {
     },
     login() {
       this.isWorking = true;
-      fbLogin(this.$root, this.loginOptions).then(response => {
+      fbLogin(this.loginOptions).then(response => {
         if (response.status === "connected") {
           this.isConnected = true;
           this.$store.dispatch("setLoginDetails", response);
@@ -93,7 +93,7 @@ export default {
       console.log('device ready called')
       loadFbSdk(this.appId, this.version)
         .then(loadingResult => {})
-        .then(() => getLoginStatus(this.$root))
+        .then(() => getLoginStatus())
         .then(response => {
           if (response.status === "connected") {
             this.isConnected = true;
