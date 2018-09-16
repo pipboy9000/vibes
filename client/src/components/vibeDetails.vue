@@ -7,8 +7,8 @@
                 <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
                 <div class="title" ref="title">{{vibe.title}}</div>
             </div>
-            <div class="joinLeave">
-                <div class="join" v-if="vibe.distance < 50 && !inVibe" @click="joinVibe">
+            <div class="joinLeave" v-if="vibe.distance < 50">
+                <div class="join" v-if="!inVibe" @click="joinVibe">
                     <img src="../assets/join_vibe_btn.png">
                     <p>Join Vibe!</p>
                 </div>
@@ -17,24 +17,25 @@
                     <p>Leave Vibe :( </p>
                 </div>
             </div>
-            <div class="pictures"></div>
-            <div class="info">
-                <div class="details">
-                    <img :src="profilePicSrc" class="profilePic">
-                    <div class="createdBy">
-                        Created by: {{vibe.createdBy.name}} - {{distance}}
-                    </div>
-                    <br>
-                    <div class="users">
-                        <img src="../assets/users_icon.png">
-                        <p> {{vibe.users.length}} - {{time}}.</p>
-                    </div>
-            
-                </div>
                 <div class="emojis">
                     <div class="emoji">{{vibe.emojis[0]}}</div>
                     <div class="emoji">{{vibe.emojis[1]}}</div>
                     <div class="emoji">{{vibe.emojis[2]}}</div>
+                </div>
+            <div class="pictures"></div>
+            <div class="info">
+                <div class="details">
+                    <img :src="profilePicSrc" class="profilePic">
+                    </br>
+                    <div class="createdBy">
+                        <p>Created by {{vibe.createdBy.name}}</p>
+                    </div>
+                    <br>
+                    <div class="users">
+                        <img src="../assets/users_icon.png">
+                        <p> {{vibe.users.length}} - {{distance}} - {{time}}.</p>
+                    </div>
+            
                 </div>
             </div>
             <hr>
@@ -223,6 +224,7 @@ export default {
 .main {
   height: 90%;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .closeBtn {
@@ -325,6 +327,7 @@ export default {
   margin-bottom: 30px;
   box-shadow: 0px 7px 0px 0px #1495c0;
   min-width: 40%;
+  float: left;
 }
 
 .joinLeave:hover {
@@ -355,12 +358,12 @@ export default {
   align-items: center;
   width: 100%;
   height: fit-content;
-  padding: 5px 0 5px;
+  padding: 22px 0 20px 10px;
 }
 
 .details {
   height: 100%;
-  width: 50%;
+  width: 100%;
   display: inline-block;
   font-family: "ABeeZee", sans-serif;
   color: #b3b3b3;
@@ -373,9 +376,17 @@ export default {
 
 .createdBy {
   display: inline-block;
+  margin-top: 10px;
   margin-bottom: 10px;
   max-width: 65%;
   margin-left: 10px;
+}
+
+.createdBy > p {
+  padding: 0;
+  margin: 0;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .profilePic {
@@ -393,8 +404,9 @@ export default {
 }
 
 .emojis {
-  height: 100%;
-  width: 50%;
+  width: 40%;
+  line-height: 100px;
+  float: right;
   display: inline-flex;
   justify-content: center;
   font-size: 40px;
