@@ -118,4 +118,42 @@ export default {
 .details {
   font-style: italic;
 }
+
+@media (max-width: 650px) {
+  .bg {
+    width: 100%;
+    height: 80px;
+    margin: 0;
+    border-radius: 0;
+  }
+  .left {
+    width: 65%;
+  }
+
+  .title {
+    font-size: 25px;
+    margin-left: 15px;
+  }
+
+  .right {
+    width: 35%;
+  }
+
+  .users {
+    margin-left: 20px;
+  }
+
+  .users > p {
+    font-size: 12px;
+  }
+
+  .emojis {
+    width: 100%;
+    font-size: 30px;
+  }
+
+  .emoji {
+    width: 33.33333%;
+  }
+}
 </style>

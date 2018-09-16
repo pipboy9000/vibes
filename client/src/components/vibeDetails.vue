@@ -3,7 +3,7 @@
         <div class="bg">
           <div class="main">
             <div class="titleWrapper" ref="titleWrapper">
-                <div class="titleBg"></div>
+                <div ref="titleBg" class="titleBg"></div>
                 <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
                 <div class="title" ref="title">{{vibe.title}}</div>
             </div>
@@ -63,7 +63,10 @@ export default {
       isOpen: false,
       ready: false, //used to fix animations
       time: null,
-      commentTxt: ""
+      commentTxt: "",
+      titleWidth: null,
+      titlePxSize: 65,
+      titlePxSizeBase: 65
     };
   },
   mounted() {
@@ -80,8 +83,36 @@ export default {
     EventBus.$on("vibeMarkerClicked", this.open);
   },
   methods: {
+    resizeTitle(e) {
+      debugger;
+      if (this.$refs.titleStroke.clientWidth - this.titleWidth > 10) {
+        this.titlePxSize--;
+        this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
+        this.$refs.title.style.fontSize = this.titlePxSize + "px";
+        var marginTop = (65 - this.titlePxSize) / 65 * 20;
+        this.$refs.titleStroke.style.marginTop = marginTop + "px";
+        this.$refs.title.style.marginTop = marginTop + "px";
+        this.$nextTick(this.resizeTitle);
+      } else if (
+        this.$refs.titleStroke.clientWidth - this.titleWidth < -10 &&
+        this.titlePxSize < this.titlePxSizeBase
+      ) {
+        this.titlePxSize++;
+        this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
+        this.$refs.title.style.fontSize = this.titlePxSize + "px";
+        this.$nextTick(this.resizeTitle);
+      }
+    },
     open() {
+      debugger;
       this.isOpen = true;
+      if (!this.titleWidth) {
+        this.$nextTick(function() {
+          debugger;
+          this.titleWidth = this.$refs.titleBg.clientWidth - 30;
+        });
+      }
+      setTimeout(this.resizeTitle, 0);
     },
     close() {
       this.isOpen = false;
@@ -259,7 +290,7 @@ export default {
 }
 
 .titleStroke {
-  width: 80%;
+  /* width: 80%; */
   text-align: left;
   padding-left: 15px;
   font-size: 60px;
