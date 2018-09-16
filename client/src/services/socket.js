@@ -5,6 +5,7 @@ import store from "../store";
 var socketAdress = "https://vibes-web.herokuapp.com";
 var port = 80;
 //socketAdress = socketAdress.replace(port, "8080");
+debugger;
 var io = socketio.connect(socketAdress);
 
 //prod
