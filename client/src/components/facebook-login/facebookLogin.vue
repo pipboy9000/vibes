@@ -71,6 +71,7 @@ export default {
     login() {
       this.isWorking = true;
       fbLogin(this.loginOptions).then(response => {
+        console.log("back in Vue file. response.status: "+response.status)
         if (response.status === "connected") {
           this.isConnected = true;
           this.$store.dispatch("setLoginDetails", response);
