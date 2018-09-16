@@ -6,6 +6,8 @@ yarn-debug.log*
 yarn-error.log*
 /test/unit/coverage/
 /www/
+/platforms/
+/plugins/
 
 # Editor directories and files
 .idea
