@@ -55,6 +55,6 @@ export function fbLogout() {
 
 export function fbGetUserDetails() {
   return new Promise(resolve => {
-    facebookConnectPlugin.api('/me', details => resolve(details));
+    facebookConnectPlugin.api('/me', {}, details => resolve(details));
   })
 }

@@ -4,7 +4,6 @@
 
 const path = require('path')
 
-console.log("pepo: "+path.resolve(__dirname, '../www/index.html'))
 module.exports = {
   dev: {
     // env: require('./prod.env'),

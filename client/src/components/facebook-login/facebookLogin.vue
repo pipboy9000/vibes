@@ -86,10 +86,8 @@ export default {
   },
   mounted() {
     this.isWorking = true;
-    debugger;
     console.log('waiting for device ready')
     this.$root.cordova.on('deviceready', () => {
-      debugger;
       console.log('device ready called')
       loadFbSdk(this.appId, this.version)
         .then(loadingResult => {})
