@@ -40,12 +40,21 @@ export function getLoginStatus() {
 
 export function fbLogin(options) {
   return new Promise(resolve => {
-    facebookConnectPlugin.login(['email'], response => resolve(response));
+    console.log("calling fb login")
+    facebookConnectPlugin.login(['email'], response => {
+      console.log("fb response:")
+      console.dir(response)
+      resolve(response)
+    },(err) => {
+      console.log("fb error:")
+      console.log(err)
+      resolve(err)
+    });
   });
 
-  return new Promise(resolve => {
-    facebookConnectPlugin.login(response => resolve(response), options);
-  });
+  // return new Promise(resolve => {
+  //   facebookConnectPlugin.login(response => resolve(response), options);
+  // });
 }
 export function fbLogout() {
   return new Promise(resolve => {

@@ -13,7 +13,10 @@ Vue.use(VueCordova, {
 })
 
 // add cordova.js only if serving the app through file://
-if (window.location.protocol === 'file:' || window.location.port === '3000') {
+
+// if (window.location.protocol === 'file:' || window.location.port === '3000') {
+  // console.log('adding cordova.js')
+  if (window.location.port === '3000') {
   var cordovaScript = document.createElement('script')
   cordovaScript.setAttribute('type', 'text/javascript')
   cordovaScript.setAttribute('src', '../cordova.js')
