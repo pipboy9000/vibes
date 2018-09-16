@@ -7,12 +7,15 @@
                 <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
                 <div class="title" ref="title">{{vibe.title}}</div>
             </div>
-            <div class="joinLeave" v-if="vibe.distance < 50">
-                <div class="join" v-if="!inVibe" @click="joinVibe">
+            <div class="joinLeave">
+              <div class="tooFar" v-if="vibe.distance > 50">
+                <p>Too Far</p>
+              </div>
+                <div class="join" v-else-if="!inVibe" @click="joinVibe">
                     <img src="../assets/join_vibe_btn.png">
                     <p>Join Vibe!</p>
                 </div>
-                <div class="leave" v-else-if="inVibe" @click="leaveVibe">
+                <div class="leave" v-else @click="leaveVibe">
                   <img src="../assets/leave_vibe_btn.png">
                     <p>Leave Vibe :( </p>
                 </div>
@@ -313,21 +316,6 @@ export default {
 }
 
 .joinLeave {
-  width: max-content;
-  padding-left: 12px;
-  padding-bottom: 15px;
-  font-size: 15px;
-  padding: 10px;
-  background: deepskyblue;
-  border-radius: 10px;
-  font-size: 20px;
-  padding-right: 36px;
-  font-weight: 700;
-  margin: 15px;
-  margin-bottom: 30px;
-  box-shadow: 0px 7px 0px 0px #1495c0;
-  min-width: 40%;
-  float: left;
 }
 
 .joinLeave:hover {
@@ -337,6 +325,45 @@ export default {
 .leave {
   display: flex;
   align-items: center;
+  width: max-content;
+  padding-left: 12px;
+  padding-bottom: 15px;
+  font-size: 15px;
+  padding: 10px;
+  background: #5bd6ff;
+  border-radius: 10px;
+  font-size: 20px;
+  padding-right: 36px;
+  font-weight: 700;
+  margin: 15px;
+  margin-bottom: 30px;
+  box-shadow: 0px 7px 0px 0px #51c7ee;
+  min-width: 40%;
+  float: left;
+}
+
+.tooFar {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  font-size: 15px;
+  border: 5px dashed #e8e8e8;
+  box-sizing: border-box;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 15px;
+  margin-bottom: 30px;
+  min-width: 40%;
+  float: left;
+}
+
+.tooFar > p {
+  margin: 0;
+  padding: 0;
+  color: #e8e8e8;
+  width: 100%;
+  line-height: 50px;
 }
 
 .join > p,

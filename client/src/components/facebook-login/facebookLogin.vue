@@ -109,6 +109,7 @@ export default {
 }
 
 button {
+  margin-top: 1px;
   width: 225px;
   position: relative;
   padding: 0 15px 0px 46px;
