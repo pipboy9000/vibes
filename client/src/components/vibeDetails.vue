@@ -28,8 +28,8 @@
             <div class="pictures"></div>
             <div class="info">
                 <div class="details">
-                    <img :src="profilePicSrc" class="profilePic">
-                    </br>
+                    <img :src="profilePicSrc" class="profilePic" v-for="(test, index) in [123,123,123,1,1,1,1,1,1,1,1,1,1,1]" :key="index">
+                    <br>
                     <div class="createdBy">
                         <p>Created by {{vibe.createdBy.name}}</p>
                     </div>
@@ -270,8 +270,8 @@ export default {
 
 .titleWrapper {
   position: relative;
-  height: 75px;
-  padding-top: 22px;
+  height: 100px;
+  padding-top: 10px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -417,8 +417,10 @@ export default {
 }
 
 .profilePic {
-  border-radius: 70px;
+  padding: 3px;
   display: inline-block;
+  width: 35px;
+  border-radius: 70px;
   max-width: 15%;
 }
 
@@ -431,6 +433,7 @@ export default {
 }
 
 .emojis {
+  padding-right: 10px;
   width: 40%;
   line-height: 100px;
   float: right;
@@ -454,7 +457,7 @@ export default {
   bottom: 0;
   left: 0;
   position: absolute;
-  width: 100%;
+  width: 480px;
   height: 10%;
   display: flex;
   align-items: center;
