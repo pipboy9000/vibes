@@ -94,12 +94,16 @@ export default {
         .then(loadingResult => {})
         .then(() => getLoginStatus())
         .then(response => {
+          console.log('fb getLoginStatus returned:')
+          console.dir(response)
           if (response.status === "connected") {
             this.isConnected = true;
+            console.log('dispatching setLoginDetails')
             this.$store.dispatch("setLoginDetails", response);
-            fbGetUserDetails().then(userDetails =>
+            fbGetUserDetails().then(userDetails => {
+              console.log('dispatching setUserDetails')              
               this.$store.dispatch("setUserDetails", userDetails)
-            );
+            });
           }
           this.isWorking = false;
         });

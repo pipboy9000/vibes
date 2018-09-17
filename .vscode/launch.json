@@ -8,6 +8,6 @@
         "request": "launch",
         "name": "Launch Program",
         "program": "${workspaceFolder}/server/server.js",
-        "cwd": "C:/workspaces/vibes/server"
+        "cwd": "${workspaceFolder}/server"
     }]
 }

@@ -2,6 +2,7 @@
 
 
 export function loadFbSdk(appId, version) {
+  //TODO: add all the options from below
   return new Promise(resolve => {
     resolve();
   });

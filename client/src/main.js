@@ -16,12 +16,12 @@ Vue.use(VueCordova, {
 
 // if (window.location.protocol === 'file:' || window.location.port === '3000') {
   // console.log('adding cordova.js')
-  if (window.location.port === '3000') {
-  var cordovaScript = document.createElement('script')
-  cordovaScript.setAttribute('type', 'text/javascript')
-  cordovaScript.setAttribute('src', '../cordova.js')
-  document.body.appendChild(cordovaScript)
-}
+  // if (window.location.port === '3000') {
+  // var cordovaScript = document.createElement('script')
+  // cordovaScript.setAttribute('type', 'text/javascript')
+  // cordovaScript.setAttribute('src', '../cordova.js')
+  // document.body.appendChild(cordovaScript)
+// }
 
 new Vue({
   el: '#app',
