@@ -34,6 +34,10 @@
         <variable name="APP_NAME" value="Vibes - Dev" />
         <variable name="FACEBOOK_ANDROID_SDK_VERSION" value="4.+" />
     </plugin>
+    <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
+        <string>need location access to find things nearby</string>
+    </edit-config>
     <engine name="browser" spec="^5.0.4" />
     <engine name="android" spec="^7.0.0" />
+    <engine name="ios" spec="^4.5.5" />
 </widget>

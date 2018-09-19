@@ -1,3 +1,4 @@
 graphics
 server/cache.json
 server/tokens.json
+.DS_Store
