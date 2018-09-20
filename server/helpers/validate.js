@@ -76,15 +76,24 @@ function save() {
 
 function load() {
   fs.readFile("tokens.json", (err, str) => {
-    if (err)
-      throw err;
+    if (err) {
+      accessTokens = {};
+      userTokensMap = {};
+      return;
+    }
 
-    data = JSON.parse(str);
-    if (data.hasOwnProperty(accessTokens))
+    var data = JSON.parse(str);
+    if (data.hasOwnProperty(accessTokens)) {
       accessTokens = data.accessTokens;
+    } else {
+      accessTokens = {};
+    }
 
-    if (data.hasOwnProperty(userTokensMap))
+    if (data.hasOwnProperty(userTokensMap)) {
       userTokensMap = data.userTokensMap;
+    } else {
+      userTokensMap = {};
+    }
   })
 }
 

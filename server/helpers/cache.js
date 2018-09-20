@@ -22,8 +22,10 @@ function save() {
 
 function load() {
     fs.readFile('cache.json', (err, str) => {
-        if (err)
-            throw err;
+        if (err) {
+            var data = {};
+            return;
+        }
 
         var data = JSON.parse(str);
 
