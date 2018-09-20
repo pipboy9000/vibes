@@ -74,9 +74,12 @@ export default {
         console.log("back in Vue file. response.status: "+response.status)
         if (response.status === "connected") {
           this.isConnected = true;
+          console.log("dispatch setLoginDetails")
           this.$store.dispatch("setLoginDetails", response);
-          fbGetUserDetails().then(userDetails =>
+          fbGetUserDetails().then(userDetails => {
+            console.log("dispatch setUserDetails")
             this.$store.dispatch("setUserDetails", userDetails)
+          }
           );
         } else {
           this.isConnected = false;

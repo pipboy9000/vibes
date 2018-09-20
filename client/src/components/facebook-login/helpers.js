@@ -65,6 +65,14 @@ export function fbLogout() {
 
 export function fbGetUserDetails() {
   return new Promise(resolve => {
-    facebookConnectPlugin.api('/me', {}, details => resolve(details));
+    console.log('calling facebookConnectPlugin.api /me')
+    facebookConnectPlugin.api('/me', ["email"], details => {
+      console.log('facebookConnectPlugin.api success function')
+      resolve(details)
+    },
+    error => {
+      console.log('facebookConnectPlugin.api failure function. error:')
+      console.log(error)
+    });
   })
 }
