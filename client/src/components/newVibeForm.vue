@@ -15,9 +15,18 @@
                        maxlength="35">
             </div>
             <div class="tagsWrapper">
-                <div @click="selectEmoji(0)" :class="{addTagBtn: emojis[0] === '+' , emoji:emojis[0] !== '+'}">{{emojis[0]}}</div>
-                <div @click="selectEmoji(1)" :class="{addTagBtn: emojis[1] === '+' , emoji:emojis[1] !== '+'}">{{emojis[1]}}</div>
-                <div @click="selectEmoji(2)" :class="{addTagBtn: emojis[2] === '+' , emoji:emojis[2] !== '+'}">{{emojis[2]}}</div>
+                <div @click="selectEmoji(0)">
+                  <plus-icon class="addTagBtn" v-if="!emojis[0]" :size="30" :thickness="5" :color="'#bababa'"></plus-icon>
+                  <div v-else class="emoji">{{emojis[0]}}</div>
+                </div>
+                <div @click="selectEmoji(1)">
+                  <plus-icon class="addTagBtn" v-if="!emojis[1]" :size="30" :thickness="5" :color="'#bababa'"></plus-icon>
+                  <div v-else class="emoji">{{emojis[1]}}</div>
+                </div>
+                <div @click="selectEmoji(2)">
+                  <plus-icon class="addTagBtn" v-if="!emojis[2]" :size="30" :thickness="5" :color="'#bababa'"></plus-icon>
+                  <div v-else class="emoji">{{emojis[2]}}</div>
+                </div>
             </div>
               <!-- <textarea class="description" rows="10" placeholder="description" v-model="description"></textarea> -->
               <div class="startBtn" @click="startVibe">Start</div>
@@ -30,6 +39,7 @@
 import { EventBus } from "../event-bus";
 import socket from "../services/socket.js";
 import location from "../services/location.js";
+import plusIcon from "./plusIcon.vue";
 export default {
   name: "NewVibeForm",
   mounted() {},
@@ -40,11 +50,14 @@ export default {
     return {
       show: false,
       title: "",
-      emojis: ["+", "+", "+"],
+      emojis: [null, null, null],
       titleWidth: null,
       titlePxSize: 65,
       titlePxSizeBase: 65
     };
+  },
+  components: {
+    plusIcon
   },
   methods: {
     onPaste() {
@@ -174,7 +187,7 @@ export default {
   background: transparent;
   font-size: 65px;
   text-align: center;
-  font-family: "Pacifico", cursive;
+  font-family: "Pacifico", cursive, sans-serif;
   color: white;
   border: none;
   outline: none;
@@ -191,7 +204,7 @@ export default {
   background: transparent;
   font-size: 65px;
   text-align: center;
-  font-family: "Pacifico", cursive;
+  font-family: "Pacifico", cursive, sans-serif;
   color: white;
   border: none;
   outline: none;
@@ -221,6 +234,7 @@ export default {
   width: 90px;
   height: 90px;
   min-width: 90px;
+  min-height: 90px;
   border-radius: 102px;
   border: 5px solid #ababab;
   background: #d2d2d2;
@@ -275,15 +289,11 @@ export default {
 }
 
 @media (max-width: 510px) {
-  .bg {
-    width: 90%;
-  }
-
   .addTagBtn {
     width: 75px;
     height: 75px;
     min-width: 75px;
-    line-height: 66px;
+    min-height: 75px;
   }
 
   .titleBg {
@@ -292,14 +302,22 @@ export default {
 
   .tagsWrapper {
     height: 90px;
+    width: 83%;
   }
 
   .bg {
-    margin-bottom: 100px;
+    margin-bottom: 0px;
+    width: 100%;
+    min-width: 100%;
+    border-radius: 0px;
   }
 
   .emoji {
     font-size: 75px;
+  }
+
+  .overlay {
+    display: block;
   }
 }
 </style>

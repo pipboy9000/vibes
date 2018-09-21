@@ -88,6 +88,7 @@ export default {
   border-radius: 5px;
   padding: 3px 10px;
   margin-bottom: 5px;
+  outline: none;
 }
 
 .emoji {

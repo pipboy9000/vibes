@@ -58,20 +58,20 @@ export default {
 .sizer {
   width: min-content;
   height: min-content;
-  font-family: "Pacifico", cursive;
+  font-family: "Pacifico", cursive, sans-serif;
   display: inline-block;
   opacity: 0;
   padding: 10px;
 }
 
 .logoText {
-  font-family: "Pacifico", cursive;
+  font-family: "Pacifico", cursive, sans-serif;
   position: absolute;
   color: white;
 }
 
 .stroke {
-  font-family: "Pacifico", cursive;
+  font-family: "Pacifico", cursive, sans-serif;
   position: absolute;
   -webkit-text-stroke-color: #3fb7f5;
 }

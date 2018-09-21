@@ -56,7 +56,7 @@ function CustomUserInfoWindow(map) {
   name.style.marginRight = '8px';
   name.style.color = '#3fb7f5';
   name.style.fontSize = '28px';
-  name.style.fontFamily = '"Pacifico", cursive';
+  name.style.fontFamily = '"Pacifico", cursive, sans-serif';
   name.style.transform = 'translateY(-17px)';
   name.style.whiteSpace = 'nowrap';
   name.style.overflow = 'hidden';

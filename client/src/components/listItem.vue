@@ -80,7 +80,7 @@ export default {
   color: #8fd9ff;
   font-size: 28px;
   margin-left: 10px;
-  font-family: "Pacifico", cursive;
+  font-family: "Pacifico", cursive, sans-serif;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

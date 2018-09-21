@@ -292,7 +292,7 @@ export default {
   padding-left: 15px;
   text-align: left;
   font-size: 60px;
-  font-family: "Pacifico", cursive;
+  font-family: "Pacifico", cursive, sans-serif;
   color: white;
   position: absolute;
   transform: translateY(-10px);
@@ -305,7 +305,7 @@ export default {
   text-align: left;
   padding-left: 15px;
   font-size: 60px;
-  font-family: "Pacifico", cursive;
+  font-family: "Pacifico", cursive, sans-serif;
   color: white;
   position: absolute;
   -webkit-text-stroke-width: 5px;
