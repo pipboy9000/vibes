@@ -5,6 +5,7 @@
             <div class="details">
                 <div class="title">{{comment.name}} - {{time}}</div>
                 <div class="text">{{comment.text}}</div>
+                <img v-if="comment.imgUrl" class="commentImg" :src="comment.imgUrl">
             </div>
         </div>
         <hr>
@@ -49,6 +50,12 @@ export default {
   min-width: 40px;
   height: 40px;
   min-height: 40px;
+}
+
+.commentImg {
+  border-radius: 10px;
+
+
 }
 
 .details {

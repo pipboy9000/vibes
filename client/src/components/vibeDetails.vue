@@ -44,12 +44,17 @@
             <hr>
             <div class="comments">
               <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
+              <!-- <div v-for="(chat, key) in this.$root.firebase().chats" :key="key" :chat="chat">
+                <img v-if="chat.imgUrl" :src="chat.imgUrl" />
+                {{chat.message}}
+              </div> -->
             </div>
           </div>
         </div>
             <div class="newComment">
               <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
               <button>></button>
+              <button @click="sendPic">+</button>
             </div>
         <div class="closeBtn" @click="close">X</div>
     </div>
@@ -75,7 +80,8 @@ export default {
       commentTxt: "",
       titleWidth: null,
       titlePxSize: 65,
-      titlePxSizeBase: 65
+      titlePxSizeBase: 65,
+      firebaseStorage: this.$root.firebaseStorage
     };
   },
   mounted() {
@@ -92,8 +98,64 @@ export default {
     EventBus.$on("vibeMarkerClicked", this.open);
   },
   methods: {
+    sendPic() {
+    //console.log(firebase.storage());
+    //console.log(firebase.storage().ref());
+    //firebase.storage().ref("pepo").putString("123");
+    //console.log("after");
+    
+    console.log("setting camera options");
+    const options = {
+      quality: 50,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE,
+      correctOrientation: true,
+      targetWidth: 200,
+      targetHeight: 200
+    };
+
+    var self = this;
+    this.camera.getPicture(imageData => {
+      // imageData is either a base64 encoded string or a file URI
+      // If it's base64 (DATA_URL):
+      //let base64Image = 'data:image/jpeg;base64,' + imageData;
+      console.log("getPicture success callback");
+      //console.log("imageData:"+imageData);
+      try{
+        self.firebaseStorage.child(new Date().getTime().toString())
+        .putString(imageData,'base64')
+        .then((snapshot) => {
+          console.log('Uploaded a blob or file!');
+          snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log("got downloadURL: ", downloadURL);
+            
+            var comment = {
+              vibeId: self.$store.state.selectedVibe.id,
+              imgUrl: downloadURL
+            };
+            socket.newComment({ token: self.$store.getters.token, comment });
+          });
+          },(err) => {
+            // Handle error
+            console.error("error in firebase storage upload callback:")
+            console.error(err);
+            }
+        );
+      } catch(errr) {
+        alert(errr);
+      }
+      
+     }, (err) => {
+      // Handle error
+      console.error("error in camera callback:")
+      console.error(err);
+     }, 
+     options);
+
+    
+  },
     resizeTitle(e) {
-      debugger;
       if (this.$refs.titleStroke.clientWidth - this.titleWidth > 10) {
         this.titlePxSize--;
         this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
@@ -113,11 +175,9 @@ export default {
       }
     },
     open() {
-      debugger;
       this.isOpen = true;
       if (!this.titleWidth) {
         this.$nextTick(function() {
-          debugger;
           this.titleWidth = this.$refs.titleBg.clientWidth - 30;
         });
       }
@@ -144,6 +204,9 @@ export default {
     }
   },
   computed: {
+    camera() {
+      return this.$root.cordova.camera
+    },
     vibe() {
       return this.$store.state.selectedVibe;
     },

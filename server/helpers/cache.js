@@ -140,6 +140,7 @@ function newComment(comment, user) {
 
     var c = {
         text: comment.text,
+        imgUrl: comment.imgUrl,
         name: user.name,
         fbid: user.fbid,
         createdAt: Date.now(),
