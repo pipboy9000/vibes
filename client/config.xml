@@ -8,7 +8,6 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
-    <plugin name="cordova-plugin-whitelist" spec="1" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -28,16 +27,17 @@
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
     </platform>
-    <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
-    <plugin name="cordova-plugin-facebook4" spec="^2.5.0">
-        <variable name="APP_ID" value="2192681937654200" />
-        <variable name="APP_NAME" value="Vibes - Dev" />
-        <variable name="FACEBOOK_ANDROID_SDK_VERSION" value="4.+" />
-    </plugin>
     <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
         <string>need location access to find things nearby</string>
     </edit-config>
     <engine name="browser" spec="^5.0.4" />
     <engine name="android" spec="^7.0.0" />
     <engine name="ios" spec="^4.5.5" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
+    <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
+    <plugin name="cordova-plugin-facebook4" spec="^2.5.0">
+        <variable name="APP_ID" value="2192681937654200" />
+        <variable name="APP_NAME" value="Vibes - Dev" />
+        <variable name="FACEBOOK_ANDROID_SDK_VERSION" value="4.+" />
+    </plugin>
 </widget>
