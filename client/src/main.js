@@ -62,7 +62,8 @@ new Vue({
   data: function () {
     return {
       cordova: Vue.cordova,
-      firebaseStorage: firebaseStorage
+      firebaseStorage: firebaseStorage,
+      firebase: firebase,
       // },
       // firestore: {
       //   pics: firestoreDb.collection('pics'),

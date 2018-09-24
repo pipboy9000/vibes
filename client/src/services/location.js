@@ -58,10 +58,11 @@ function init() {
   watchLocation();
 }
 
-init();
+// init();
 
 export default {
   getLocation,
   watchLocation,
-  stopWatch
+  stopWatch,
+  init
 }
