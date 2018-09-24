@@ -7,10 +7,17 @@
 
 <script>
 import EmojiSelector from "./components/emojiSelector";
+import location from "./services/location.js";
 export default {
   name: "App",
   components: {
     EmojiSelector
+  },
+  mounted() {
+    debugger;
+    this.$root.cordova.on("deviceready", () => {
+      location.init();
+    });
   }
 };
 </script>

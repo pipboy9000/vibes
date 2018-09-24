@@ -42,11 +42,6 @@ import location from "../services/location.js";
 import plusIcon from "./plusIcon.vue";
 export default {
   name: "NewVibeForm",
-  mounted() {
-    this.$root.cordova.on('deviceready', () => {
-      location.init();
-    });
-  },
   created() {
     EventBus.$on("openNewVibeForm", this.open);
   },
