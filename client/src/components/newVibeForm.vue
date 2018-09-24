@@ -245,6 +245,7 @@ export default {
 }
 
 .emoji {
+  transform: translateY(-6px);
   font-size: 90px;
 }
 
@@ -318,6 +319,10 @@ export default {
 
   .overlay {
     display: block;
+  }
+
+  .startBtn {
+    width: 75%;
   }
 }
 </style>

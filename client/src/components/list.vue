@@ -3,14 +3,16 @@
     <div class="items">
       <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
     </div>
-    <div v-if="isOpen" class="closeBtn" @click="close">
-      <div></div>
-      <div></div>
-    </div>
-    <div v-else class="openBtn" @click="open">
-      <div></div>
-      <div></div>
-      <div></div>
+    <div class="btn">
+      <div v-if="isOpen" class="closeBtn" @click="close">
+        <div></div>
+        <div></div>
+      </div>
+      <div v-else class="openBtn" @click="open">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   </div>
 </template>
@@ -74,7 +76,12 @@ export default {
   float: left;
   max-height: 536px;
   overflow-y: scroll;
+  overflow-x: hidden;
   padding-right: 5px;
+}
+
+.btn {
+  float: left;
 }
 
 .closed {
@@ -109,43 +116,40 @@ export default {
   }
 }
 
-.closed > .openBtn {
-  margin-left: 20px;
-}
-
 .noAnim {
   animation-duration: 0s;
 }
 
 .openBtn {
   border-radius: 50px;
-  border: 3px white solid;
-  width: 50px;
-  height: 50px;
-  background: #91daffc9;
+  border: 4px white solid;
+  width: 65px;
+  height: 65px;
+  background: #22dbe3a8;
   float: left;
   color: white;
   display: inline-flex;
   flex-direction: column;
   justify-content: space-evenly;
-  padding: 10px;
+  padding: 12px;
   box-sizing: border-box;
   margin-left: 15px;
+  box-shadow: 0px 6px 6px -1px #00000030;
 }
 
 .openBtn > div {
   width: 100%;
-  height: 5px;
+  height: 6px;
   background: white;
   border-radius: 10px;
 }
 
 .closeBtn {
   border-radius: 50px;
-  border: 3px white solid;
-  width: 50px;
-  height: 50px;
-  background: #91daffc9;
+  border: 4px white solid;
+  width: 65px;
+  height: 65px;
+  background: #22dbe3a8;
   float: left;
   color: white;
   display: inline-flex;
@@ -155,6 +159,7 @@ export default {
   box-sizing: border-box;
   margin-left: 5px;
   align-items: center;
+  box-shadow: 0px 6px 6px -1px #00000030;
 }
 
 .closeBtn > div {
@@ -201,14 +206,6 @@ export default {
   background: transparent;
 }
 
-.listSmall {
-  visibility: visible;
-  display: none;
-  width: 85%;
-  float: left;
-  clear: none;
-}
-
 @media (max-width: 650px) {
   .list {
     width: 100%;
@@ -222,8 +219,19 @@ export default {
   }
 
   .items {
+    width: 80%;
+    box-sizing: border-box;
     max-height: 100vh;
     transform: translateX(-5px);
+  }
+
+  .closeBtn {
+    margin-left: 5px;
+  }
+
+  .btn {
+    width: 20%;
+    margin-top: 10px;
   }
 
   @keyframes openAnim {
@@ -260,18 +268,7 @@ export default {
 
   .items {
     width: 80%;
-    padding-bottom: 10px;
-    max-height: 97vh;
-  }
-
-  .openBtn {
-    margin-right: 10px;
-    margin-top: 10px;
-  }
-
-  .closeBtn {
-    margin-right: 10px;
-    margin-top: 10px;
+    padding-bottom: 15px;
   }
 
   .items > .bg:last-child {

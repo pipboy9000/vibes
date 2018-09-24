@@ -5,19 +5,29 @@
         <img src="../assets/focus_icon.png">
       </div>
       <div class="zoom">
-        <div class="zoomIn" @click="zoomIn">+</div>
+        <div class="zoomIn" @click="zoomIn">
+          <plus-icon :size="15" :thickness="5" :color="'white'"></plus-icon>
+        </div>
         <hr>
-        <div class="zoomOut" @click="zoomOut">-</div>
+        <div class="zoomOut" @click="zoomOut">
+          <minus-icon :size="15" :thickness="5" :color="'white'"></minus-icon>
+        </div>
       </div>
     </div>
-    <div class="newVibeBtn" @click="openNewVibeForm">+</div>
+    <div class="newVibeBtn" @click="openNewVibeForm">
+      <plus-icon :size="25" :thickness="8" :color="'white'"></plus-icon>
+    </div>
   </div>
 </template>
 
 <script>
 import { EventBus } from "../event-bus";
+import plusIcon from "./plusIcon";
+import minusIcon from "./minusIcon";
+
 export default {
   name: "MapUI",
+  components: { plusIcon, minusIcon },
   methods: {
     zoomIn() {
       EventBus.$emit("zoomIn");
@@ -90,6 +100,20 @@ hr {
   box-shadow: 0px 5px 3px -2px #0004;
 }
 
+.zoomIn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50%;
+}
+
+.zoomOut {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50%;
+}
+
 .newVibeBtn {
   user-select: none;
   position: absolute;
@@ -107,6 +131,9 @@ hr {
   line-height: 70px;
   color: white;
   box-shadow: 0px 8px 10px -1px #0004;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 316px) {
