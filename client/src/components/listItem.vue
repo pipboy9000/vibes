@@ -55,21 +55,26 @@ export default {
   width: 530px;
   height: 80px;
   margin-bottom: 10px;
+  padding-right: 10px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 2px 4px 1px #00000025;
 }
 
 .left {
-  width: 336px;
+  /* width: 336px; */
   height: 80px;
   float: left;
+  max-width: 70%;
+  box-sizing: border-box;
 }
 
 .right {
-  width: 194px;
+  box-sizing: border-box;
+  padding-right: 10px;
+  max-width: 30%;
   height: 80px;
-  float: left;
+  float: right;
 }
 
 .title {
@@ -127,7 +132,7 @@ export default {
     border-radius: 0;
   }
   .left {
-    width: 65%;
+    max-width: 65%;
   }
 
   .title {
@@ -136,7 +141,7 @@ export default {
   }
 
   .right {
-    width: 35%;
+    max-width: 35%;
   }
 
   .users {
@@ -149,11 +154,34 @@ export default {
 
   .emojis {
     width: 100%;
-    font-size: 30px;
+    font-size: 32px;
   }
 
   .emoji {
     width: 33.33333%;
+  }
+}
+
+@media (max-width: 480px) {
+  .bg {
+    padding-right: 5px;
+  }
+
+  .emoji {
+    font-size: 23px;
+  }
+
+  .right {
+    margin-top: 10px;
+    height: 48px;
+  }
+
+  .left {
+    height: 50px;
+  }
+
+  .details {
+    position: absolute;
   }
 }
 </style>

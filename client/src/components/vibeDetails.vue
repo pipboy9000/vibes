@@ -28,17 +28,18 @@
             <div class="pictures"></div>
             <div class="info">
                 <div class="details">
+                  <div class="userPics">
                     <img :src="profilePicSrc" class="profilePic" v-for="(test, index) in [123,123,123,1,1,1,1,1,1,1,1,1,1,1]" :key="index">
-                    <br>
-                    <div class="createdBy">
-                        <p>Created by {{vibe.createdBy.name}}</p>
-                    </div>
-                    <br>
-                    <div class="users">
-                        <img src="../assets/users_icon.png">
-                        <p> {{vibe.users.length}} - {{distance}} - {{time}}.</p>
-                    </div>
-            
+                  </div>
+                  <br>
+                  <div class="createdBy">
+                      <p>Created by {{vibe.createdBy.name}}</p>
+                  </div>
+                  <br>
+                  <div class="users">
+                      <img src="../assets/users_icon.png">
+                      <p> {{vibe.users.length}} - {{distance}} - {{time}}.</p>
+                  </div>
                 </div>
             </div>
             <hr>
@@ -100,81 +101,89 @@ export default {
   },
   methods: {
     sendPic() {
-    //console.log(firebase.storage());
-    //console.log(firebase.storage().ref());
-    //firebase.storage().ref("pepo").putString("123");
-    //console.log("after");
-    
-    console.log("setting camera options");
-    const options = {
-      quality: 50,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE,
-      correctOrientation: true,
-      targetWidth: 200,
-      targetHeight: 200
-    };
+      //console.log(firebase.storage());
+      //console.log(firebase.storage().ref());
+      //firebase.storage().ref("pepo").putString("123");
+      //console.log("after");
 
-    var self = this;
-    this.camera.getPicture(imageData => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64 (DATA_URL):
-      //let base64Image = 'data:image/jpeg;base64,' + imageData;
-      console.log("getPicture success callback");
-      //console.log("imageData:"+imageData);
-      try{
-        var uploadTask = 
-        self.firebaseStorage.child(new Date().getTime().toString())
-          .putString(imageData,'base64');
+      console.log("setting camera options");
+      const options = {
+        quality: 50,
+        destinationType: this.camera.DestinationType.DATA_URL,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        correctOrientation: true,
+        targetWidth: 200,
+        targetHeight: 200
+      };
 
-uploadTask.on('state_changed', function(snapshot){
-  // Observe state change events such as progress, pause, and resume
-  // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-  var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  var firebase = self.firebase;
-  console.log('Upload is ' + progress + '% done');
-  switch (snapshot.state) {
-    case firebase.storage.TaskState.PAUSED: // or 'paused'
-      console.log('Upload is paused');
-      break;
-    case firebase.storage.TaskState.RUNNING: // or 'running'
-      console.log('Upload is running');
-      break;
-  }
-}, function(error) {
-  // Handle unsuccessful uploads
-  console.dir(error)
-}, function() {
-  // Handle successful uploads on complete
-  // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-  uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-    console.log('Uploaded a blob or file!');
-    console.log("got downloadURL: ", downloadURL);
-    
-    var comment = {
-      vibeId: self.$store.state.selectedVibe.id,
-      imgUrl: downloadURL
-    };
-    socket.newComment({ token: self.$store.getters.token, comment });    
-  });
-});
+      var self = this;
+      this.camera.getPicture(
+        imageData => {
+          // imageData is either a base64 encoded string or a file URI
+          // If it's base64 (DATA_URL):
+          //let base64Image = 'data:image/jpeg;base64,' + imageData;
+          console.log("getPicture success callback");
+          //console.log("imageData:"+imageData);
+          try {
+            var uploadTask = self.firebaseStorage
+              .child(new Date().getTime().toString())
+              .putString(imageData, "base64");
 
-          
-    
-      } catch(errr) {
-        alert(errr);
-      }
-      
-     }, (err) => {
-      // Handle error
-      console.error("error in camera callback:")
-      console.error(err);
-     }, 
-     options);
+            uploadTask.on(
+              "state_changed",
+              function(snapshot) {
+                // Observe state change events such as progress, pause, and resume
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                var progress =
+                  snapshot.bytesTransferred / snapshot.totalBytes * 100;
+                var firebase = self.firebase;
+                console.log("Upload is " + progress + "% done");
+                switch (snapshot.state) {
+                  case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log("Upload is paused");
+                    break;
+                  case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log("Upload is running");
+                    break;
+                }
+              },
+              function(error) {
+                // Handle unsuccessful uploads
+                console.dir(error);
+              },
+              function() {
+                // Handle successful uploads on complete
+                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                uploadTask.snapshot.ref
+                  .getDownloadURL()
+                  .then(function(downloadURL) {
+                    console.log("Uploaded a blob or file!");
+                    console.log("got downloadURL: ", downloadURL);
 
-    
-  },
+                    var comment = {
+                      vibeId: self.$store.state.selectedVibe.id,
+                      imgUrl: downloadURL
+                    };
+                    socket.newComment({
+                      token: self.$store.getters.token,
+                      comment
+                    });
+                  });
+              }
+            );
+          } catch (errr) {
+            alert(errr);
+          }
+        },
+        err => {
+          // Handle error
+          console.error("error in camera callback:");
+          console.error(err);
+        },
+        options
+      );
+    },
     resizeTitle(e) {
       if (this.$refs.titleStroke.clientWidth - this.titleWidth > 10) {
         this.titlePxSize--;
@@ -225,7 +234,7 @@ uploadTask.on('state_changed', function(snapshot){
   },
   computed: {
     camera() {
-      return this.$root.cordova.camera
+      return this.$root.cordova.camera;
     },
     vibe() {
       return this.$store.state.selectedVibe;
@@ -396,12 +405,6 @@ uploadTask.on('state_changed', function(snapshot){
   transform: translateY(-10px);
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-.joinLeave {
-}
-
-.joinLeave:hover {
 }
 
 .join,
@@ -605,5 +608,23 @@ hr {
 }
 .main::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    width: 100%;
+  }
+
+  .bg {
+    width: 100%;
+  }
+
+  .newComment {
+    width: 100%;
+  }
+
+  .userPics {
+    display: none;
+  }
 }
 </style>
