@@ -9,7 +9,7 @@ function getLocation() {
     store.commit('updateLocation', location);
   }, function (err) {
     console.log(err);
-  }, null, {
+  }, {
     enableHighAccuracy: true,
     timeout: 5000,
     maximumAge: 0
@@ -43,7 +43,7 @@ function watchLocation() {
     store.dispatch('setLocation', loc);
   }, function (err) {
     console.log(err);
-  }, null, {
+  }, {
     enableHighAccuracy: true,
     timeout: 5000,
     maximumAge: 0
