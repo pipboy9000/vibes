@@ -179,9 +179,5 @@ export default {
   .left {
     height: 50px;
   }
-
-  .details {
-    position: absolute;
-  }
 }
 </style>

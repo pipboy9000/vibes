@@ -14,7 +14,6 @@ export default {
     EmojiSelector
   },
   mounted() {
-    debugger;
     this.$root.cordova.on("deviceready", () => {
       location.init();
     });

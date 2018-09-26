@@ -66,7 +66,7 @@ export default {
 <style scoped="true">
 .list {
   padding: 10px;
-  transform: translateX(-555px);
+  transform: translateX(-565px);
   position: absolute;
   float: left;
   left: 0px;
@@ -88,7 +88,7 @@ export default {
   animation: closeAnim;
   animation-duration: 0.25s;
   animation-timing-function: ease-out;
-  transform: translateX(-555px);
+  transform: translateX(-565px);
 }
 
 .open {
@@ -125,7 +125,7 @@ export default {
   border: 4px white solid;
   width: 65px;
   height: 65px;
-  background: #22dbe3a8;
+  background: #22dbe3;
   float: left;
   color: white;
   display: inline-flex;
@@ -222,11 +222,10 @@ export default {
     width: 80%;
     box-sizing: border-box;
     max-height: 100vh;
-    transform: translateX(-5px);
   }
 
   .closeBtn {
-    margin-left: 5px;
+    margin-left: 10px;
   }
 
   .btn {
@@ -272,7 +271,14 @@ export default {
   }
 
   .items > .bg:last-child {
-    border-radius: 0px 0px 10px 10px;
+    border-radius: 0px 0px 10px 0px;
+  }
+}
+
+@media (max-width: 400px) {
+  .closeBtn {
+    width: 57px;
+    height: 57px;
   }
 }
 </style>
