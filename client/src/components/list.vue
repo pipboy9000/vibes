@@ -77,7 +77,7 @@ export default {
   max-height: 536px;
   overflow-y: scroll;
   overflow-x: hidden;
-  padding-right: 5px;
+  padding-right: 15px;
 }
 
 .btn {

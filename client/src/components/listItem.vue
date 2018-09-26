@@ -158,6 +158,7 @@ export default {
   }
 
   .emoji {
+    min-width: max-content;
     width: 33.33333%;
   }
 }
