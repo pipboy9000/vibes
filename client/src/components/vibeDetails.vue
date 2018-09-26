@@ -1,45 +1,45 @@
 <template>
-    <div v-if="vibe" class="wrapper" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}">
+    <div class="main" v-if="vibe" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}">
+      <div class="scrollBarDiv">
         <div class="bg">
-          <div class="main">
             <div class="titleWrapper" ref="titleWrapper">
                 <div ref="titleBg" class="titleBg"></div>
                 <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
                 <div class="title" ref="title">{{vibe.title}}</div>
             </div>
             <div class="joinLeave">
-              <div class="tooFar" v-if="vibe.distance > 50">
-                <p>Too Far</p>
-              </div>
+                <div class="tooFar" v-if="vibe.distance > 50">
+                    <p>Too Far</p>
+                </div>
                 <div class="join" v-else-if="!inVibe" @click="joinVibe">
                     <img src="../assets/join_vibe_btn.png">
                     <p>Join Vibe!</p>
                 </div>
                 <div class="leave" v-else @click="leaveVibe">
-                  <img src="../assets/leave_vibe_btn.png">
+                    <img src="../assets/leave_vibe_btn.png">
                     <p>Leave Vibe :( </p>
                 </div>
             </div>
-                <div class="emojis">
-                    <div class="emoji">{{vibe.emojis[0]}}</div>
-                    <div class="emoji">{{vibe.emojis[1]}}</div>
-                    <div class="emoji">{{vibe.emojis[2]}}</div>
-                </div>
+            <div class="emojis">
+                <div class="emoji">{{vibe.emojis[0]}}</div>
+                <div class="emoji">{{vibe.emojis[1]}}</div>
+                <div class="emoji">{{vibe.emojis[2]}}</div>
+            </div>
             <div class="pictures"></div>
             <div class="info">
                 <div class="details">
-                  <div class="userPics">
-                    <img :src="profilePicSrc" class="profilePic" v-for="(test, index) in [123,123,123,1,1,1,1,1,1,1,1,1,1,1]" :key="index">
-                  </div>
-                  <br>
-                  <div class="createdBy">
-                      <p>Created by {{vibe.createdBy.name}}</p>
-                  </div>
-                  <br>
-                  <div class="users">
-                      <img src="../assets/users_icon.png">
-                      <p> {{vibe.users.length}} - {{distance}} - {{time}}.</p>
-                  </div>
+                    <div class="userPics">
+                      <img :src="profilePicSrc" class="profilePic" v-for="(test, index) in [123,123,123,1,1,1,1,1,1,1,1,1,1,1]" :key="index">
+                    </div>
+                    <br>
+                    <div class="createdBy">
+                        <p>Created by {{vibe.createdBy.name}}</p>
+                    </div>
+                    <br>
+                    <div class="users">
+                        <img src="../assets/users_icon.png">
+                        <p> {{vibe.users.length}} - {{distance}} - {{time}}.</p>
+                    </div>
                 </div>
             </div>
             <hr>
@@ -50,15 +50,18 @@
                 {{chat.message}}
               </div> -->
             </div>
-          </div>
         </div>
-            <div class="newComment">
-              <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
-              <button>></button>
-              <button @click="sendPic">+</button>
-            </div>
-        <div class="closeBtn" @click="close">X</div>
-    </div>
+      </div>
+      <div class="newComment">
+          <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
+          <button>></button>
+          <button @click="sendPic">+</button>
+      </div>
+      <div  class="closeBtn" @click="close">
+          <div></div>
+          <div></div>
+        </div>
+    </div>    
 </template>
 
 <script>
@@ -294,6 +297,7 @@ export default {
 }
 
 .closed {
+  pointer-events: none;
   transform: translateX(-10px);
   left: -550px;
   animation: closeAnim;
@@ -306,58 +310,91 @@ export default {
   height: 100%;
 }
 
+.scrollBarDiv {
+  width: 495px;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.scrollBarDiv::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.scrollBarDiv::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+.scrollBarDiv::-webkit-scrollbar-thumb {
+  background: #fffd;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+.scrollBarDiv::-webkit-scrollbar-thumb:hover {
+  background: #fff;
+}
+.scrollBarDiv::-webkit-scrollbar-thumb:active {
+  background: #ffff;
+}
+.scrollBarDiv::-webkit-scrollbar-track {
+  background: #0000;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+.scrollBarDiv::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* items */
 .bg {
-  height: 100%;
+  /* height: 100%; */
   width: 480px;
   background: white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   float: left;
   position: relative;
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
 .main {
-  height: 90%;
-  overflow-y: scroll;
+  height: 100%;
+  overflow-y: hidden;
   overflow-x: hidden;
 }
 
 .closeBtn {
-  margin-top: 10px;
-  margin-left: 10px;
   border-radius: 50px;
-  border: 3px white solid;
-  width: 50px;
-  height: 50px;
-  line-height: 43px;
-  font-size: 20px;
-  background: #91daffc9;
-  font-family: cursive;
-  font-weight: 900;
+  border: 4px white solid;
+  width: 65px;
+  height: 65px;
+  background: #22dbe3a8;
   float: left;
   color: white;
-  user-select: none;
-  box-sizing: border-box;
-}
-
-.openBtn {
-  margin-left: 6px;
-  border-radius: 50px;
-  border: 3px white solid;
-  width: 50px;
-  height: 50px;
-  background: #91daffc9;
-  float: left;
-  color: white;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   justify-content: space-evenly;
   padding: 10px;
   box-sizing: border-box;
+  margin-left: 10px;
+  margin-top: 10px;
+  align-items: center;
+  box-shadow: 0px 6px 6px -1px #00000030;
 }
 
-.openBtn {
-  float: left;
+.closeBtn > div {
+  position: absolute;
+  width: 25px;
+  height: 5px;
+  background: white;
+  border-radius: 10px;
+}
+
+.closeBtn > div:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.closeBtn > div:nth-child(2) {
+  transform: rotate(-45deg);
 }
 
 .titleWrapper {
@@ -465,6 +502,7 @@ export default {
 }
 
 .info {
+  box-sizing: border-box;
   background: #f2faff;
   height: 75px;
   display: flex;
@@ -535,6 +573,7 @@ export default {
 }
 
 .comments {
+  padding-bottom: 60px;
   width: 100%;
 }
 
@@ -585,29 +624,6 @@ hr {
   height: 1px;
   background-image: linear-gradient(to right, #e4e4e410, #e4e4e4, #e4e4e410);
   width: 95%;
-}
-
-.main::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-.main::-webkit-scrollbar-button {
-  width: 0px;
-  height: 0px;
-}
-.main::-webkit-scrollbar-thumb {
-  background: #d2d2d2;
-  border: 1px none #f00;
-  border-radius: 50px;
-}
-
-.main::-webkit-scrollbar-track {
-  background: #0000;
-  border: 0px none #ffffff;
-  border-radius: 50px;
-}
-.main::-webkit-scrollbar-corner {
-  background: transparent;
 }
 
 @media (max-width: 480px) {
