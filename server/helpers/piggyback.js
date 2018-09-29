@@ -29,6 +29,13 @@ function newComment(comment) {
     data.comments[comment.vibeId] = cache.getComments(comment.vibeId);
 }
 
+function newPicture(picture) {
+    full = true
+    if (!data.pictures)
+        data.pictures = {};
+    data.pictures[picture.vibeId] = cache.getPictures(picture.vibeId);
+}
+
 function joinVibe() {
     full = true;
     data.vibes = cache.getVibes();
@@ -65,6 +72,7 @@ module.exports = {
     newVibe,
     updateLocation,
     newComment,
+    newPicture,
     getData,
     login,
     joinVibe,

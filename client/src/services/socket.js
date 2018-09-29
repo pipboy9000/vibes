@@ -6,8 +6,8 @@ var socketAdress = "https://vibes-web.herokuapp.com";
 // var socketAdress = "http://192.168.43.3:8080";
 // var port = 80;
 //socketAdress = socketAdress.replace(port, "8080");
-// var io = socketio.connect(socketAdress);
-var io = socketio.connect("localhost:8080");
+var io = socketio.connect(socketAdress);
+// var io = socketio.connect("localhost:8080");
 
 //prod
 // var io = socketio.connect();
@@ -38,6 +38,10 @@ function newComment(comment) {
   io.emit("newComment", comment);
 }
 
+function newPicture(picture) {
+  io.emit("newPicture", picture);
+}
+
 function joinVibe(vibe) {
   io.emit("joinVibe", vibe);
 }
@@ -51,6 +55,7 @@ export default {
   login,
   updateLocation,
   newComment,
+  newPicture,
   joinVibe,
   leaveVibe
 };

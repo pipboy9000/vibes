@@ -140,7 +140,6 @@ function newComment(comment, user) {
 
     var c = {
         text: comment.text,
-        imgUrl: comment.imgUrl,
         name: user.name,
         fbid: user.fbid,
         createdAt: Date.now(),
@@ -151,6 +150,35 @@ function newComment(comment, user) {
     return {
         vibeId: comment.vibeId,
         comments: vibe.comments
+    }
+}
+
+function newPicture(picture, user) {
+
+    var vibe = vibesMap[picture.vibeId];
+    if (!vibe) {
+        console.log(chalk.red("new picture: vibe doesn't exist " + picture.vibeId));
+        return;
+    }
+
+    //check if user is in the vibe
+    if (!vibe.users.includes(user.fbid)) {
+        console.log(chalk.red("can't add picture if not in vibe " + user.fbid));
+        return;
+    }
+
+    var c = {
+        imgUrl: picture.imgUrl,
+        name: user.name,
+        fbid: user.fbid,
+        createdAt: Date.now(),
+    }
+
+    vibe.pictures.push(c);
+
+    return {
+        vibeId: picture.vibeId,
+        pictures: vibe.pictures
     }
 }
 
@@ -221,6 +249,10 @@ function getComments(vibeId) {
     return vibesMap[vibeId].comments;
 }
 
+function getPictures(vibeId) {
+    return vibesMap[vibeId].pictures;
+}
+
 function clear() {
     var from = Date.now() - vibeTimout;
 
@@ -267,7 +299,9 @@ module.exports = {
     login,
     updateLocation,
     newComment,
+    newPicture,
     getComments,
+    getPictures,
     joinVibe,
     leaveVibe,
     save,
