@@ -66,13 +66,14 @@ export default {
 <style scoped="true">
 .list {
   padding: 10px;
-  transform: translateX(-565px);
+  transform: translateX(-575px);
   position: absolute;
   float: left;
   left: 0px;
 }
 
 .items {
+  box-sizing: border-box;
   float: left;
   max-height: 536px;
   overflow-y: scroll;
@@ -88,7 +89,7 @@ export default {
   animation: closeAnim;
   animation-duration: 0.25s;
   animation-timing-function: ease-out;
-  transform: translateX(-565px);
+  transform: translateX(-575px);
 }
 
 .open {
@@ -220,12 +221,7 @@ export default {
 
   .items {
     width: 80%;
-    box-sizing: border-box;
     max-height: 100vh;
-  }
-
-  .closeBtn {
-    margin-left: 10px;
   }
 
   .btn {
@@ -279,6 +275,10 @@ export default {
   .closeBtn {
     width: 57px;
     height: 57px;
+  }
+
+  .items {
+    padding-right: 8px;
   }
 }
 </style>

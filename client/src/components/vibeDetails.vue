@@ -2,11 +2,14 @@
     <div class="main" v-if="vibe" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}">
       <div class="scrollBarDiv">
         <div class="bg">
-            <div class="titleWrapper" ref="titleWrapper">
-                <div ref="titleBg" class="titleBg"></div>
-                <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
-                <div class="title" ref="title">{{vibe.title}}</div>
-            </div>
+          <div class="window">
+            <div class="hole"></div>
+          </div>
+          <div class="titleWrapper" ref="titleWrapper">
+              <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
+              <div class="title" ref="title">{{vibe.title}}</div>
+          </div>
+          <div class="top">
             <div class="joinLeave">
                 <div class="tooFar" v-if="vibe.distance > 50">
                     <p>Too Far</p>
@@ -25,31 +28,32 @@
                 <div class="emoji">{{vibe.emojis[1]}}</div>
                 <div class="emoji">{{vibe.emojis[2]}}</div>
             </div>
-            <div class="pictures"></div>
-            <div class="info">
-                <div class="details">
-                    <div class="userPics">
-                      <img :src="profilePicSrc" class="profilePic" v-for="(test, index) in [123,123,123,1,1,1,1,1,1,1,1,1,1,1]" :key="index">
-                    </div>
-                    <br>
-                    <div class="createdBy">
-                        <p>Created by {{vibe.createdBy.name}}</p>
-                    </div>
-                    <br>
-                    <div class="users">
-                        <img src="../assets/users_icon.png">
-                        <p> {{vibe.users.length}} - {{distance}} - {{time}}.</p>
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <div class="comments">
-              <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
-              <!-- <div v-for="(chat, key) in this.$root.firebase().chats" :key="key" :chat="chat">
-                <img v-if="chat.imgUrl" :src="chat.imgUrl" />
-                {{chat.message}}
-              </div> -->
-            </div>
+          </div>
+          <div class="pictures"></div>
+          <div class="info">
+              <div class="details">
+                  <div class="userPics">
+                    <img :src="profilePicSrc" class="profilePic" v-for="(test, index) in [123,123,123,1,1,1,1,1,1,1,1,1,1,1]" :key="index">
+                  </div>
+                  <br>
+                  <div class="createdBy">
+                      <p>Created by {{vibe.createdBy.name}}</p>
+                  </div>
+                  <br>
+                  <div class="users">
+                      <img src="../assets/users_icon.png">
+                      <p> {{vibe.users.length}} - {{distance}} - {{time}}.</p>
+                  </div>
+              </div>
+          </div>
+          <hr>
+          <div class="comments">
+            <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
+            <!-- <div v-for="(chat, key) in this.$root.firebase().chats" :key="key" :chat="chat">
+              <img v-if="chat.imgUrl" :src="chat.imgUrl" />
+              {{chat.message}}
+            </div> -->
+          </div>
         </div>
       </div>
       <div class="newComment">
@@ -82,9 +86,8 @@ export default {
       ready: false, //used to fix animations
       time: null,
       commentTxt: "",
-      titleWidth: null,
-      titlePxSize: 65,
-      titlePxSizeBase: 65,
+      titleHeight: null,
+      titlePxSizeBase: 85,
       firebaseStorage: this.$root.firebaseStorage,
       firebase: this.$root.firebase
     };
@@ -101,6 +104,12 @@ export default {
 
     EventBus.$on("listItemClicked", this.open);
     EventBus.$on("vibeMarkerClicked", this.open);
+
+    window.onresize = function() {
+      if (self.open) {
+        self.resizeTitle();
+      }
+    };
   },
   methods: {
     sendPic() {
@@ -188,32 +197,41 @@ export default {
       );
     },
     resizeTitle(e) {
-      if (this.$refs.titleStroke.clientWidth - this.titleWidth > 10) {
-        this.titlePxSize--;
-        this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
-        this.$refs.title.style.fontSize = this.titlePxSize + "px";
-        var marginTop = (65 - this.titlePxSize) / 65 * 20;
-        this.$refs.titleStroke.style.marginTop = marginTop + "px";
-        this.$refs.title.style.marginTop = marginTop + "px";
-        this.$nextTick(this.resizeTitle);
-      } else if (
-        this.$refs.titleStroke.clientWidth - this.titleWidth < -10 &&
-        this.titlePxSize < this.titlePxSizeBase
-      ) {
-        this.titlePxSize++;
-        this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
-        this.$refs.title.style.fontSize = this.titlePxSize + "px";
-        this.$nextTick(this.resizeTitle);
-      }
+      this.$nextTick(function() {
+        debugger;
+        var fontSize = this.titlePxSizeBase;
+        this.$refs.titleStroke.style.fontSize = fontSize + "px";
+        this.titleHeight = this.$refs.titleWrapper.clientHeight;
+
+        while (this.$refs.titleStroke.clientHeight > this.titleHeight) {
+          fontSize--;
+          this.$refs.titleStroke.style.fontSize = fontSize + "px";
+        }
+        this.$refs.title.style.fontSize = fontSize + "px";
+      });
     },
+    // resizeTitle(e) {
+    //   if (this.$refs.titleStroke.clientWidth - this.titleWidth > 10) {
+    //     this.titlePxSize--;
+    //     this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
+    //     this.$refs.title.style.fontSize = this.titlePxSize + "px";
+    //     var marginTop = (65 - this.titlePxSize) / 65 * 20;
+    //     this.$refs.titleStroke.style.marginTop = marginTop + "px";
+    //     this.$refs.title.style.marginTop = marginTop + "px";
+    //     this.$nextTick(this.resizeTitle);
+    //   } else if (
+    //     this.$refs.titleStroke.clientWidth - this.titleWidth < -10 &&
+    //     this.titlePxSize < this.titlePxSizeBase
+    //   ) {
+    //     this.titlePxSize++;
+    //     this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
+    //     this.$refs.title.style.fontSize = this.titlePxSize + "px";
+    //     this.$nextTick(this.resizeTitle);
+    //   }
+    // },
     open() {
       this.isOpen = true;
-      if (!this.titleWidth) {
-        this.$nextTick(function() {
-          this.titleWidth = this.$refs.titleBg.clientWidth - 30;
-        });
-      }
-      setTimeout(this.resizeTitle, 0);
+      this.resizeTitle();
     },
     close() {
       this.isOpen = false;
@@ -299,10 +317,31 @@ export default {
 .closed {
   pointer-events: none;
   transform: translateX(-10px);
-  left: -550px;
+  left: -570px;
   animation: closeAnim;
   animation-duration: 0.25s;
   animation-timing-function: ease-out;
+}
+
+.window {
+  mix-blend-mode: hard-light;
+  display: none;
+  background: white;
+  width: 100%;
+  height: 200px;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  position: absolute;
+  transform: translateY(-50%);
+}
+
+.hole {
+  background: grey;
+  width: 200px;
+  height: 200px;
+  border-radius: 100px;
+  border: 3px lightseagreen solid;
 }
 
 .wrapper {
@@ -313,7 +352,7 @@ export default {
 .scrollBarDiv {
   width: 495px;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .scrollBarDiv::-webkit-scrollbar {
@@ -325,7 +364,7 @@ export default {
   height: 0px;
 }
 .scrollBarDiv::-webkit-scrollbar-thumb {
-  background: #fffd;
+  background: #ffffff;
   border: 0px none #ffffff;
   border-radius: 50px;
 }
@@ -338,7 +377,6 @@ export default {
 .scrollBarDiv::-webkit-scrollbar-track {
   background: #0000;
   border: 0px none #ffffff;
-  border-radius: 50px;
 }
 .scrollBarDiv::-webkit-scrollbar-corner {
   background: transparent;
@@ -354,10 +392,12 @@ export default {
   position: relative;
   overflow-y: hidden;
   overflow-x: hidden;
+  min-height: 100%;
 }
 
 .main {
   height: 100%;
+  width: 570px;
   overflow-y: hidden;
   overflow-x: hidden;
 }
@@ -375,10 +415,13 @@ export default {
   justify-content: space-evenly;
   padding: 10px;
   box-sizing: border-box;
-  margin-left: 10px;
+  margin-left: 15px;
   margin-top: 10px;
   align-items: center;
   box-shadow: 0px 6px 6px -1px #00000030;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .closeBtn > div {
@@ -399,14 +442,12 @@ export default {
 
 .titleWrapper {
   position: relative;
-  height: 100px;
+  height: 150px;
   padding-top: 10px;
   width: 100%;
   display: flex;
   align-items: center;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .titleBg {
@@ -417,22 +458,21 @@ export default {
 }
 
 .title {
-  width: 80%;
   padding-left: 15px;
+  padding-right: 15px;
   text-align: left;
   font-size: 60px;
   font-family: "Pacifico", cursive, sans-serif;
   color: white;
   position: absolute;
   transform: translateY(-10px);
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis; */
 }
 
 .titleStroke {
-  /* width: 80%; */
   text-align: left;
   padding-left: 15px;
+  padding-right: 15px;
   font-size: 60px;
   font-family: "Pacifico", cursive, sans-serif;
   color: white;
@@ -440,8 +480,15 @@ export default {
   -webkit-text-stroke-width: 5px;
   -webkit-text-stroke-color: #3fb7f5;
   transform: translateY(-10px);
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis; */
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  align-content: space-between;
+  justify-content: space-around;
+  width: 100%;
 }
 
 .join,
@@ -626,13 +673,49 @@ hr {
   width: 95%;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 570px) {
+  .main {
+    width: 100%;
+  }
+
   .wrapper {
     width: 100%;
   }
 
-  .bg {
+  .scrollBarDiv {
     width: 100%;
+  }
+
+  .scrollBarDiv::-webkit-scrollbar-track {
+    background: #d8d8d8;
+    border: 0px none #ffffff;
+  }
+
+  .bg {
+    background: unset;
+    width: 100%;
+  }
+
+  .titleWrapper {
+    background: white;
+  }
+
+  .top {
+    background: white;
+  }
+
+  .window {
+    display: flex;
+  }
+
+  .closeBtn {
+    margin-right: 15px;
+  }
+
+  .title,
+  .titleStroke,
+  .titleBg {
+    margin-right: 95px;
   }
 
   .newComment {
