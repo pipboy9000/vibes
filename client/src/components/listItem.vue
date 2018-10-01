@@ -106,7 +106,7 @@ export default {
 .users > p {
   margin: 0;
   display: inline-block;
-  margin-left: 4px;
+  margin-left: 8px;
   font-size: 13px;
 }
 
@@ -122,6 +122,7 @@ export default {
 
 .details {
   font-style: italic;
+  text-align: left;
 }
 
 @media (max-width: 650px) {
