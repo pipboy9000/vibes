@@ -89,6 +89,21 @@ io.on('connection', function (socket) {
     })
   });
 
+  socket.on('newPicture', function ({
+    picture,
+    token
+  }) {
+    validate(token).then(user => {
+      if (user) {
+        var pictures = cache.newPicture(picture, user);
+        if (pictures) {
+          piggyBack.newPicture(picture);
+          socket.emit('setComments', pictures);
+        }
+      }
+    })
+  });
+
   socket.on('joinVibe', function ({
     token,
     vibeId

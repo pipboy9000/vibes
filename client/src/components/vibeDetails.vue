@@ -29,8 +29,24 @@
                 <div class="emoji">{{vibe.emojis[1]}}</div>
                 <div class="emoji">{{vibe.emojis[2]}}</div>
             </div>
-          </div>
-          <div class="pictures"></div>
+            <div class="pictures">
+              <gallery :images="images" :index="index" @close="index = null"></gallery>
+              <div
+                class="image"
+                v-for="(image, imageIndex) in images"
+                :key="imageIndex"
+                @click="index = imageIndex"
+                :style="{ backgroundImage: 'url(' + image + ')', width: '200px', height: '200px' }"
+              ></div>
+            </div>
+              <div
+                class="image"
+                v-for="(image, imageIndex) in images"
+                :key="imageIndex"
+                @click="index = imageIndex"
+                :style="{ backgroundImage: 'url(' + image + ')', width: '200px', height: '200px' }"
+              ></div>
+            </div>
           <div class="info">
               <div class="details">
                   <div class="userPics">
@@ -50,10 +66,6 @@
           <hr>
           <div class="comments">
             <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
-            <!-- <div v-for="(chat, key) in this.$root.firebase().chats" :key="key" :chat="chat">
-              <img v-if="chat.imgUrl" :src="chat.imgUrl" />
-              {{chat.message}}
-            </div> -->
           </div>
         </div>
       </div>
@@ -75,11 +87,13 @@ import { timeAgo } from "../services/timeAgo.js";
 import { formatDistance } from "../services/maps.js";
 import socket from "../services/socket.js";
 import comment from "./comment";
+import VueGallery from 'vue-gallery';
 
 export default {
   name: "VibeDetails",
   components: {
-    comment
+    comment,
+    'gallery': VueGallery
   },
   data() {
     return {
@@ -89,7 +103,8 @@ export default {
       commentTxt: "",
       titlePxSizeBase: 85,
       firebaseStorage: this.$root.firebaseStorage,
-      firebase: this.$root.firebase
+      firebase: this.$root.firebase,
+      index: null
     };
   },
   mounted() {
@@ -173,14 +188,24 @@ export default {
                     console.log("Uploaded a blob or file!");
                     console.log("got downloadURL: ", downloadURL);
 
-                    var comment = {
+                    var picture = {
                       vibeId: self.$store.state.selectedVibe.id,
                       imgUrl: downloadURL
                     };
-                    socket.newComment({
-                      token: self.$store.getters.token,
-                      comment
-                    });
+                    socket.newPicture({
+                       token: self.$store.getters.token,
+                       picture
+                     });
+                     self.vibe.pictures.push(picture);
+
+                    // var comment = {
+                    //   vibeId: self.$store.state.selectedVibe.id,
+                    //   imgUrl: downloadURL
+                    // };
+                    // socket.newComment({
+                    //   token: self.$store.getters.token,
+                    //   comment
+                    // });
                   });
               }
             );
@@ -242,6 +267,9 @@ export default {
     }
   },
   computed: {
+    images() {
+        return this.vibe.pictures.map(x => x.imgUrl);
+      },
     camera() {
       return this.$root.cordova.camera;
     },
@@ -342,6 +370,7 @@ export default {
   height: 100%;
   overflow-y: auto;
 }
+
 
 .scrollBarDiv::-webkit-scrollbar {
   width: 10px;
@@ -582,6 +611,19 @@ export default {
   width: 35px;
   border-radius: 70px;
   max-width: 15%;
+}
+
+
+.pictures {
+  width: 100%;
+  height: 210px;
+  overflow-x: scroll;
+}
+
+.image {
+  margin: 5px;
+  border-radius: 10px;
+  display: inline-block;
 }
 
 .users {

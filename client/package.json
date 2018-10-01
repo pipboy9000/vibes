@@ -30,6 +30,7 @@
     "javascript-time-ago": "^1.0.31",
     "vue": "^2.5.17",
     "vue-cordova": "^0.1.2",
+    "vue-gallery": "^1.4.0",
     "vue-router": "^3.0.1",
     "vue-socket.io": "^2.1.1-b",
     "vue2-google-maps": "^0.9.8",
