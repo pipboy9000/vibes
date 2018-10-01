@@ -6,6 +6,7 @@
             <div class="hole"></div>
           </div>
           <div class="titleWrapper" ref="titleWrapper">
+              <div class="titleBg"></div>
               <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
               <div class="title" ref="title">{{vibe.title}}</div>
           </div>
@@ -86,7 +87,6 @@ export default {
       ready: false, //used to fix animations
       time: null,
       commentTxt: "",
-      titleHeight: null,
       titlePxSizeBase: 85,
       firebaseStorage: this.$root.firebaseStorage,
       firebase: this.$root.firebase
@@ -107,7 +107,7 @@ export default {
 
     window.onresize = function() {
       if (self.open) {
-        self.resizeTitle();
+        self.resizeLayout();
       }
     };
   },
@@ -196,42 +196,30 @@ export default {
         options
       );
     },
-    resizeTitle(e) {
+    resizeLayout(e) {
       this.$nextTick(function() {
         debugger;
+        //title
         var fontSize = this.titlePxSizeBase;
-        this.$refs.titleStroke.style.fontSize = fontSize + "px";
-        this.titleHeight = this.$refs.titleWrapper.clientHeight;
+        var title = this.$refs.title;
+        var titleStroke = this.$refs.titleStroke;
+        var titleWrapper = this.$refs.titleWrapper;
+        var titleHeight = titleWrapper.clientHeight;
 
-        while (this.$refs.titleStroke.clientHeight > this.titleHeight) {
+        titleStroke.style.fontSize = fontSize + "px";
+
+        while (titleStroke.clientHeight > titleHeight) {
           fontSize--;
-          this.$refs.titleStroke.style.fontSize = fontSize + "px";
+          titleStroke.style.fontSize = fontSize + "px";
         }
-        this.$refs.title.style.fontSize = fontSize + "px";
+        title.style.fontSize = fontSize + "px";
+
+        //window
       });
     },
-    // resizeTitle(e) {
-    //   if (this.$refs.titleStroke.clientWidth - this.titleWidth > 10) {
-    //     this.titlePxSize--;
-    //     this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
-    //     this.$refs.title.style.fontSize = this.titlePxSize + "px";
-    //     var marginTop = (65 - this.titlePxSize) / 65 * 20;
-    //     this.$refs.titleStroke.style.marginTop = marginTop + "px";
-    //     this.$refs.title.style.marginTop = marginTop + "px";
-    //     this.$nextTick(this.resizeTitle);
-    //   } else if (
-    //     this.$refs.titleStroke.clientWidth - this.titleWidth < -10 &&
-    //     this.titlePxSize < this.titlePxSizeBase
-    //   ) {
-    //     this.titlePxSize++;
-    //     this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
-    //     this.$refs.title.style.fontSize = this.titlePxSize + "px";
-    //     this.$nextTick(this.resizeTitle);
-    //   }
-    // },
     open() {
       this.isOpen = true;
-      this.resizeTitle();
+      this.resizeLayout();
     },
     close() {
       this.isOpen = false;
@@ -331,7 +319,7 @@ export default {
   height: 200px;
   align-items: center;
   justify-content: center;
-  top: 50%;
+  top: 50vh;
   position: absolute;
   transform: translateY(-50%);
 }
@@ -442,7 +430,8 @@ export default {
 
 .titleWrapper {
   position: relative;
-  height: 150px;
+  min-height: 80px;
+  max-height: 150px;
   padding-top: 10px;
   width: 100%;
   display: flex;
@@ -614,10 +603,10 @@ export default {
   opacity: 0.9;
 }
 
-.emoji {
+/* .emoji {
   margin-left: 5px;
   margin-right: 5px;
-}
+} */
 
 .comments {
   padding-bottom: 60px;

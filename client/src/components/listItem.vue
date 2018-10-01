@@ -52,7 +52,7 @@ export default {
 
 <style scoped="true">
 .bg {
-  width: 530px;
+  width: 520px;
   height: 80px;
   margin-bottom: 10px;
   padding-right: 10px;
@@ -78,7 +78,7 @@ export default {
 }
 
 .title {
-  width: 100%;
+  width: 98%;
   height: 62px;
   text-align: left;
   transform: translateY(-2px);
