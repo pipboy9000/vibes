@@ -2,8 +2,11 @@
 //   1. grunt bump-build-deploy-to-4 --verbose
 
 module.exports = function (grunt) {
-
     var path = require('path');
+
+    var cwd = process.cwd();
+    var basePath = path.dirname(cwd);
+    var prodPath = path.join(basePath,'prod');
     
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-npm-command');
@@ -13,10 +16,10 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('../server/package.json'),
         paths: {
-            client: './platforms/browser/www',
-            server: '../server',
-            public: '../prod/public',
-            prod: '../prod'
+            client: path.join(cwd,'platforms','browser','www'),
+            server: path.join(basePath, 'server'),
+            public: path.join(prodPath, 'public'),
+            prod: prodPath
         },
         clean: {
             options: {
@@ -39,7 +42,7 @@ module.exports = function (grunt) {
                         expand: true,
                         dot: true,
                         cwd: '<%= paths.server %>',
-                        src: ['**/*','!**/node_modules/**'],
+                        src: ['**/*','!**/node_modules/**','!**/public/**'],
                         dest: '<%= paths.prod %>',
                         flatten: false
                     },
@@ -50,27 +53,41 @@ module.exports = function (grunt) {
         gitadd: {
             task: {
               options: {
-                force: true,
-                cwd: '<%= paths.prod %>'
+                verbose: true,
+                cwd: '<%= paths.prod %>',
+                all: true,
+                force: true
               },
               files: {
-                src: ['*']
+                cwd: '<%= paths.prod %>',
               }
             }
           },
 
         gitcommit: {
-            prod: {
+            task: {
               options: {
-                cwd: '<%= paths.prod %>'
+                cwd: '<%= paths.prod %>',
+                all: true
               },
               files: [
                 {
-                  src: ["*"],
                   expand: true,
+                  src: ['**/*','.gitignore'],
                   cwd: '<%= paths.prod %>'
                 }
               ]
+            }
+          },
+
+          gitpush: {
+            task: {
+              options: {
+                cwd: '<%= paths.prod %>',
+                remote: 'heroku',
+                verbose: true,
+                force: true
+              }
             }
           },
 
@@ -95,7 +112,11 @@ module.exports = function (grunt) {
         'clean:prod',
         'npm-command:webpack-build-app',
         'npm-command:cordova-build-browser',
-        'copy:main']);
+        'copy:main',
+        'gitadd',
+        'gitcommit',
+        'gitpush'
+    ]);
 };
 
 
