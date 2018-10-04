@@ -1,5 +1,5 @@
 <template>
-    <div class="main" v-if="vibe" :class="{open: isOpen, closed: !isOpen, noAnim: !ready}">
+    <div class="main" v-if="vibe" :class="{open: isOpen, closed: !isOpen}">
       <div class="scrollBarDiv">
         <div class="bg">
           <div class="window">
@@ -87,18 +87,18 @@ import { timeAgo } from "../services/timeAgo.js";
 import { formatDistance } from "../services/maps.js";
 import socket from "../services/socket.js";
 import comment from "./comment";
-import VueGallery from 'vue-gallery';
+import VueGallery from "vue-gallery";
 
 export default {
   name: "VibeDetails",
   components: {
     comment,
-    'gallery': VueGallery
+    gallery: VueGallery
   },
   data() {
     return {
+      isMounted: false,
       isOpen: false,
-      ready: false, //used to fix animations
       time: null,
       commentTxt: "",
       titlePxSizeBase: 85,
@@ -108,6 +108,7 @@ export default {
     };
   },
   mounted() {
+    isMounted = true;
     var self = this;
 
     //keep timeago updated
@@ -193,10 +194,10 @@ export default {
                       imgUrl: downloadURL
                     };
                     socket.newPicture({
-                       token: self.$store.getters.token,
-                       picture
-                     });
-                     self.vibe.pictures.push(picture);
+                      token: self.$store.getters.token,
+                      picture
+                    });
+                    self.vibe.pictures.push(picture);
 
                     // var comment = {
                     //   vibeId: self.$store.state.selectedVibe.id,
@@ -222,10 +223,12 @@ export default {
       );
     },
     resizeLayout(e) {
+      //component hasn't been mounted yet
+      if (!isMounted) return;
+
       this.$nextTick(function() {
-        debugger;
         //title
-        var fontSize = this.titlePxSizeBase;
+        if (this.$refs) var fontSize = this.titlePxSizeBase;
         var title = this.$refs.title;
         var titleStroke = this.$refs.titleStroke;
         var titleWrapper = this.$refs.titleWrapper;
@@ -244,7 +247,7 @@ export default {
     },
     open() {
       this.isOpen = true;
-      this.resizeLayout();
+      this.$nextTick(this.resizeLayout);
     },
     close() {
       this.isOpen = false;
@@ -268,8 +271,8 @@ export default {
   },
   computed: {
     images() {
-        return this.vibe.pictures.map(x => x.imgUrl);
-      },
+      return this.vibe.pictures.map(x => x.imgUrl);
+    },
     camera() {
       return this.$root.cordova.camera;
     },
@@ -370,7 +373,6 @@ export default {
   height: 100%;
   overflow-y: auto;
 }
-
 
 .scrollBarDiv::-webkit-scrollbar {
   width: 10px;
@@ -612,7 +614,6 @@ export default {
   border-radius: 70px;
   max-width: 15%;
 }
-
 
 .pictures {
   width: 100%;

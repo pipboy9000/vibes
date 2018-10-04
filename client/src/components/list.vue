@@ -66,7 +66,7 @@ export default {
 <style scoped="true">
 .list {
   padding: 10px;
-  transform: translateX(-575px);
+  transform: translateX(-565px);
   position: absolute;
   float: left;
   left: 0px;
@@ -89,7 +89,7 @@ export default {
   animation: closeAnim;
   animation-duration: 0.25s;
   animation-timing-function: ease-out;
-  transform: translateX(-575px);
+  transform: translateX(-565px);
 }
 
 .open {
