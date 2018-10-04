@@ -9,7 +9,7 @@
   </div>
 </template>
 <script>
-import Vue from 'vue'
+import Vue from "vue";
 
 import {
   loadFbSdk,
@@ -17,7 +17,9 @@ import {
   fbLogout,
   fbLogin,
   fbGetUserDetails
-} from "./helpers.js";
+} from "./helpers-dev.js";
+// } from "./helpers.js";
+
 import icon from "./icon.png";
 export default {
   name: "facebook-login",
@@ -71,16 +73,15 @@ export default {
     login() {
       this.isWorking = true;
       fbLogin(this.loginOptions).then(response => {
-        console.log("back in Vue file. response.status: "+response.status)
+        console.log("back in Vue file. response.status: " + response.status);
         if (response.status === "connected") {
           this.isConnected = true;
-          console.log("dispatch setLoginDetails")
+          console.log("dispatch setLoginDetails");
           this.$store.dispatch("setLoginDetails", response);
           fbGetUserDetails().then(userDetails => {
-            console.log("dispatch setUserDetails")
-            this.$store.dispatch("setUserDetails", userDetails)
-          }
-          );
+            console.log("dispatch setUserDetails");
+            this.$store.dispatch("setUserDetails", userDetails);
+          });
         } else {
           this.isConnected = false;
         }
@@ -90,22 +91,22 @@ export default {
   },
   mounted() {
     this.isWorking = true;
-    console.log('waiting for device ready')
-    this.$root.cordova.on('deviceready', () => {
-      console.log('device ready called')
+    console.log("waiting for device ready");
+    this.$root.cordova.on("deviceready", () => {
+      console.log("device ready called");
       loadFbSdk(this.appId, this.version)
         .then(loadingResult => {})
         .then(() => getLoginStatus())
         .then(response => {
-          console.log('fb getLoginStatus returned:')
-          console.dir(response)
+          console.log("fb getLoginStatus returned:");
+          console.dir(response);
           if (response.status === "connected") {
             this.isConnected = true;
-            console.log('dispatching setLoginDetails')
+            console.log("dispatching setLoginDetails");
             this.$store.dispatch("setLoginDetails", response);
             fbGetUserDetails().then(userDetails => {
-              console.log('dispatching setUserDetails')              
-              this.$store.dispatch("setUserDetails", userDetails)
+              console.log("dispatching setUserDetails");
+              this.$store.dispatch("setUserDetails", userDetails);
             });
           }
           this.isWorking = false;

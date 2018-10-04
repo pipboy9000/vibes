@@ -46,9 +46,6 @@ export default {
 </script>
 
 <style scoped="true">
-.wrapper {
-}
-
 .sideBtns {
   width: min-content;
   height: min-content;
