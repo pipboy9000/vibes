@@ -7,10 +7,16 @@ import store from "../store";
 // var port = 80;
 //socketAdress = socketAdress.replace(port, "8080");
 // var io = socketio.connect(socketAdress);
-var io = socketio.connect("localhost:8080");
+// var io = socketio.connect("localhost:8080");
 
 //prod
-// var io = socketio.connect();
+console.log("env: "+process.env.NODE_ENV)
+console.log("process.env.SOCKET_ADDRESS: "+process.env.SOCKET_ADDRESS)
+if (process.env.NODE_ENV == 'production') {
+  var io = socketio.connect();
+} else {
+  var io = socketio.connect(process.env.SOCKET_ADDRESS);
+}
 
 //from server
 io.on("login", data => store.dispatch("login", data));
