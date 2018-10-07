@@ -222,7 +222,7 @@ export default {
       );
     },
     resizeLayout(e) {
-      if (!this.isMounted) return;
+      if (!this.isMounted || !this.vibe) return;
 
       this.$nextTick(function() {
         //title resize

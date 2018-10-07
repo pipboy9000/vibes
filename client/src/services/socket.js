@@ -10,8 +10,8 @@ import store from "../store";
 // var io = socketio.connect("localhost:8080");
 
 //prod
-console.log("env: "+process.env.NODE_ENV)
-console.log("process.env.SOCKET_ADDRESS: "+process.env.SOCKET_ADDRESS)
+console.log("env: " + process.env.NODE_ENV)
+console.log("process.env.SOCKET_ADDRESS: " + process.env.SOCKET_ADDRESS)
 if (process.env.NODE_ENV == 'production') {
   var io = socketio.connect();
 } else {
