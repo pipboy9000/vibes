@@ -2,9 +2,6 @@
     <div class="main" v-if="vibe" :class="{open: isOpen, closed: !isOpen}">
       <div class="scrollBarDiv">
         <div class="bg">
-          <div class="window">
-            <div class="hole"></div>
-          </div>
           <div class="titleWrapper" ref="titleWrapper">
               <div class="titleBg"></div>
               <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
@@ -13,15 +10,16 @@
           <div class="top">
             <div class="joinLeave">
                 <div class="tooFar" v-if="vibe.distance > 50">
-                    <p>Too Far</p>
+                    <span>Too Far</span>
                 </div>
                 <div class="join" v-else-if="!inVibe" @click="joinVibe">
-                    <img src="../assets/join_vibe_btn.png">
-                    <p>Join Vibe!</p>
+                    <span>Join!</span>
+                    <span>Join!</span>
+                    <img src="../assets/join_arrow.png">
                 </div>
                 <div class="leave" v-else @click="leaveVibe">
                     <img src="../assets/leave_vibe_btn.png">
-                    <p>Leave Vibe :( </p>
+                    <span>Leave Vibe :( </span>
                 </div>
             </div>
             <div class="emojis">
@@ -29,7 +27,8 @@
                 <div class="emoji">{{vibe.emojis[1]}}</div>
                 <div class="emoji">{{vibe.emojis[2]}}</div>
             </div>
-            <div class="pictures">
+          </div>
+            <!-- <div class="pictures">
               <gallery :images="images" :index="index" @close="index = null"></gallery>
               <div
                 class="image"
@@ -38,16 +37,15 @@
                 @click="index = imageIndex"
                 :style="{ backgroundImage: 'url(' + image + ')', width: '200px', height: '200px' }"
               ></div>
-            </div>
-              <div
+            </div> -->
+              <!-- <div
                 class="image"
                 v-for="(image, imageIndex) in images"
                 :key="imageIndex"
                 @click="index = imageIndex"
                 :style="{ backgroundImage: 'url(' + image + ')', width: '200px', height: '200px' }"
-              ></div>
-            </div>
-          <div class="info">
+              ></div> -->
+          <!-- <div class="info">
               <div class="details">
                   <div class="userPics">
                     <img :src="profilePicSrc" class="profilePic" v-for="(test, index) in [123,123,123,1,1,1,1,1,1,1,1,1,1,1]" :key="index">
@@ -62,7 +60,7 @@
                       <p> {{vibe.users.length}} - {{distance}} - {{time}}.</p>
                   </div>
               </div>
-          </div>
+          </div> -->
           <hr>
           <div class="comments">
             <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
@@ -101,14 +99,15 @@ export default {
       isOpen: false,
       time: null,
       commentTxt: "",
-      titlePxSizeBase: 85,
+      titlePxSizeBase: 65,
+      maxTitleHeight: 150,
       firebaseStorage: this.$root.firebaseStorage,
       firebase: this.$root.firebase,
       index: null
     };
   },
   mounted() {
-    isMounted = true;
+    this.isMounted = true;
     var self = this;
 
     //keep timeago updated
@@ -223,31 +222,36 @@ export default {
       );
     },
     resizeLayout(e) {
-      //component hasn't been mounted yet
-      if (!isMounted) return;
+      if (!this.isMounted) return;
 
       this.$nextTick(function() {
-        //title
-        if (this.$refs) var fontSize = this.titlePxSizeBase;
+        //title resize
+        var fontSize = this.titlePxSizeBase;
         var title = this.$refs.title;
         var titleStroke = this.$refs.titleStroke;
         var titleWrapper = this.$refs.titleWrapper;
-        var titleHeight = titleWrapper.clientHeight;
+        var maxHeight = this.maxTitleHeight;
+        var maxWidth = titleWrapper.clientWidth;
 
         titleStroke.style.fontSize = fontSize + "px";
 
-        while (titleStroke.clientHeight > titleHeight) {
+        while (
+          titleStroke.clientHeight > maxHeight ||
+          titleStroke.clientWidth > maxWidth
+        ) {
           fontSize--;
           titleStroke.style.fontSize = fontSize + "px";
         }
-        title.style.fontSize = fontSize + "px";
 
-        //window
+        titleStroke.style.fontSize = fontSize - 5 + "px";
+        title.style.fontSize = fontSize - 5 + "px";
+        titleWrapper.style.height =
+          Math.max(titleStroke.clientHeight, 35) + "px";
       });
     },
     open() {
       this.isOpen = true;
-      this.$nextTick(this.resizeLayout);
+      this.resizeLayout();
     },
     close() {
       this.isOpen = false;
@@ -342,27 +346,6 @@ export default {
   animation-timing-function: ease-out;
 }
 
-.window {
-  mix-blend-mode: hard-light;
-  display: none;
-  background: white;
-  width: 100%;
-  height: 200px;
-  align-items: center;
-  justify-content: center;
-  top: 50vh;
-  position: absolute;
-  transform: translateY(-50%);
-}
-
-.hole {
-  background: grey;
-  width: 200px;
-  height: 200px;
-  border-radius: 100px;
-  border: 3px lightseagreen solid;
-}
-
 .wrapper {
   position: absolute;
   height: 100%;
@@ -403,7 +386,6 @@ export default {
 
 /* items */
 .bg {
-  /* height: 100%; */
   width: 480px;
   background: white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -435,7 +417,7 @@ export default {
   padding: 10px;
   box-sizing: border-box;
   margin-left: 15px;
-  margin-top: 10px;
+  margin-top: 15px;
   align-items: center;
   box-shadow: 0px 6px 6px -1px #00000030;
   position: absolute;
@@ -460,14 +442,20 @@ export default {
 }
 
 .titleWrapper {
-  position: relative;
-  min-height: 80px;
-  max-height: 150px;
   padding-top: 10px;
+  padding-bottom: 10px;
+  overflow: initial;
+  line-height: normal;
+  margin-top: 15px;
+  position: relative;
   width: 100%;
   display: flex;
   align-items: center;
   overflow: hidden;
+}
+
+.titleWrapper > div::first-letter {
+  text-transform: capitalize;
 }
 
 .titleBg {
@@ -478,8 +466,9 @@ export default {
 }
 
 .title {
-  padding-left: 15px;
-  padding-right: 15px;
+  line-height: 1.1;
+  padding-left: 20px;
+  padding-right: 20px;
   text-align: left;
   font-size: 60px;
   font-family: "Pacifico", cursive, sans-serif;
@@ -490,9 +479,10 @@ export default {
 }
 
 .titleStroke {
+  line-height: 1.1;
+  padding-left: 20px;
+  padding-right: 20px;
   text-align: left;
-  padding-left: 15px;
-  padding-right: 15px;
   font-size: 60px;
   font-family: "Pacifico", cursive, sans-serif;
   color: white;
@@ -500,72 +490,47 @@ export default {
   -webkit-text-stroke-width: 5px;
   -webkit-text-stroke-color: #3fb7f5;
   transform: translateY(-10px);
-  /* text-overflow: ellipsis; */
 }
 
 .top {
   display: flex;
   align-items: center;
-  align-content: space-between;
   justify-content: space-around;
   width: 100%;
+  margin-top: 10px;
 }
 
-.join,
-.leave {
+.join {
+  float: left;
+  font-family: "Pacifico", cursive, sans-serif;
+  border-radius: 20px;
+  background: #ffe9f1;
+  box-shadow: -7px 7px 0px 0px #ff91de;
+  border: 4px solid #ff91de;
   display: flex;
   align-items: center;
-  width: max-content;
-  padding-left: 12px;
-  padding-bottom: 15px;
-  font-size: 15px;
-  padding: 10px;
-  background: #5bd6ff;
-  border-radius: 10px;
-  font-size: 20px;
-  padding-right: 36px;
-  font-weight: 700;
-  margin: 15px;
-  margin-bottom: 30px;
-  box-shadow: 0px 7px 0px 0px #51c7ee;
-  min-width: 40%;
-  float: left;
+  justify-content: space-between;
+  min-width: 100px;
+}
+
+.join > span {
+  position: absolute;
 }
 
 .tooFar {
   display: flex;
   align-items: center;
-  width: max-content;
-  font-size: 15px;
   border: 5px dashed #e8e8e8;
   box-sizing: border-box;
   border-radius: 10px;
   font-size: 20px;
-  font-weight: 700;
-  margin: 15px;
-  margin-bottom: 30px;
-  min-width: 40%;
-  float: left;
 }
 
-.tooFar > p {
+.tooFar > span {
   margin: 0;
-  padding: 0;
+  padding: 10px 35px;
   color: #e8e8e8;
-  width: 100%;
-  line-height: 50px;
-}
-
-.join > p,
-.leave > p {
-  margin-left: 15px;
-  margin-top: 0;
-  margin-right: 0;
-  margin-bottom: 0;
-  padding: 0;
-  color: white;
-  text-shadow: -1px -1px 0px #86e0ff;
-  width: 100%;
+  font-weight: bold;
 }
 
 .info {
@@ -637,19 +602,12 @@ export default {
 
 .emojis {
   padding-right: 10px;
-  width: 40%;
-  line-height: 100px;
   float: right;
   display: inline-flex;
   justify-content: center;
   font-size: 40px;
   opacity: 0.9;
 }
-
-/* .emoji {
-  margin-left: 5px;
-  margin-right: 5px;
-} */
 
 .comments {
   padding-bottom: 60px;
@@ -724,20 +682,11 @@ hr {
   }
 
   .bg {
-    background: unset;
     width: 100%;
   }
 
-  .titleWrapper {
-    background: white;
-  }
-
-  .top {
-    background: white;
-  }
-
-  .window {
-    display: flex;
+  .tooFar > p {
+    padding: 10px 30px;
   }
 
   .closeBtn {

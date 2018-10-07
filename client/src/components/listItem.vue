@@ -91,6 +91,10 @@ export default {
   text-overflow: ellipsis;
 }
 
+.title::first-letter {
+  text-transform: capitalize;
+}
+
 .users {
   float: left;
   transform: translateY(-8px);

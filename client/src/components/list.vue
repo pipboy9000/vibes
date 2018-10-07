@@ -226,7 +226,7 @@ export default {
 
   .btn {
     width: 20%;
-    margin-top: 10px;
+    margin-top: 15px;
   }
 
   @keyframes openAnim {
