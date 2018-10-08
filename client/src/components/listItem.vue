@@ -52,6 +52,7 @@ export default {
 
 <style scoped="true">
 .bg {
+  cursor: pointer;
   width: 520px;
   height: 80px;
   margin-bottom: 10px;

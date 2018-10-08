@@ -51,12 +51,14 @@ export default {
       title: "",
       emojis: [null, null, null],
       titleWidth: null,
-      titlePxSize: 65,
       titlePxSizeBase: 65
     };
   },
   components: {
     plusIcon
+  },
+  mounted() {
+    window.addEventListener("resize", this.resizeTitle);
   },
   methods: {
     onPaste() {
@@ -79,23 +81,21 @@ export default {
       e.stopPropagation();
     },
     resizeTitle(e) {
-      if (this.$refs.titleStroke.clientWidth - this.titleWidth > 10) {
-        this.titlePxSize--;
-        this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
-        this.$refs.titleInput.style.fontSize = this.titlePxSize + "px";
-        var marginTop = (65 - this.titlePxSize) / 65 * 20;
-        this.$refs.titleStroke.style.marginTop = marginTop + "px";
-        this.$refs.titleInput.style.marginTop = marginTop + "px";
-        this.$nextTick(this.resizeTitle);
-      } else if (
-        this.$refs.titleStroke.clientWidth - this.titleWidth < -10 &&
-        this.titlePxSize < this.titlePxSizeBase
-      ) {
-        this.titlePxSize++;
-        this.$refs.titleStroke.style.fontSize = this.titlePxSize + "px";
-        this.$refs.titleInput.style.fontSize = this.titlePxSize + "px";
-        this.$nextTick(this.resizeTitle);
+      if (!this.show) return;
+
+      var stroke = this.$refs.titleStroke;
+      var maxWidth = this.$refs.titleBg.clientWidth;
+      var input = this.$refs.titleInput;
+      var fontSize = this.titlePxSizeBase;
+
+      input.style.fontSize = fontSize + "px";
+      stroke.style.fontSize = fontSize + "px";
+
+      while (stroke.clientWidth > maxWidth) {
+        fontSize--;
+        stroke.style.fontSize = fontSize + "px";
       }
+      input.style.fontSize = fontSize + "px";
     },
     selectEmoji(emojiIdx) {
       var self = this;
@@ -183,7 +183,6 @@ export default {
 
 .titleStroke {
   position: absolute;
-  border-radius: 10px;
   background: transparent;
   font-size: 65px;
   text-align: center;
@@ -200,7 +199,6 @@ export default {
 
 .title {
   position: absolute;
-  border-radius: 10px;
   background: transparent;
   font-size: 65px;
   text-align: center;
@@ -213,12 +211,12 @@ export default {
   bottom: auto;
 }
 
-.title::placeholder {
-  color: #d0d0d0;
-}
-
 .input {
   width: 100%;
+}
+
+.title::placeholder {
+  color: #d0d0d0;
 }
 
 .tagsWrapper {
@@ -269,6 +267,7 @@ export default {
 }
 
 .startBtn {
+  cursor: pointer;
   width: 100%;
   background: #3fb7f5;
   max-width: 300px;

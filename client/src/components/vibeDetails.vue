@@ -13,13 +13,18 @@
                     <span>Too Far</span>
                 </div>
                 <div class="join" v-else-if="!inVibe" @click="joinVibe">
+                  <div class="joinText">
                     <span>Join!</span>
                     <span>Join!</span>
-                    <img src="../assets/join_arrow.png">
+                  </div>
+                  <img src="../assets/join_arrow.png">
                 </div>
                 <div class="leave" v-else @click="leaveVibe">
-                    <img src="../assets/leave_vibe_btn.png">
-                    <span>Leave Vibe :( </span>
+                  <img src="../assets/leave_arrow.png">
+                  <div class="leaveText">
+                    <span>Leave</span>
+                    <span>Leave</span>
+                  </div>
                 </div>
             </div>
             <div class="emojis">
@@ -120,11 +125,7 @@ export default {
     EventBus.$on("listItemClicked", this.open);
     EventBus.$on("vibeMarkerClicked", this.open);
 
-    window.onresize = function() {
-      if (self.open) {
-        self.resizeLayout();
-      }
-    };
+    window.addEventListener("resize", this.resizeLayout);
   },
   methods: {
     sendPic() {
@@ -222,7 +223,7 @@ export default {
       );
     },
     resizeLayout(e) {
-      if (!this.isMounted || !this.vibe) return;
+      if (!this.open || !this.isMounted || !this.vibe) return;
 
       this.$nextTick(function() {
         //title resize
@@ -404,6 +405,7 @@ export default {
 }
 
 .closeBtn {
+  cursor: pointer;
   border-radius: 50px;
   border: 4px white solid;
   width: 65px;
@@ -442,11 +444,11 @@ export default {
 }
 
 .titleWrapper {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   overflow: initial;
   line-height: normal;
-  margin-top: 15px;
+  margin-top: 5px;
   position: relative;
   width: 100%;
   display: flex;
@@ -498,11 +500,14 @@ export default {
   justify-content: space-around;
   width: 100%;
   margin-top: 10px;
+  padding-bottom: 10px;
 }
 
-.join {
-  float: left;
+.join,
+.leave {
+  cursor: pointer;
   font-family: "Pacifico", cursive, sans-serif;
+  font-size: 36px;
   border-radius: 20px;
   background: #ffe9f1;
   box-shadow: -7px 7px 0px 0px #ff91de;
@@ -510,10 +515,37 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-width: 100px;
+  height: 60px;
+  width: 170px;
+  color: white;
+  padding: 0px 15px 0px 15px;
 }
 
-.join > span {
+.leave {
+  background: #d5effd;
+  box-shadow: -7px 7px 0px 0px #92cded;
+  border: 4px solid #92cded;
+}
+
+.joinText,
+.leaveText {
+  user-select: none;
+  width: 100px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.joinText span:nth-child(1) {
+  -webkit-text-stroke: #ff99e0 5px;
+}
+
+.leaveText span:nth-child(1) {
+  -webkit-text-stroke: #92cded 5px;
+}
+
+.join span,
+.leave span {
   position: absolute;
 }
 

@@ -82,6 +82,7 @@ export default {
 }
 
 .btn {
+  cursor: pointer;
   float: left;
 }
 

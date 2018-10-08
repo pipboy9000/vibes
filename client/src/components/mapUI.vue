@@ -47,6 +47,7 @@ export default {
 
 <style scoped="true">
 .sideBtns {
+  cursor: pointer;
   width: min-content;
   height: min-content;
   position: absolute;
@@ -112,6 +113,7 @@ hr {
 }
 
 .newVibeBtn {
+  cursor: pointer;
   user-select: none;
   position: absolute;
   width: 80px;
