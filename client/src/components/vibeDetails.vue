@@ -499,8 +499,11 @@ export default {
   align-items: center;
   justify-content: space-around;
   width: 100%;
-  margin-top: 10px;
   padding-bottom: 10px;
+}
+
+.joinLeave {
+  margin-left: 20px;
 }
 
 .join,
@@ -737,6 +740,20 @@ hr {
 
   .userPics {
     display: none;
+  }
+}
+
+@media (max-width: 410px) {
+  .top {
+    flex-direction: column-reverse;
+  }
+  .joinLeave {
+    margin-top: 10px;
+    margin-left: 0px;
+  }
+
+  .titleWrapper {
+    padding-bottom: 0px;
   }
 }
 </style>
