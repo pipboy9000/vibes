@@ -33,8 +33,7 @@
                 <div class="emoji">{{vibe.emojis[2]}}</div>
             </div>
           </div>
-          <div class="users">
-            <div v-if="vibe.users.length === 0">No one here... </div>
+          <div class="users" v-if="vibe.users.length > 0">
             <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square&width=30&height=30'">
           </div>
           <div class="info">
@@ -582,15 +581,16 @@ export default {
 
 .details > p {
   color: #818181;
-  font-size: 17px;
+  font-size: 15px;
+  font-weight: bold;
   font-family: "ABeeZee", sans-serif;
-  margin: 5px 0px 0px 10px;
+  margin: 7px 0px 0px 10px;
 }
 
 .details > div {
   display: flex;
-  margin: 10px 0px 0px 20px;
-  font-size: 15px;
+  margin: 5px 0px 0px 20px;
+  font-size: 13px;
 }
 
 .details > div > img {
