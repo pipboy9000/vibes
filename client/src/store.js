@@ -91,6 +91,11 @@ export default new Vuex.Store({
     },
     setVibes(state, vibes) {
       state.vibes = vibes;
+      if (state.selectedVibe) {
+        state.selectedVibe = vibes.find(function (vibe) {
+          return vibe.id === state.selectedVibe.id;
+        });
+      }
     },
     newVibe(state, vibe) {
       if (state.location) {
@@ -226,7 +231,7 @@ export default new Vuex.Store({
       console.dir(userDetails)
       console.dir(context)
       context.commit("setUserDetails", userDetails);
-      
+
       console.log(context.state.loginDetails);
       console.log(context.state.location);
       console.log(context.state.userDetails);

@@ -33,6 +33,20 @@
                 <div class="emoji">{{vibe.emojis[2]}}</div>
             </div>
           </div>
+          <div class="users">
+            <div v-if="vibe.users.length === 0">No one here... </div>
+            <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square&width=30&height=30'">
+          </div>
+          <div class="info">
+            <img class="creatorPic" :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=square&width=65&height=65'">
+            <div class="details">
+              <p>Created By: {{vibe.createdBy.name}}</p>
+              <div>
+                <img src="../assets/users_icon.png">
+                <span> {{vibe.users.length}} - {{distance}} - {{time}}.</span>
+              </div>
+            </div>
+          </div>
             <!-- <div class="pictures">
               <gallery :images="images" :index="index" @close="index = null"></gallery>
               <div
@@ -50,22 +64,6 @@
                 @click="index = imageIndex"
                 :style="{ backgroundImage: 'url(' + image + ')', width: '200px', height: '200px' }"
               ></div> -->
-          <!-- <div class="info">
-              <div class="details">
-                  <div class="userPics">
-                    <img :src="profilePicSrc" class="profilePic" v-for="(test, index) in [123,123,123,1,1,1,1,1,1,1,1,1,1,1]" :key="index">
-                  </div>
-                  <br>
-                  <div class="createdBy">
-                      <p>Created by {{vibe.createdBy.name}}</p>
-                  </div>
-                  <br>
-                  <div class="users">
-                      <img src="../assets/users_icon.png">
-                      <p> {{vibe.users.length}} - {{distance}} - {{time}}.</p>
-                  </div>
-              </div>
-          </div> -->
           <hr>
           <div class="comments">
             <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
@@ -462,7 +460,8 @@ export default {
 
 .titleBg {
   background: #d5effd;
-  height: 55px;
+  min-height: 55px;
+  height: 65%;
   width: 95%;
   border-radius: 0 8px 8px 0;
 }
@@ -568,17 +567,6 @@ export default {
   font-weight: bold;
 }
 
-.info {
-  box-sizing: border-box;
-  background: #f2faff;
-  height: 75px;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: fit-content;
-  padding: 22px 0 20px 10px;
-}
-
 .details {
   height: 100%;
   width: 100%;
@@ -592,27 +580,40 @@ export default {
   height: fit-content;
 }
 
-.createdBy {
-  display: inline-block;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  max-width: 65%;
-  margin-left: 10px;
+.details > p {
+  color: #818181;
+  font-size: 17px;
+  font-family: "ABeeZee", sans-serif;
+  margin: 5px 0px 0px 10px;
 }
 
-.createdBy > p {
-  padding: 0;
-  margin: 0;
-  margin-top: 5px;
-  margin-bottom: 5px;
+.details > div {
+  display: flex;
+  margin: 10px 0px 0px 20px;
+  font-size: 15px;
+}
+
+.details > div > img {
+  margin-right: 15px;
+  width: 18px;
+  height: 18px;
 }
 
 .profilePic {
-  padding: 3px;
-  display: inline-block;
-  width: 35px;
+  width: 40px;
+  height: 40px;
   border-radius: 70px;
-  max-width: 15%;
+}
+
+.info {
+  padding: 20px;
+  display: flex;
+}
+
+.creatorPic {
+  width: 65px;
+  height: 65px;
+  border-radius: 70px;
 }
 
 .pictures {
@@ -628,11 +629,12 @@ export default {
 }
 
 .users {
-  display: inline-flex;
-  align-items: center;
-  white-space: pre;
-  margin-left: 15px;
-  height: fit-content;
+  display: flex;
+  background: #efefef;
+  width: 100%;
+  flex-flow: wrap;
+  padding: 5px;
+  margin-top: 10px;
 }
 
 .emojis {
@@ -748,7 +750,7 @@ hr {
     flex-direction: column-reverse;
   }
   .joinLeave {
-    margin-top: 10px;
+    margin-top: 20px;
     margin-left: 0px;
   }
 
