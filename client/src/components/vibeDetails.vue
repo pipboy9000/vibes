@@ -9,17 +9,17 @@
           </div>
           <div class="top">
             <div class="joinLeave">
-                <div class="tooFar" v-if="vibe.distance > 50">
-                    <span>Too Far</span>
-                </div>
-                <div class="join" v-else-if="!inVibe" @click="joinVibe">
+                <div class="join" v-if="!inVibe && vibe.distance < 50" @click="joinVibe">
                   <div class="joinText">
                     <span>Join!</span>
                     <span>Join!</span>
                   </div>
                   <img src="../assets/join_arrow.png">
                 </div>
-                <div class="leave" v-else @click="leaveVibe">
+                <div class="tooFar" v-else-if="!inVibe && vibe.distance > 50">
+                    <span>Too Far</span>
+                </div>
+                <div class="leave" v-else-if="inVibe" @click="leaveVibe">
                   <img src="../assets/leave_arrow.png">
                   <div class="leaveText">
                     <span>Leave</span>
@@ -33,11 +33,18 @@
                 <div class="emoji">{{vibe.emojis[2]}}</div>
             </div>
           </div>
+          <!-- <div class="pictures">
+            <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.imgUrl">
+          </div> -->
+          <div class="pictures">
+            <gallery :images="pictures" :index="index" @close="index = null"></gallery>
+            <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.imgUrl" @click="index = idx">        
+          </div>
           <div class="users" v-if="vibe.users.length > 0">
-            <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square&width=30&height=30'">
+            <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square'">
           </div>
           <div class="info">
-            <img class="creatorPic" :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=square&width=65&height=65'">
+            <img class="creatorPic" :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=square'">
             <div class="details">
               <p>Created By: {{vibe.createdBy.name}}</p>
               <div>
@@ -46,23 +53,6 @@
               </div>
             </div>
           </div>
-            <!-- <div class="pictures">
-              <gallery :images="images" :index="index" @close="index = null"></gallery>
-              <div
-                class="image"
-                v-for="(image, imageIndex) in images"
-                :key="imageIndex"
-                @click="index = imageIndex"
-                :style="{ backgroundImage: 'url(' + image + ')', width: '200px', height: '200px' }"
-              ></div>
-            </div> -->
-              <!-- <div
-                class="image"
-                v-for="(image, imageIndex) in images"
-                :key="imageIndex"
-                @click="index = imageIndex"
-                :style="{ backgroundImage: 'url(' + image + ')', width: '200px', height: '200px' }"
-              ></div> -->
           <hr>
           <div class="comments">
             <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
@@ -161,7 +151,7 @@ export default {
                 // Observe state change events such as progress, pause, and resume
                 // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                 var progress =
-                  snapshot.bytesTransferred / snapshot.totalBytes * 100;
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 var firebase = self.firebase;
                 console.log("Upload is " + progress + "% done");
                 switch (snapshot.state) {
@@ -272,7 +262,7 @@ export default {
     }
   },
   computed: {
-    images() {
+    pictures() {
       return this.vibe.pictures.map(x => x.imgUrl);
     },
     camera() {
@@ -299,7 +289,7 @@ export default {
   },
   watch: {
     vibe(newVibe) {
-      this.time = timeAgo.format(this.vibe.createdAt);
+      if (newVibe) this.time = timeAgo.format(this.vibe.createdAt);
     }
   }
 };
@@ -441,11 +431,10 @@ export default {
 }
 
 .titleWrapper {
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 25px;
+  padding-bottom: 25px;
   overflow: initial;
   line-height: normal;
-  margin-top: 5px;
   position: relative;
   width: 100%;
   display: flex;
@@ -600,8 +589,9 @@ export default {
 }
 
 .profilePic {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
+  margin: 1px;
   border-radius: 70px;
 }
 
@@ -611,24 +601,22 @@ export default {
 }
 
 .creatorPic {
-  width: 65px;
-  height: 65px;
   border-radius: 70px;
 }
 
 .pictures {
   width: 100%;
-  height: 210px;
+  height: 200px;
   overflow-x: scroll;
-}
-
-.image {
-  margin: 5px;
-  border-radius: 10px;
-  display: inline-block;
+  display: flex;
+  margin-top: 25px;
+  background: black;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .users {
+  box-sizing: border-box;
   display: flex;
   background: #efefef;
   width: 100%;
@@ -752,10 +740,6 @@ hr {
   .joinLeave {
     margin-top: 20px;
     margin-left: 0px;
-  }
-
-  .titleWrapper {
-    padding-bottom: 0px;
   }
 }
 </style>

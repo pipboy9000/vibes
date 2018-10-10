@@ -98,7 +98,8 @@ io.on('connection', function (socket) {
         var pictures = cache.newPicture(picture, user);
         if (pictures) {
           piggyBack.newPicture(picture);
-          socket.emit('setComments', pictures);
+          console.log("set pictures");
+          socket.emit('setPictures', pictures);
         }
       }
     })

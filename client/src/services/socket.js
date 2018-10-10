@@ -26,6 +26,7 @@ io.on("newVibe", vibe => store.dispatch("newVibe", vibe));
 io.on("setComments", comments => store.dispatch("setComments", comments));
 io.on("joinVibe", vibeId => store.dispatch("joinVibe", vibeId));
 io.on("leaveVibe", _ => store.dispatch("leaveVibe"));
+io.on("setPictures", pictures => store.dispatch("setPictures", pictures));
 
 //to server
 function newVibe(vibe) {

@@ -113,7 +113,7 @@ export default {
   display: inline-block;
   margin-left: 8px;
   font-size: 13px;
-  min-width: 170px;
+  min-width: 200px;
 }
 
 .emojis {

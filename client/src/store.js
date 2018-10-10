@@ -137,6 +137,20 @@ export default new Vuex.Store({
       if (state.selectedVibe.id === vibeId)
         state.selectedVibe.comments = comments;
     },
+    setPictures(state, {
+      vibeId,
+      pictures
+    }) {
+      var v = state.vibes.find(function (vibe) {
+        return vibe.id === vibeId
+      });
+
+      if (v)
+        v.pictures = pictures;
+
+      if (state.selectedVibe.id === vibeId)
+        state.selectedVibe.pictures = pictures;
+    },
     addUser(state, {
       vibeId,
       fbid
@@ -169,8 +183,6 @@ export default new Vuex.Store({
 
       if (data.hasOwnProperty("vibes")) {
         context.dispatch("setVibes", data.vibes);
-      } else {
-        context.dispatch("setVibes", []);
       }
 
       if (data.hasOwnProperty("comments")) {
@@ -178,6 +190,16 @@ export default new Vuex.Store({
           context.commit("setComments", {
             vibeId,
             comments: data.comments[vibeId]
+          });
+        }
+      }
+
+      if (data.hasOwnProperty("pictures")) {
+        debugger;
+        for (var vibeId in data.pictures) {
+          context.commit("setPictures", {
+            vibeId,
+            pictures: data.pictures[vibeId]
           });
         }
       }
@@ -212,6 +234,9 @@ export default new Vuex.Store({
     },
     setComments: (context, comments) => {
       context.commit("setComments", comments);
+    },
+    setPictures: (context, pictures) => {
+      context.commit("setComments", pictures);
     },
     setLoginDetails: (context, loginDetails) => {
       console.log("in store.js setLoginDetails. printing loginDetails and context:")
