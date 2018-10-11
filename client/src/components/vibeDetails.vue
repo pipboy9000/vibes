@@ -1,5 +1,6 @@
 <template>
     <div class="main" v-if="vibe" :class="{open: isOpen, closed: !isOpen}">
+      <canvas id="img-canvas" style="display:none"></canvas>
       <div class="scrollBarDiv">
         <div class="bg">
           <div class="titleWrapper" ref="titleWrapper">
@@ -38,7 +39,7 @@
           </div> -->
           <div class="pictures" v-if="pictures.length">
             <gallery :images="pictures" :index="index" @close="index = null"></gallery>
-            <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.imgUrl" @click="index = idx">        
+            <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.thumbnailUrl" @click="index = idx">        
           </div>
           <div class="users" v-if="vibe.users.length > 0">
             <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square'">
@@ -78,6 +79,8 @@ import { formatDistance } from "../services/maps.js";
 import socket from "../services/socket.js";
 import comment from "./comment";
 import VueGallery from "vue-gallery";
+import Pica from 'pica';
+const pica = Pica();
 
 export default {
   name: "VibeDetails",
@@ -132,41 +135,24 @@ export default {
     // }
   },
   methods: {
+    
     sendPic() {
       //console.log(firebase.storage());
       //console.log(firebase.storage().ref());
       //firebase.storage().ref("pepo").putString("123");
       //console.log("after");
 
-      console.log("setting camera options");
-      const options = {
-        quality: 50,
-        destinationType: this.camera.DestinationType.DATA_URL,
-        encodingType: this.camera.EncodingType.JPEG,
-        mediaType: this.camera.MediaType.PICTURE,
-        correctOrientation: true,
-        targetWidth: 200,
-        targetHeight: 200
-      };
-
-      var self = this;
-      this.camera.getPicture(
-        imageData => {
-          // imageData is either a base64 encoded string or a file URI
-          // If it's base64 (DATA_URL):
-          //let base64Image = 'data:image/jpeg;base64,' + imageData;
-          console.log("getPicture success callback");
-          //console.log("imageData:"+imageData);
+     function uploadBase64(imageData, firebaseChild) {
+       return new Promise(resolve =>
+        {
+          //console.log("uploading imageData:" + imageData);
           try {
-            var uploadTask = self.firebaseStorage
-              .child(new Date().getTime().toString())
+            var uploadTask = firebaseChild
               .putString(imageData, "base64");
 
             uploadTask.on(
               "state_changed",
               function(snapshot) {
-                // Observe state change events such as progress, pause, and resume
-                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                 var progress =
                   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                 var firebase = self.firebase;
@@ -185,38 +171,89 @@ export default {
                 console.dir(error);
               },
               function() {
-                // Handle successful uploads on complete
-                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                 uploadTask.snapshot.ref
                   .getDownloadURL()
                   .then(function(downloadURL) {
                     console.log("Uploaded a blob or file!");
                     console.log("got downloadURL: ", downloadURL);
 
-                    var picture = {
-                      vibeId: self.$store.state.selectedVibe.id,
-                      imgUrl: downloadURL
-                    };
-                    socket.newPicture({
-                      token: self.$store.getters.token,
-                      picture
-                    });
-                    self.vibe.pictures.push(picture);
-
-                    // var comment = {
-                    //   vibeId: self.$store.state.selectedVibe.id,
-                    //   imgUrl: downloadURL
-                    // };
-                    // socket.newComment({
-                    //   token: self.$store.getters.token,
-                    //   comment
-                    // });
+                    resolve(downloadURL);
                   });
               }
             );
           } catch (errr) {
-            alert(errr);
+            console.error(errr)
           }
+       });
+    }
+
+    function generateThumbnail(cordovaImageData, storageChildName) {
+      return new Promise(resolve => {
+        var canvas = document.getElementById("img-canvas"); // TODO: I know there's a better way to do this
+        var ctx = canvas.getContext("2d");
+
+        var image = new Image();
+        image.src = "data:image/png;base64," + cordovaImageData;
+        image.onload = function() {
+          ctx.drawImage(image, 0, 0);
+          pica.resize(image, canvas)
+          .then(result => pica.toBlob(result, 'image/jpeg', 0.90))
+          .then(blob => {
+            console.log('resized to canvas & created blob!')
+            console.log(blob);
+            var reader = new FileReader();
+            reader.readAsDataURL(blob); 
+            reader.onloadend = function() {
+              var imageData = reader.result.substr(reader.result.indexOf(',') + 1);
+              uploadBase64(
+                imageData, 
+                self.firebaseStorage.child(storageChildName).child("thumb"))
+                .then(resolve);
+            }
+          });
+        };
+      });
+    }
+
+    console.log("setting camera options");
+      const options = {
+        quality: 100,
+        destinationType: this.camera.DestinationType.DATA_URL,
+        encodingType: this.camera.EncodingType.JPEG,
+        mediaType: this.camera.MediaType.PICTURE,
+        correctOrientation: true,
+        // targetWidth: 200,
+        // targetHeight: 200
+      };
+
+      var self = this;
+      this.camera.getPicture(
+        cordovaImageData => {
+          // imageData is either a base64 encoded string or a file URI
+          // If it's base64 (DATA_URL):
+          //let base64Image = 'data:image/jpeg;base64,' + imageData;
+          console.log("getPicture success callback");
+
+          var dateStr = new Date().getTime().toString();
+
+          var fullUploadPromise = uploadBase64(
+            cordovaImageData, 
+            self.firebaseStorage.child(dateStr).child("full"));
+            
+          var thumbnailUploadPromise = generateThumbnail(cordovaImageData, dateStr);
+            
+          Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(urls => {
+            var picture = {
+              vibeId: self.$store.state.selectedVibe.id,
+              imgUrl: urls[0],
+              thumbnailUrl: urls[1]
+            };
+            socket.newPicture({
+              token: self.$store.getters.token,
+              picture
+            });
+            self.vibe.pictures.push(picture);
+          });
         },
         err => {
           // Handle error

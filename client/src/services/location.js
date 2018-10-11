@@ -20,10 +20,26 @@ var count = 0;
 
 function watchLocation() {
   //for development
-  // store.dispatch('setLocation', {
-  //   lat: mockX,
-  //   lng: mockY
-  // });
+  if (process.env.NODE_ENV == 'development') {
+    store.dispatch('setLocation', {
+        lat: mockX,
+        lng: mockY
+      });
+  } else {
+    watchID = navigator.geolocation.watchPosition(function (location) {
+      var loc = {
+        lat: location.coords.latitude,
+        lng: location.coords.longitude
+      }
+      store.dispatch('setLocation', loc);
+    }, function (err) {
+      console.error(err);
+    }, {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0
+    });
+  }
 
   // watchID = setInterval(function (idx) {
   //   mockX += Math.random() / 5000;
@@ -34,24 +50,10 @@ function watchLocation() {
   //     lng: mockY
   //   });
   // }, 15000);
-
-  watchID = navigator.geolocation.watchPosition(function (location) {
-    var loc = {
-      lat: location.coords.latitude,
-      lng: location.coords.longitude
-    }
-    store.dispatch('setLocation', loc);
-  }, function (err) {
-    console.log(err);
-  }, {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-  });
 };
 
 function stopWatch() {
-  navigator.geolocation.clearWatch(watchID);
+  if (watchID) navigator.geolocation.clearWatch(watchID);
 }
 
 function init() {
