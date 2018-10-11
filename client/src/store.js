@@ -17,6 +17,12 @@ export default new Vuex.Store({
     loggedIn: false
   },
   getters: {
+    getVibeById: (state) => (id) => {
+      var v = state.vibes.find(function (_v) {
+        return _v.id === id;
+      });
+      return v;
+    },
     serverLocation: state => {
       return state.serverLocation;
     },
@@ -54,6 +60,7 @@ export default new Vuex.Store({
   mutations: {
     setSelectedVibe: (state, vibe) => {
       state.selectedVibe = vibe;
+
     },
     setLocation: (state, location) => {
       state.location = location;

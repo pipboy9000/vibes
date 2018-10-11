@@ -192,8 +192,16 @@ export default {
         google.maps.event.clearInstanceListeners(this.vibeMarkers[i]);
         //set click listeners
         this.vibeMarkers[i].addListener("click", function() {
-          self.$store.commit("setSelectedVibe", vibe);
-          EventBus.$emit("vibeMarkerClicked", vibe);
+          // self.$store.commit("setSelectedVibe", vibe);
+          // EventBus.$emit("vibeMarkerClicked", vibe);
+          var vibeId = self.$route.query.v;
+          if (vibeId) {
+            self.$router.replace({ path: "", query: { v: vibeId } });
+            EventBus.$emit("vibeMarkerClicked", vibe);
+          } else {
+            vibeId = vibe.id;
+            self.$router.push({ path: "", query: { v: vibeId } });
+          }
           self.focusVibe(vibe);
         });
 

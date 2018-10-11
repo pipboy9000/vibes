@@ -42,7 +42,15 @@ export default {
   methods: {
     clicked() {
       {
-        this.$store.commit("setSelectedVibe", this.vibe);
+        // this.$store.commit("setSelectedVibe", this.vibe);
+        var vibeId = this.$route.query.v;
+        if (vibeId) {
+          this.$router.replace({ path: "", query: { v: vibeId } });
+          EventBus.$emit("vibeMarkerClicked", vibe);
+        } else {
+          vibeId = this.vibe.id;
+          this.$router.push({ path: "", query: { v: vibeId } });
+        }
         EventBus.$emit("listItemClicked", this.vibe);
       }
     }

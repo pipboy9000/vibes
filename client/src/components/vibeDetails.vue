@@ -36,7 +36,7 @@
           <!-- <div class="pictures">
             <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.imgUrl">
           </div> -->
-          <div class="pictures">
+          <div class="pictures" v-if="pictures.length">
             <gallery :images="pictures" :index="index" @close="index = null"></gallery>
             <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.imgUrl" @click="index = idx">        
           </div>
@@ -64,10 +64,10 @@
           <button>></button>
           <button @click="sendPic">+</button>
       </div>
-      <div  class="closeBtn" @click="close">
+      <router-link tag="div" class="closeBtn" :to="''" replace>
           <div></div>
           <div></div>
-        </div>
+      </router-link>
     </div>    
 </template>
 
@@ -98,6 +98,10 @@ export default {
       index: null
     };
   },
+  // created() {
+  //   debugger;
+
+  // },
   mounted() {
     this.isMounted = true;
     var self = this;
@@ -113,6 +117,19 @@ export default {
     EventBus.$on("vibeMarkerClicked", this.open);
 
     window.addEventListener("resize", this.resizeLayout);
+
+    //open vibe details if provided id in link
+    //doesn't work because vibes aren't loaded yet :()
+    // var vibeId = this.$route.query.v;
+    // if (vibeId) {
+    //   var v = this.$store.getters.getVibeById(vibeId);
+    //   if (v) {
+    //     this.$store.commit("setSelectedVibe", v);
+    //     this.open();
+    //   } else {
+    //     console.log("vibe not found, id: " + vibeId);
+    //   }
+    // }
   },
   methods: {
     sendPic() {
@@ -271,6 +288,9 @@ export default {
     vibe() {
       return this.$store.state.selectedVibe;
     },
+    vibes() {
+      return this.$store.state.vibes;
+    },
     inVibe() {
       return this.$store.state.selectedVibe.id === this.$store.state.inVibe;
     },
@@ -288,8 +308,33 @@ export default {
     }
   },
   watch: {
+    $route(to, from) {
+      var vibeId = to.query.v;
+      if (vibeId) {
+        var vibe = this.$store.getters.getVibeById(vibeId);
+        if (vibe) {
+          this.$store.commit("setSelectedVibe", vibe);
+          this.open();
+        }
+      } else {
+        this.close();
+      }
+    },
     vibe(newVibe) {
       if (newVibe) this.time = timeAgo.format(this.vibe.createdAt);
+    },
+    vibes() {
+      var vibeId = this.$route.query.v;
+      if (vibeId) {
+        var vibe = this.$store.getters.getVibeById(vibeId);
+        if (vibe) {
+          this.$store.commit("setSelectedVibe", vibe);
+          this.open();
+        } else {
+          console.log("vibe is over or not found, id: " + vibeId);
+          this.close();
+        }
+      }
     }
   }
 };
@@ -605,6 +650,7 @@ export default {
 }
 
 .pictures {
+  box-sizing: border-box;
   width: 100%;
   height: 200px;
   overflow-x: scroll;
@@ -613,6 +659,7 @@ export default {
   background: black;
   padding-top: 10px;
   padding-bottom: 10px;
+  overflow-x: auto;
 }
 
 .users {
