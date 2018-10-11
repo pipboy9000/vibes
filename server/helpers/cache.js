@@ -239,7 +239,6 @@ function leaveVibe(user) {
 }
 
 function getVibes() {
-    debugger;
     return vibes;
 }
 
