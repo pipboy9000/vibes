@@ -169,6 +169,7 @@ function newPicture(picture, user) {
 
     var c = {
         imgUrl: picture.imgUrl,
+        thumbnailUrl: picture.thumbnailUrl,
         name: user.name,
         fbid: user.fbid,
         createdAt: Date.now(),
@@ -238,6 +239,7 @@ function leaveVibe(user) {
 }
 
 function getVibes() {
+    debugger;
     return vibes;
 }
 

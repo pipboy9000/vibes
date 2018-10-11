@@ -53,6 +53,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setSelectedVibe: (state, vibe) => {
+      debugger;
       state.selectedVibe = vibe;
     },
     setLocation: (state, location) => {
