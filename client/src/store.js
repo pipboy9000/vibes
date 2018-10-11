@@ -195,7 +195,6 @@ export default new Vuex.Store({
       }
 
       if (data.hasOwnProperty("pictures")) {
-        debugger;
         for (var vibeId in data.pictures) {
           context.commit("setPictures", {
             vibeId,
