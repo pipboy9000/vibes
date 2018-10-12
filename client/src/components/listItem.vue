@@ -46,7 +46,7 @@ export default {
         var vibeId = this.$route.query.v;
         if (vibeId) {
           this.$router.replace({ path: "", query: { v: vibeId } });
-          EventBus.$emit("vibeMarkerClicked", vibe);
+          EventBus.$emit("vibeMarkerClicked", this.vibe);
         } else {
           vibeId = this.vibe.id;
           this.$router.push({ path: "", query: { v: vibeId } });

@@ -1,6 +1,6 @@
 <template>
     <div class="main" v-if="vibe" :class="{open: isOpen, closed: !isOpen}">
-      <canvas id="img-canvas" style="display:none"></canvas>
+      <canvas id="img-canvas" width="200" height="150"></canvas>
       <div class="scrollBarDiv">
         <div class="bg">
           <div class="titleWrapper" ref="titleWrapper">
@@ -39,7 +39,10 @@
           </div> -->
           <div class="pictures" v-if="pictures.length">
             <gallery :images="pictures" :index="index" @close="index = null"></gallery>
-            <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.thumbnailUrl" @click="index = idx">        
+            <div v-for="(picture, idx) in vibe.pictures.reverse()" :key="idx" @click="index = idx">
+              <img class="gallery-img" :src="picture.thumbnailUrl" >
+              <pulse-loader class="spinner" :color="loaderColor" :loading="picture.uploading ? true : false"></pulse-loader>
+            </div>
           </div>
           <div class="users" v-if="vibe.users.length > 0">
             <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square'">
@@ -81,12 +84,14 @@ import comment from "./comment";
 import VueGallery from "vue-gallery";
 import Pica from 'pica';
 const pica = Pica();
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 export default {
   name: "VibeDetails",
   components: {
     comment,
-    gallery: VueGallery
+    gallery: VueGallery,
+    PulseLoader
   },
   data() {
     return {
@@ -98,7 +103,8 @@ export default {
       maxTitleHeight: 150,
       firebaseStorage: this.$root.firebaseStorage,
       firebase: this.$root.firebase,
-      index: null
+      index: null,
+      loaderColor: "#d5effd"
     };
   },
   // created() {
@@ -141,6 +147,7 @@ export default {
       //console.log(firebase.storage().ref());
       //firebase.storage().ref("pepo").putString("123");
       //console.log("after");
+      const base64JpegPrefix = "data:image/jpeg;base64,";
 
      function uploadBase64(imageData, firebaseChild) {
        return new Promise(resolve =>
@@ -187,13 +194,13 @@ export default {
        });
     }
 
-    function generateThumbnail(cordovaImageData, storageChildName) {
+    function generateThumbnail(cordovaImageData) {
       return new Promise(resolve => {
         var canvas = document.getElementById("img-canvas"); // TODO: I know there's a better way to do this
         var ctx = canvas.getContext("2d");
 
         var image = new Image();
-        image.src = "data:image/png;base64," + cordovaImageData;
+        image.src = base64JpegPrefix + cordovaImageData;
         image.onload = function() {
           ctx.drawImage(image, 0, 0);
           pica.resize(image, canvas)
@@ -205,10 +212,7 @@ export default {
             reader.readAsDataURL(blob); 
             reader.onloadend = function() {
               var imageData = reader.result.substr(reader.result.indexOf(',') + 1);
-              uploadBase64(
-                imageData, 
-                self.firebaseStorage.child(storageChildName).child("thumb"))
-                .then(resolve);
+              resolve(imageData);
             }
           });
         };
@@ -234,25 +238,36 @@ export default {
           //let base64Image = 'data:image/jpeg;base64,' + imageData;
           console.log("getPicture success callback");
 
-          var dateStr = new Date().getTime().toString();
 
-          var fullUploadPromise = uploadBase64(
-            cordovaImageData, 
-            self.firebaseStorage.child(dateStr).child("full"));
+          generateThumbnail(cordovaImageData).then(thumbnailImageData => {
+            var dateStr = new Date().getTime().toString();
+            var fullUploadPromise = uploadBase64(
+              cordovaImageData, 
+              self.firebaseStorage.child(dateStr).child("full"));
+
+            var thumbnailUploadPromise = uploadBase64(
+              thumbnailImageData, 
+              self.firebaseStorage.child(dateStr).child("thumb"));
             
-          var thumbnailUploadPromise = generateThumbnail(cordovaImageData, dateStr);
-            
-          Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(urls => {
-            var picture = {
-              vibeId: self.$store.state.selectedVibe.id,
-              imgUrl: urls[0],
-              thumbnailUrl: urls[1]
-            };
-            socket.newPicture({
-              token: self.$store.getters.token,
-              picture
+            var localPicture = {
+              vibeId: self.vibe.id,
+                imgUrl: base64JpegPrefix + cordovaImageData,
+                thumbnailUrl: base64JpegPrefix + thumbnailImageData,
+                uploading: true
+              };
+            self.vibe.pictures.push(localPicture);
+            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(urls => {
+              localPicture.uploading = false;
+              var picture = {
+                vibeId: self.vibe.id,
+                imgUrl: urls[0],
+                thumbnailUrl: urls[1]
+              };
+              socket.newPicture({
+                token: self.$store.getters.token,
+                picture
+              });
             });
-            self.vibe.pictures.push(picture);
           });
         },
         err => {
@@ -763,6 +778,14 @@ export default {
   font-size: 24px;
   line-height: 10px;
   text-align: center;
+}
+
+.spinner {
+  /* position: absolute; */
+}
+
+#img-canvas {
+  display: none;
 }
 
 hr {
