@@ -2,7 +2,7 @@
   <transition name="fade">
       <div class="overlay" @click="close" v-if="show">
           <div class="bg" @click="bgClicked">
-            <input class="search" type="text" v-model="query" placeholder="search">
+            <input class="search" type="text" v-model="query" placeholder="search" ref="search">
             <br>
             <div class="emoji" v-for="(emoji, idx) in filteredList" :key="idx" @click="pick(emoji.char)">
               {{emoji.char}}
@@ -39,6 +39,9 @@ export default {
     open(callback) {
       this.callback = callback;
       this.show = true;
+      this.$nextTick(function() {
+        this.$refs.search.focus();
+      });
     },
     bgClicked(e) {
       e.stopPropagation();

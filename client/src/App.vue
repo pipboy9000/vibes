@@ -17,6 +17,15 @@ export default {
     this.$root.cordova.on("deviceready", () => {
       location.init();
     });
+
+    //makes back button work if user opens the app with vibe id link
+    var vibeId = this.$route.query.v;
+    if (vibeId) {
+      this.$router.replace({ path: "", query: {} });
+      this.$router.push({ path: "", query: { v: vibeId } });
+    } else {
+      this.$router.replace({ path: "", query: {} }); //remove all other queries if exist
+    }
   }
 };
 </script>

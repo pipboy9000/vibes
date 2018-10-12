@@ -68,10 +68,10 @@
           <button>></button>
           <button @click="sendPic">+</button>
       </div>
-      <router-link tag="div" class="closeBtn" :to="''" replace>
+      <div class="closeBtn" @click="close">
           <div></div>
           <div></div>
-      </router-link>
+      </div>
     </div>    
 </template>
 
@@ -82,9 +82,9 @@ import { formatDistance } from "../services/maps.js";
 import socket from "../services/socket.js";
 import comment from "./comment";
 import VueGallery from "vue-gallery";
-import Pica from 'pica';
+import Pica from "pica";
 const pica = Pica();
-import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 
 export default {
   name: "VibeDetails",
@@ -121,27 +121,9 @@ export default {
         self.time = timeAgo.format(self.vibe.createdAt);
       }
     }, 10000);
-
-    EventBus.$on("listItemClicked", this.open);
-    EventBus.$on("vibeMarkerClicked", this.open);
-
     window.addEventListener("resize", this.resizeLayout);
-
-    //open vibe details if provided id in link
-    //doesn't work because vibes aren't loaded yet :()
-    // var vibeId = this.$route.query.v;
-    // if (vibeId) {
-    //   var v = this.$store.getters.getVibeById(vibeId);
-    //   if (v) {
-    //     this.$store.commit("setSelectedVibe", v);
-    //     this.open();
-    //   } else {
-    //     console.log("vibe not found, id: " + vibeId);
-    //   }
-    // }
   },
   methods: {
-    
     sendPic() {
       //console.log(firebase.storage());
       //console.log(firebase.storage().ref());
@@ -149,13 +131,11 @@ export default {
       //console.log("after");
       const base64JpegPrefix = "data:image/jpeg;base64,";
 
-     function uploadBase64(imageData, firebaseChild) {
-       return new Promise(resolve =>
-        {
+      function uploadBase64(imageData, firebaseChild) {
+        return new Promise(resolve => {
           //console.log("uploading imageData:" + imageData);
           try {
-            var uploadTask = firebaseChild
-              .putString(imageData, "base64");
+            var uploadTask = firebaseChild.putString(imageData, "base64");
 
             uploadTask.on(
               "state_changed",
@@ -189,43 +169,46 @@ export default {
               }
             );
           } catch (errr) {
-            console.error(errr)
+            console.error(errr);
           }
-       });
-    }
+        });
+      }
 
-    function generateThumbnail(cordovaImageData) {
-      return new Promise(resolve => {
-        var canvas = document.getElementById("img-canvas"); // TODO: I know there's a better way to do this
-        var ctx = canvas.getContext("2d");
+      function generateThumbnail(cordovaImageData) {
+        return new Promise(resolve => {
+          var canvas = document.getElementById("img-canvas"); // TODO: I know there's a better way to do this
+          var ctx = canvas.getContext("2d");
 
-        var image = new Image();
-        image.src = base64JpegPrefix + cordovaImageData;
-        image.onload = function() {
-          ctx.drawImage(image, 0, 0);
-          pica.resize(image, canvas)
-          .then(result => pica.toBlob(result, 'image/jpeg', 0.90))
-          .then(blob => {
-            console.log('resized to canvas & created blob!')
-            console.log(blob);
-            var reader = new FileReader();
-            reader.readAsDataURL(blob); 
-            reader.onloadend = function() {
-              var imageData = reader.result.substr(reader.result.indexOf(',') + 1);
-              resolve(imageData);
-            }
-          });
-        };
-      });
-    }
+          var image = new Image();
+          image.src = base64JpegPrefix + cordovaImageData;
+          image.onload = function() {
+            ctx.drawImage(image, 0, 0);
+            pica
+              .resize(image, canvas)
+              .then(result => pica.toBlob(result, "image/jpeg", 0.9))
+              .then(blob => {
+                console.log("resized to canvas & created blob!");
+                console.log(blob);
+                var reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onloadend = function() {
+                  var imageData = reader.result.substr(
+                    reader.result.indexOf(",") + 1
+                  );
+                  resolve(imageData);
+                };
+              });
+          };
+        });
+      }
 
-    console.log("setting camera options");
+      console.log("setting camera options");
       const options = {
         quality: 100,
         destinationType: this.camera.DestinationType.DATA_URL,
         encodingType: this.camera.EncodingType.JPEG,
         mediaType: this.camera.MediaType.PICTURE,
-        correctOrientation: true,
+        correctOrientation: true
         // targetWidth: 200,
         // targetHeight: 200
       };
@@ -238,36 +221,39 @@ export default {
           //let base64Image = 'data:image/jpeg;base64,' + imageData;
           console.log("getPicture success callback");
 
-
           generateThumbnail(cordovaImageData).then(thumbnailImageData => {
             var dateStr = new Date().getTime().toString();
             var fullUploadPromise = uploadBase64(
-              cordovaImageData, 
-              self.firebaseStorage.child(dateStr).child("full"));
+              cordovaImageData,
+              self.firebaseStorage.child(dateStr).child("full")
+            );
 
             var thumbnailUploadPromise = uploadBase64(
-              thumbnailImageData, 
-              self.firebaseStorage.child(dateStr).child("thumb"));
-            
+              thumbnailImageData,
+              self.firebaseStorage.child(dateStr).child("thumb")
+            );
+
             var localPicture = {
               vibeId: self.vibe.id,
-                imgUrl: base64JpegPrefix + cordovaImageData,
-                thumbnailUrl: base64JpegPrefix + thumbnailImageData,
-                uploading: true
-              };
+              imgUrl: base64JpegPrefix + cordovaImageData,
+              thumbnailUrl: base64JpegPrefix + thumbnailImageData,
+              uploading: true
+            };
             self.vibe.pictures.push(localPicture);
-            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(urls => {
-              localPicture.uploading = false;
-              var picture = {
-                vibeId: self.vibe.id,
-                imgUrl: urls[0],
-                thumbnailUrl: urls[1]
-              };
-              socket.newPicture({
-                token: self.$store.getters.token,
-                picture
-              });
-            });
+            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(
+              urls => {
+                localPicture.uploading = false;
+                var picture = {
+                  vibeId: self.vibe.id,
+                  imgUrl: urls[0],
+                  thumbnailUrl: urls[1]
+                };
+                socket.newPicture({
+                  token: self.$store.getters.token,
+                  picture
+                });
+              }
+            );
           });
         },
         err => {
@@ -311,7 +297,7 @@ export default {
       this.resizeLayout();
     },
     close() {
-      this.isOpen = false;
+      this.$router.go(-1);
     },
     sendNewComment() {
       var comment = {
@@ -372,15 +358,17 @@ export default {
           this.open();
         }
       } else {
-        this.close();
+        this.isOpen = false;
       }
     },
     vibe(newVibe) {
       if (newVibe) this.time = timeAgo.format(this.vibe.createdAt);
     },
     vibes() {
+      //in case user opens the app with link that has a vibe id we should open the vibe details window
+      //we know its first time if this.vibe === null (this.$store.state.selectedVibe)
       var vibeId = this.$route.query.v;
-      if (vibeId) {
+      if (vibeId && !this.vibe) {
         var vibe = this.$store.getters.getVibeById(vibeId);
         if (vibe) {
           this.$store.commit("setSelectedVibe", vibe);

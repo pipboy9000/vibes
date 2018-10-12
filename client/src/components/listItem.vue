@@ -42,15 +42,8 @@ export default {
   methods: {
     clicked() {
       {
-        // this.$store.commit("setSelectedVibe", this.vibe);
-        var vibeId = this.$route.query.v;
-        if (vibeId) {
-          this.$router.replace({ path: "", query: { v: vibeId } });
-          EventBus.$emit("vibeMarkerClicked", this.vibe);
-        } else {
-          vibeId = this.vibe.id;
-          this.$router.push({ path: "", query: { v: vibeId } });
-        }
+        //we only replace because we assume url already has list=true
+        this.$router.replace({ path: "", query: { v: this.vibe.id } });
         EventBus.$emit("listItemClicked", this.vibe);
       }
     }

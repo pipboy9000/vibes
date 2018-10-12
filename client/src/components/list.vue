@@ -8,11 +8,11 @@
         <div></div>
         <div></div>
       </div>
-      <div v-else class="openBtn" @click="open">
+      <router-link tag="div" v-else class="openBtn" :to="{path:'', query:{list:true}}">
         <div></div>
         <div></div>
         <div></div>
-      </div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -30,15 +30,12 @@ export default {
     };
   },
   components: { ListItem },
-  mounted() {
-    EventBus.$on("listItemClicked", this.close);
-  },
   methods: {
     open() {
       this.isOpen = true;
     },
     close() {
-      this.isOpen = false;
+      this.$router.go(-1);
       this.ready = true;
     }
   },
@@ -57,6 +54,13 @@ export default {
       } else if (newVibesCount === 0 && oldVibesCount > 0) {
         this.ready = false;
         this.close();
+      }
+    },
+    $route(to, from) {
+      if (this.$route.query.list) {
+        this.open();
+      } else {
+        this.isOpen = false;
       }
     }
   }
