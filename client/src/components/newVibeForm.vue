@@ -43,7 +43,7 @@ import plusIcon from "./plusIcon.vue";
 export default {
   name: "NewVibeForm",
   created() {
-    EventBus.$on("openNewVibeForm", this.open);
+    // EventBus.$on("openNewVibeForm", this.open);
   },
   data() {
     return {
@@ -75,7 +75,7 @@ export default {
       setTimeout(this.resizeTitle, 0);
     },
     close() {
-      this.show = false;
+      this.$router.go(-1);
     },
     bgClicked(e) {
       e.stopPropagation();
@@ -129,6 +129,16 @@ export default {
   computed: {
     getEmoji(idx) {
       return this.emojis[idx] ? this.emojis[idx].char : "+";
+    }
+  },
+  watch: {
+    $route(to, from) {
+      var q = this.$route.query;
+      if (q.new) {
+        this.open();
+      } else {
+        this.show = false;
+      }
     }
   }
 };

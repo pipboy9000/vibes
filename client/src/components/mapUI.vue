@@ -39,7 +39,9 @@ export default {
       EventBus.$emit("focus");
     },
     openNewVibeForm() {
-      EventBus.$emit("openNewVibeForm");
+      var q = this.$route.query;
+      this.$router.push({ query: { ...q, new: true } });
+      // EventBus.$emit("openNewVibeForm");
     }
   }
 };
