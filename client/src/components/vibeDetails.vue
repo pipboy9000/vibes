@@ -37,9 +37,9 @@
           <!-- <div class="pictures">
             <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.imgUrl">
           </div> -->
-          <div class="pictures" v-if="pictures.length">
-            <gallery :images="pictures" :index="index" @close="index = null"></gallery>
-            <div v-for="(picture, idx) in vibe.pictures.reverse()" :key="idx" @click="index = idx">
+          <div class="pictures" v-if="vibePictures.length">
+            <gallery :images="largePictures" :index="index" @close="index = null"></gallery>
+            <div v-for="(picture, idx) in vibePictures" :key="idx" @click="index = idx">
               <img class="gallery-img" :src="picture.thumbnailUrl" >
               <pulse-loader class="spinner" :color="loaderColor" :loading="picture.uploading ? true : false"></pulse-loader>
             </div>
@@ -331,8 +331,11 @@ export default {
     }
   },
   computed: {
-    pictures() {
-      return this.vibe.pictures.map(x => x.imgUrl);
+    largePictures() {
+      return this.vibePictures.map(x => x.imgUrl);
+    },
+    vibePictures() {
+      return this.vibe.pictures.reverse();
     },
     camera() {
       return this.$root.cordova.camera;
