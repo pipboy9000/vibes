@@ -35,7 +35,7 @@
             </div>
           </div>
           <div class="pictures">
-            <gallery :images="largePictures" :index="index" @close="index = null"></gallery>
+            <gallery :images="largePictures" :index="index" @close="closeImg"></gallery>
             <div class="sendPicButtonContainer">
               <button class="sendPicButton" @click="sendPic">+</button>
             </div>
@@ -43,7 +43,7 @@
               <img class="gallery-img" :src="picture.thumbnailUrl" >
               <pulse-loader class="spinner" :color="loaderColor" :loading="true"></pulse-loader>
             </div>
-            <div class="picture" v-for="(picture, idx) in vibePictures" :key="idx" @click="index = idx">
+            <div class="picture" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)">
               <img class="gallery-img" :src="picture.thumbnailUrl" >
             </div>
           </div>
@@ -127,6 +127,13 @@ export default {
     window.addEventListener("resize", this.resizeLayout);
   },
   methods: {
+    openImg(idx) {
+      var q = this.$route.query;
+      this.$router.push({ query: { ...q, img: idx } });
+    },
+    closeImg() {
+      if (+this.$route.query.img >= 0) this.$router.go(-1);
+    },
     sendPic() {
       //console.log(firebase.storage());
       //console.log(firebase.storage().ref());
@@ -136,7 +143,9 @@ export default {
       const base64JpegPrefix = "data:image/jpeg;base64,";
 
       function removePictureFromUploading(id) {
-        self.uploadingPictures = self.uploadingPictures.filter((pic) => pic.id !== id);
+        self.uploadingPictures = self.uploadingPictures.filter(
+          pic => pic.id !== id
+        );
       }
 
       function uploadBase64(imageData, firebaseChild) {
@@ -247,18 +256,20 @@ export default {
               thumbnailUrl: base64JpegPrefix + thumbnailImageData
             };
             self.uploadingPictures.push(localPicture);
-            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(urls => {
-              var picture = {
-                vibeId: self.vibe.id,
-                imgUrl: urls[0],
-                thumbnailUrl: urls[1]
-              };
-              socket.newPicture({
-                token: self.$store.getters.token,
-                picture
-              });
-              removePictureFromUploading(dateStr);
-            });
+            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(
+              urls => {
+                var picture = {
+                  vibeId: self.vibe.id,
+                  imgUrl: urls[0],
+                  thumbnailUrl: urls[1]
+                };
+                socket.newPicture({
+                  token: self.$store.getters.token,
+                  picture
+                });
+                removePictureFromUploading(dateStr);
+              }
+            );
           });
         },
         err => {
@@ -355,13 +366,18 @@ export default {
   },
   watch: {
     $route(to, from) {
-      debugger;
       var vibeId = to.query.v;
       if (vibeId) {
         var vibe = this.$store.getters.getVibeById(vibeId);
         if (vibe) {
           this.$store.commit("setSelectedVibe", vibe);
           this.open();
+          var imgIdx = to.query.img;
+          if (imgIdx >= 0) {
+            this.index = +imgIdx;
+          } else {
+            this.index = null;
+          }
         }
       } else {
         this.isOpen = false;
@@ -379,6 +395,11 @@ export default {
         if (vibe) {
           this.$store.commit("setSelectedVibe", vibe);
           this.open();
+          debugger;
+          var imgIdx = +this.$route.query.img;
+          if (imgIdx >= 0) {
+            this.index = imgIdx;
+          }
         }
       }
     }
@@ -696,7 +717,7 @@ export default {
 }
 
 .picture {
-  width:200px;
+  width: 200px;
   height: 150px;
 }
 
@@ -801,7 +822,6 @@ hr {
 }
 
 .sendPicButtonContainer {
-  
 }
 
 @media (max-width: 570px) {

@@ -20,9 +20,13 @@ export default {
 
     //makes back button work if user opens the app with vibe id link
     var vibeId = this.$route.query.v;
+    var imgIdx = this.$route.query.img;
     if (vibeId) {
       this.$router.replace({ path: "", query: {} });
       this.$router.push({ path: "", query: { v: vibeId } });
+      if (imgIdx != undefined && +imgIdx >= 0) {
+        this.$router.push({ path: "", query: { v: vibeId, img: imgIdx } });
+      }
     } else {
       this.$router.replace({ path: "", query: {} }); //remove all other queries if exist
     }
