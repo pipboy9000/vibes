@@ -34,14 +34,17 @@
                 <div class="emoji">{{vibe.emojis[2]}}</div>
             </div>
           </div>
-          <!-- <div class="pictures">
-            <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.imgUrl">
-          </div> -->
-          <div class="pictures" v-if="vibePictures.length">
+          <div class="pictures">
             <gallery :images="largePictures" :index="index" @close="index = null"></gallery>
-            <div v-for="(picture, idx) in vibePictures" :key="idx" @click="index = idx">
+            <div class="sendPicButtonContainer">
+              <button class="sendPicButton" @click="sendPic">+</button>
+            </div>
+            <div class="picture" v-for="(picture) in uploadingPictures" :key="picture.id">
               <img class="gallery-img" :src="picture.thumbnailUrl" >
-              <pulse-loader class="spinner" :color="loaderColor" :loading="picture.uploading ? true : false"></pulse-loader>
+              <pulse-loader class="spinner" :color="loaderColor" :loading="true"></pulse-loader>
+            </div>
+            <div class="picture" v-for="(picture, idx) in vibePictures" :key="idx" @click="index = idx">
+              <img class="gallery-img" :src="picture.thumbnailUrl" >
             </div>
           </div>
           <div class="users" v-if="vibe.users.length > 0">
@@ -66,7 +69,6 @@
       <div class="newComment">
           <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
           <button>></button>
-          <button @click="sendPic">+</button>
       </div>
       <div class="closeBtn" @click="close">
           <div></div>
@@ -104,7 +106,8 @@ export default {
       firebaseStorage: this.$root.firebaseStorage,
       firebase: this.$root.firebase,
       index: null,
-      loaderColor: "#d5effd"
+      loaderColor: "#d5effd",
+      uploadingPictures: []
     };
   },
   // created() {
@@ -129,7 +132,12 @@ export default {
       //console.log(firebase.storage().ref());
       //firebase.storage().ref("pepo").putString("123");
       //console.log("after");
+      var self = this;
       const base64JpegPrefix = "data:image/jpeg;base64,";
+
+      function removePictureFromUploading(id) {
+        self.uploadingPictures = self.uploadingPictures.filter((pic) => pic.id !== id);
+      }
 
       function uploadBase64(imageData, firebaseChild) {
         return new Promise(resolve => {
@@ -213,7 +221,6 @@ export default {
         // targetHeight: 200
       };
 
-      var self = this;
       this.camera.getPicture(
         cordovaImageData => {
           // imageData is either a base64 encoded string or a file URI
@@ -234,26 +241,24 @@ export default {
             );
 
             var localPicture = {
+              id: dateStr,
               vibeId: self.vibe.id,
               imgUrl: base64JpegPrefix + cordovaImageData,
-              thumbnailUrl: base64JpegPrefix + thumbnailImageData,
-              uploading: true
+              thumbnailUrl: base64JpegPrefix + thumbnailImageData
             };
-            self.vibe.pictures.push(localPicture);
-            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(
-              urls => {
-                localPicture.uploading = false;
-                var picture = {
-                  vibeId: self.vibe.id,
-                  imgUrl: urls[0],
-                  thumbnailUrl: urls[1]
-                };
-                socket.newPicture({
-                  token: self.$store.getters.token,
-                  picture
-                });
-              }
-            );
+            self.uploadingPictures.push(localPicture);
+            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(urls => {
+              var picture = {
+                vibeId: self.vibe.id,
+                imgUrl: urls[0],
+                thumbnailUrl: urls[1]
+              };
+              socket.newPicture({
+                token: self.$store.getters.token,
+                picture
+              });
+              removePictureFromUploading(dateStr);
+            });
           });
         },
         err => {
@@ -690,6 +695,11 @@ export default {
   border-radius: 70px;
 }
 
+.picture {
+  width:200px;
+  height: 150px;
+}
+
 .pictures {
   box-sizing: border-box;
   width: 100%;
@@ -782,6 +792,16 @@ hr {
   height: 1px;
   background-image: linear-gradient(to right, #e4e4e410, #e4e4e4, #e4e4e410);
   width: 95%;
+}
+
+.sendPicButton {
+  width: 200px;
+  height: 150px;
+  font-size: 100px;
+}
+
+.sendPicButtonContainer {
+  
 }
 
 @media (max-width: 570px) {
