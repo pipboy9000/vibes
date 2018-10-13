@@ -395,10 +395,13 @@ export default {
         if (vibe) {
           this.$store.commit("setSelectedVibe", vibe);
           this.open();
-          debugger;
-          var imgIdx = +this.$route.query.img;
+          let imgIdx = +this.$route.query.img;
           if (imgIdx >= 0) {
-            this.index = imgIdx;
+            this.index = null;
+            var self = this;
+            this.$nextTick(function() {
+              self.index = imgIdx;
+            });
           }
         }
       }
