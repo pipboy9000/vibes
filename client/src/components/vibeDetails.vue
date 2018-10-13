@@ -34,14 +34,14 @@
                 <div class="emoji">{{vibe.emojis[2]}}</div>
             </div>
           </div>
-          <!-- <div class="pictures">
-            <img v-for="(picture, idx) in vibe.pictures" :key="idx" :src="picture.imgUrl">
-          </div> -->
-          <div class="pictures" v-if="vibePictures.length">
+          <div class="pictures">
             <gallery :images="largePictures" :index="index" @close="index = null"></gallery>
+            <div v-for="(picture) in uploadingPictures" :key="picture.id">
+              <img class="gallery-img" :src="picture.thumbnailUrl" >
+              <pulse-loader class="spinner" :color="loaderColor" :loading="true"></pulse-loader>
+            </div>
             <div v-for="(picture, idx) in vibePictures" :key="idx" @click="index = idx">
               <img class="gallery-img" :src="picture.thumbnailUrl" >
-              <pulse-loader class="spinner" :color="loaderColor" :loading="picture.uploading ? true : false"></pulse-loader>
             </div>
           </div>
           <div class="users" v-if="vibe.users.length > 0">
@@ -104,7 +104,8 @@ export default {
       firebaseStorage: this.$root.firebaseStorage,
       firebase: this.$root.firebase,
       index: null,
-      loaderColor: "#d5effd"
+      loaderColor: "#d5effd",
+      uploadingPictures: []
     };
   },
   // created() {
@@ -129,7 +130,12 @@ export default {
       //console.log(firebase.storage().ref());
       //firebase.storage().ref("pepo").putString("123");
       //console.log("after");
+      var self = this;
       const base64JpegPrefix = "data:image/jpeg;base64,";
+
+      function removePictureFromUploading(id) {
+        self.uploadingPictures = self.uploadingPictures.filter((pic) => pic.id !== id);
+      }
 
       function uploadBase64(imageData, firebaseChild) {
         return new Promise(resolve => {
@@ -213,7 +219,6 @@ export default {
         // targetHeight: 200
       };
 
-      var self = this;
       this.camera.getPicture(
         cordovaImageData => {
           // imageData is either a base64 encoded string or a file URI
@@ -234,26 +239,24 @@ export default {
             );
 
             var localPicture = {
+              id: dateStr,
               vibeId: self.vibe.id,
               imgUrl: base64JpegPrefix + cordovaImageData,
-              thumbnailUrl: base64JpegPrefix + thumbnailImageData,
-              uploading: true
+              thumbnailUrl: base64JpegPrefix + thumbnailImageData
             };
-            self.vibe.pictures.push(localPicture);
-            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(
-              urls => {
-                localPicture.uploading = false;
-                var picture = {
-                  vibeId: self.vibe.id,
-                  imgUrl: urls[0],
-                  thumbnailUrl: urls[1]
-                };
-                socket.newPicture({
-                  token: self.$store.getters.token,
-                  picture
-                });
-              }
-            );
+            self.uploadingPictures.push(localPicture);
+            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(urls => {
+              var picture = {
+                vibeId: self.vibe.id,
+                imgUrl: urls[0],
+                thumbnailUrl: urls[1]
+              };
+              socket.newPicture({
+                token: self.$store.getters.token,
+                picture
+              });
+              removePictureFromUploading(dateStr);
+            });
           });
         },
         err => {
