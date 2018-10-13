@@ -350,6 +350,7 @@ export default {
   },
   watch: {
     $route(to, from) {
+      debugger;
       var vibeId = to.query.v;
       if (vibeId) {
         var vibe = this.$store.getters.getVibeById(vibeId);
@@ -373,9 +374,6 @@ export default {
         if (vibe) {
           this.$store.commit("setSelectedVibe", vibe);
           this.open();
-        } else {
-          console.log("vibe is over or not found, id: " + vibeId);
-          this.close();
         }
       }
     }
