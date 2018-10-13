@@ -36,11 +36,14 @@
           </div>
           <div class="pictures">
             <gallery :images="largePictures" :index="index" @close="index = null"></gallery>
-            <div v-for="(picture) in uploadingPictures" :key="picture.id">
+            <div class="sendPicButtonContainer">
+              <button class="sendPicButton" @click="sendPic">+</button>
+            </div>
+            <div class="picture" v-for="(picture) in uploadingPictures" :key="picture.id">
               <img class="gallery-img" :src="picture.thumbnailUrl" >
               <pulse-loader class="spinner" :color="loaderColor" :loading="true"></pulse-loader>
             </div>
-            <div v-for="(picture, idx) in vibePictures" :key="idx" @click="index = idx">
+            <div class="picture" v-for="(picture, idx) in vibePictures" :key="idx" @click="index = idx">
               <img class="gallery-img" :src="picture.thumbnailUrl" >
             </div>
           </div>
@@ -66,7 +69,6 @@
       <div class="newComment">
           <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
           <button>></button>
-          <button @click="sendPic">+</button>
       </div>
       <div class="closeBtn" @click="close">
           <div></div>
@@ -695,6 +697,11 @@ export default {
   border-radius: 70px;
 }
 
+.picture {
+  width:200px;
+  height: 150px;
+}
+
 .pictures {
   box-sizing: border-box;
   width: 100%;
@@ -787,6 +794,16 @@ hr {
   height: 1px;
   background-image: linear-gradient(to right, #e4e4e410, #e4e4e4, #e4e4e410);
   width: 95%;
+}
+
+.sendPicButton {
+  width: 200px;
+  height: 150px;
+  font-size: 100px;
+}
+
+.sendPicButtonContainer {
+  
 }
 
 @media (max-width: 570px) {
