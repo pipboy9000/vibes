@@ -35,7 +35,7 @@
             </div>
           </div>
           <div class="pictures">
-            <gallery :images="largePictures" :index="index" @close="closeImg"></gallery>
+            <gallery :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
             <div class="sendPicButtonContainer">
               <button class="sendPicButton" @click="sendPic">+</button>
             </div>
@@ -107,7 +107,8 @@ export default {
       firebase: this.$root.firebase,
       index: null,
       loaderColor: "#d5effd",
-      uploadingPictures: []
+      uploadingPictures: [],
+      slide: false //check if link change was from a slide
     };
   },
   // created() {
@@ -133,6 +134,13 @@ export default {
     },
     closeImg() {
       if (+this.$route.query.img >= 0) this.$router.go(-1);
+    },
+    slideEnd(e) {
+      var q = this.$route.query;
+      if (q.img != e.index && q.img >= 0) {
+        this.slide = true;
+        this.$router.replace({ query: { ...q, img: e.index } });
+      }
     },
     sendPic() {
       //console.log(firebase.storage());
@@ -366,6 +374,10 @@ export default {
   },
   watch: {
     $route(to, from) {
+      if (this.slide) {
+        this.slide = false;
+        return;
+      }
       var vibeId = to.query.v;
       if (vibeId) {
         var vibe = this.$store.getters.getVibeById(vibeId);
