@@ -89,6 +89,12 @@ export default {
       });
     }
   },
+  created() {
+    debugger;
+    if (process.env.NODE_ENV == "production") {
+      this.appId = "1033690713453013";
+    }
+  },
   mounted() {
     this.isWorking = true;
     console.log("waiting for device ready");
