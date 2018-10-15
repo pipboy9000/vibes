@@ -33,6 +33,7 @@ export default {
   methods: {
     open() {
       this.isOpen = true;
+      this.ready = true;
     },
     close() {
       this.$router.go(-1);
@@ -128,16 +129,16 @@ export default {
 
 .openBtn {
   border-radius: 50px;
-  border: 4px white solid;
+  border: 3px white solid;
   width: 65px;
   height: 65px;
-  background: #22dbe3;
+  background: #5dc8ff;
   float: left;
   color: white;
   display: inline-flex;
   flex-direction: column;
   justify-content: space-evenly;
-  padding: 12px;
+  padding: 10px;
   box-sizing: border-box;
   margin-left: 15px;
   box-shadow: 0px 6px 6px -1px #00000030;
@@ -145,17 +146,17 @@ export default {
 
 .openBtn > div {
   width: 100%;
-  height: 6px;
+  height: 5px;
   background: white;
   border-radius: 10px;
 }
 
 .closeBtn {
   border-radius: 50px;
-  border: 4px white solid;
+  border: 3px white solid;
   width: 65px;
   height: 65px;
-  background: #22dbe3a8;
+  background: #5dc8ff;
   float: left;
   color: white;
   display: inline-flex;
@@ -214,9 +215,9 @@ export default {
 
 @media (max-width: 650px) {
   .list {
-    width: 100%;
+    width: 120vw;
     padding: 0;
-    transform: translateX(-80%);
+    transform: translateX(100vw);
   }
   .wrapper {
     margin: 0;
@@ -224,13 +225,8 @@ export default {
     box-shadow: -18px 10px 56px;
   }
 
-  .items {
-    width: 80%;
-    max-height: 100vh;
-  }
-
   .btn {
-    width: 20%;
+    width: 20vw;
     margin-top: 15px;
   }
 
@@ -256,7 +252,7 @@ export default {
     animation: closeAnim;
     animation-duration: 0.25s;
     animation-timing-function: ease-out;
-    transform: translateX(-80%);
+    transform: translateX(-100vw);
   }
 
   .open {
@@ -267,8 +263,16 @@ export default {
   }
 
   .items {
-    width: 80%;
-    padding-bottom: 15px;
+    width: 100vw;
+    max-height: 100vh;
+    padding-right: 0;
+    padding-bottom: 0;
+  }
+
+  .items::-webkit-scrollbar-track {
+    background: #fff;
+    border: 0px none #ffffff;
+    border-radius: 0px;
   }
 
   .items > .bg:last-child {

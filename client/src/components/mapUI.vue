@@ -65,8 +65,8 @@ export default {
 .focusBtn {
   width: 50px;
   height: 50px;
-  background: #22dbe3;
-  border: 4px solid white;
+  background: #5dc8ff;
+  border: 3px solid white;
   border-radius: 60px;
   display: flex;
   align-items: center;
@@ -87,8 +87,8 @@ hr {
   width: 50px;
   height: 100px;
   margin-top: 5px;
-  background: #22dbe3;
-  border: 4px solid white;
+  background: #5dc8ff;
+  border: 3px solid white;
   border-radius: 60px;
   display: flex;
   flex-direction: column;
@@ -120,8 +120,8 @@ hr {
   position: absolute;
   width: 80px;
   height: 80px;
-  background-color: #22dbe3;
-  border: 5px solid white;
+  background-color: #5dc8ff;
+  border: 3px solid white;
   left: 50%;
   -webkit-transform: translateX (-50%);
   transform: translateX(-50%);
@@ -135,6 +135,16 @@ hr {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 620px) {
+  .sideBtns {
+    margin: 15px;
+  }
+
+  .newVibeBtn {
+    bottom: 35px;
+  }
 }
 
 @media (max-width: 316px) {
