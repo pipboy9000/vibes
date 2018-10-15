@@ -12,12 +12,10 @@ import store from "../store";
 //prod
 console.log("env: " + process.env.NODE_ENV)
 console.log("process.env.SOCKET_ADDRESS: " + process.env.SOCKET_ADDRESS)
-debugger;
 if (process.env.NODE_ENV == 'production') {
   var io = socketio.connect();
 } else {
-  // var io = socketio.connect(process.env.SOCKET_ADDRESS);
-  var io = socketio.connect("172.16.0.232:8080");
+  var io = socketio.connect(process.env.SOCKET_ADDRESS);
 }
 
 //from server
