@@ -163,7 +163,7 @@ export default {
   justify-content: space-evenly;
   padding: 10px;
   box-sizing: border-box;
-  margin-left: 5px;
+  margin-left: 10px;
   align-items: center;
   box-shadow: 0px 6px 6px -1px #00000030;
 }
