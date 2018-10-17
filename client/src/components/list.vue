@@ -1,5 +1,11 @@
 <template>
   <div class="list" v-if="hasVibes" :class="{open :isOpen, closed: !isOpen && ready}">
+    <div class="topBar" v-if="isMobile">
+      <div class="closeBtn" @click="close">
+        <div></div>
+        <div></div>
+      </div>
+    </div>
     <div class="items">
       <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
     </div>
@@ -26,12 +32,14 @@ export default {
   data() {
     return {
       isOpen: false,
-      ready: false //used to fix animations
+      ready: false, //used to fix animations
+      isMobile: false
     };
   },
   components: { ListItem },
   methods: {
     open() {
+      this.isMobile = window.innerWidth < 650 ? true : false;
       this.isOpen = true;
       this.ready = true;
     },
@@ -75,6 +83,17 @@ export default {
   position: absolute;
   float: left;
   left: 0px;
+}
+
+.topBar {
+  width: 100vw;
+  height: 80px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: white;
+  border-bottom: 2px #dfdfdf solid;
 }
 
 .items {
@@ -166,7 +185,7 @@ export default {
   box-sizing: border-box;
   margin-left: 10px;
   align-items: center;
-  box-shadow: 0px 6px 6px -1px #00000030;
+  box-shadow: 0px 2px 6px -1px #00000030;
 }
 
 .closeBtn > div {
@@ -230,6 +249,10 @@ export default {
     margin-top: 15px;
   }
 
+  .closeBtn {
+    margin-right: 10px;
+  }
+
   @keyframes openAnim {
     from {
       transform: translateX(-80%);
@@ -264,15 +287,20 @@ export default {
 
   .items {
     width: 100vw;
-    max-height: 100vh;
     padding-right: 0;
-    padding-bottom: 0;
+    padding-bottom: 10px;
+    max-height: 480px;
+    margin-top: 80px;
   }
 
   .items::-webkit-scrollbar-track {
-    background: #fff;
+    background: #5dc8ff;
     border: 0px none #ffffff;
     border-radius: 0px;
+  }
+
+  .items::-webkit-scrollbar-thumb {
+    background: #ffffffd9;
   }
 
   .items > .bg:last-child {

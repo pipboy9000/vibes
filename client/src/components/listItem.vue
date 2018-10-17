@@ -144,6 +144,8 @@ export default {
   }
 
   .title {
+    margin-top: 6px;
+    height: 55px;
     font-size: 25px;
     margin-left: 15px;
   }
