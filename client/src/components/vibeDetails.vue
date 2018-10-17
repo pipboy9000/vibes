@@ -263,7 +263,7 @@ export default {
               imgUrl: base64JpegPrefix + cordovaImageData,
               thumbnailUrl: base64JpegPrefix + thumbnailImageData
             };
-            self.uploadingPictures.push(localPicture);
+            self.uploadingPictures.unshift(localPicture);
             Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(
               urls => {
                 var picture = {
@@ -837,6 +837,7 @@ hr {
 }
 
 .sendPicButtonContainer {
+  
 }
 
 @media (max-width: 570px) {
