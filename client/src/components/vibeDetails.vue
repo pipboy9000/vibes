@@ -36,7 +36,7 @@
           </div>
           <div class="pictures">
             <gallery :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
-            <div class="sendPicButtonContainer">
+            <div v-if="inVibe" class="sendPicButtonContainer">
               <button class="sendPicButton" @click="sendPic">+</button>
             </div>
             <div class="picture" v-for="(picture) in uploadingPictures" :key="picture.id">
@@ -66,7 +66,7 @@
           </div>
         </div>
       </div>
-      <div class="newComment">
+      <div v-if="inVibe" class="newComment">
           <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
           <button>></button>
       </div>
