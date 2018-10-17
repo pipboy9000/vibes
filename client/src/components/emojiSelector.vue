@@ -34,14 +34,12 @@ export default {
       this.close();
     },
     close() {
-      this.show = false;
+      this.$router.go(-1);
     },
     open(callback) {
       this.callback = callback;
-      this.show = true;
-      this.$nextTick(function() {
-        this.$refs.search.focus();
-      });
+      var q = this.$route.query;
+      this.$router.push({ query: { ...q, emoji: true } });
     },
     bgClicked(e) {
       e.stopPropagation();
@@ -49,18 +47,33 @@ export default {
   },
   computed: {
     filteredList() {
-      if (!this.query) return emojisList.slice(0, 30);
+      var maxIcons = window.innerWidth > 510 ? 30 : 24;
+      if (!this.query) return emojisList.slice(0, maxIcons);
 
-      var q = this.query.split(" ");
+      var q = this.query.toLowerCase().split(" ");
       var flist = emojisList.filter(emoji => {
         for (var i = 0; i < q.length; i++) {
           if (emoji.keywords.indexOf(q[i]) === -1) {
-            return false;
+            return;
+            false;
           }
         }
         return true;
       });
-      return flist.slice(0, 30);
+      return flist.slice(0, maxIcons);
+    }
+  },
+  watch: {
+    $route(to, from) {
+      var q = this.$route.query;
+      if (q.emoji) {
+        this.show = true;
+        this.$nextTick(function() {
+          this.$refs.search.focus();
+        });
+      } else {
+        this.show = false;
+      }
     }
   }
 };
@@ -113,11 +126,17 @@ export default {
 
 @media (max-width: 510px) {
   .bg {
-    padding: 15px 2px 2px 2px;
+    padding: 15px 0px 0px 0px;
+    height: 285px;
+    margin-top: 4vw;
+  }
+
+  .overlay {
+    align-items: start;
   }
 
   .emoji {
-    padding: 2px;
+    padding: 4px;
   }
 }
 </style>

@@ -9,7 +9,8 @@
                        class="title input" 
                        placeholder="Title" 
                        v-model="title" 
-                       @input="resizeTitle" 
+                       @input="resizeTitle"
+                       @change="resizeTitle" 
                        @paste="onPaste" 
                        @keydown="resizeTitle" 
                        maxlength="35">
@@ -59,6 +60,9 @@ export default {
   },
   mounted() {
     window.addEventListener("resize", this.resizeTitle);
+    if (window.innerWidth <= 510) {
+      this.titlePxSizeBase = 35;
+    }
   },
   methods: {
     onPaste() {
@@ -69,7 +73,11 @@ export default {
       if (!this.titleWidth) {
         this.$nextTick(function() {
           this.titleWidth = this.$refs.titleBg.clientWidth - 30;
-          this.$refs.titleInput.focus();
+          this.$refs.titleInput.select();
+        });
+      } else {
+        this.$nextTick(function() {
+          this.$refs.titleInput.select();
         });
       }
       setTimeout(this.resizeTitle, 0);
@@ -81,6 +89,11 @@ export default {
       e.stopPropagation();
     },
     resizeTitle(e) {
+      if (window.innerWidth <= 510) {
+        this.titlePxSizeBase = 35;
+      } else {
+        this.titlePxSizeBase = 65;
+      }
       if (!this.show) return;
 
       var stroke = this.$refs.titleStroke;
@@ -257,21 +270,6 @@ export default {
   font-size: 90px;
 }
 
-/* .description {
-  width: 88%;
-  height: 180px;
-  resize: none;
-  text-align: center;
-  font-family: unset;
-  font-size: 22px;
-  border: none;
-  background: hsla(196, 0%, 91%, 1);
-  border-radius: 5px;
-  outline: none;
-  color: #62caff;
-  padding: 10px;
-} */
-
 .description::placeholder {
   color: #d0d0d0;
 }
@@ -300,26 +298,31 @@ export default {
 
 @media (max-width: 510px) {
   .addTagBtn {
-    width: 75px;
-    height: 75px;
-    min-width: 75px;
-    min-height: 75px;
+    width: 65px;
+    height: 65px;
+    min-width: 65px;
+    min-height: 65px;
+    border: 3px solid #ababab;
   }
 
   .titleBg {
+    height: 55px;
     margin: 12px;
   }
 
   .tagsWrapper {
-    height: 90px;
-    width: 83%;
+    height: 67px;
+    width: 85%;
+    margin-top: 0px;
   }
 
   .bg {
+    margin-top: 4vw;
     margin-bottom: 0px;
-    width: 100%;
-    min-width: 100%;
-    border-radius: 0px;
+    width: 85%;
+    min-width: 350px;
+    border-radius: 15px;
+    padding-bottom: 22px;
   }
 
   .emoji {
@@ -327,11 +330,16 @@ export default {
   }
 
   .overlay {
-    display: block;
+    align-items: flex-start;
+    /* display: block; */
   }
 
   .startBtn {
     width: 75%;
+    height: 40px;
+    font-size: 23px;
+    line-height: 43px;
+    max-width: 150px;
   }
 }
 </style>

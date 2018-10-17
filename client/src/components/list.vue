@@ -217,7 +217,7 @@ export default {
   .list {
     width: 120vw;
     padding: 0;
-    transform: translateX(100vw);
+    transform: translateX(-100vw);
   }
   .wrapper {
     margin: 0;
@@ -276,7 +276,7 @@ export default {
   }
 
   .items > .bg:last-child {
-    border-radius: 0px 0px 10px 0px;
+    border-radius: 0px 0px 00px 0px;
   }
 }
 
@@ -286,8 +286,8 @@ export default {
     height: 57px;
   }
 
-  .items {
-    padding-right: 8px;
+  .items > .bg:last-child {
+    border-radius: 0px 0px 0px 0px;
   }
 }
 </style>
