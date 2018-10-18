@@ -358,7 +358,9 @@ export default {
   computed: {
     useHtmlCamera() {
       function isAndroidOrIos() {
-        return navigator.userAgent.indexOf("Android") != -1 || navigator.userAgent.indexOf("iOS") != -1
+        return navigator.userAgent.indexOf("Android") != -1 || 
+        navigator.userAgent.indexOf("iPhone") != -1 ||
+        navigator.userAgent.indexOf("iPad") != -1 
       }
       return (isAndroidOrIos() && device.platform === "browser");
     },
