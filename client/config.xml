@@ -38,6 +38,7 @@
         <variable name="FACEBOOK_ANDROID_SDK_VERSION" value="4.+" />
     </plugin>
     <plugin name="cordova-plugin-camera" spec="^4.0.3" />
+    <plugin name="cordova-plugin-device" spec="^2.0.2" />
     <engine name="browser" spec="^5.0.4" />
     <engine name="android" spec="^7.0.0" />
     <engine name="ios" spec="^4.5.5" />
