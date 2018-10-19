@@ -634,7 +634,7 @@ export default {
 }
 
 .titleWrapper {
-  padding-top: 25px;
+  padding-top: 37px;
   padding-bottom: 25px;
   overflow: initial;
   line-height: normal;
@@ -653,32 +653,34 @@ export default {
   background: #d5effd;
   min-height: 55px;
   height: 65%;
-  width: 95%;
-  border-radius: 0 8px 8px 0;
+  width: 100%;
+  margin-left: 20px;
+  margin-right: 20px;
+  border-radius: 8px 8px 8px 8px;
 }
 
 .title {
   line-height: 1.1;
-  padding-left: 20px;
-  padding-right: 20px;
-  text-align: left;
-  font-size: 60px;
   font-family: "Pacifico", cursive, sans-serif;
   color: white;
   position: absolute;
   transform: translateY(-10px);
-  /* text-overflow: ellipsis; */
+  width: 100%;
+  font-size: 40px;
+  text-align: center;
+  padding: 0;
 }
 
 .titleStroke {
   line-height: 1.1;
-  padding-left: 20px;
-  padding-right: 20px;
-  text-align: left;
-  font-size: 60px;
   font-family: "Pacifico", cursive, sans-serif;
   color: white;
   position: absolute;
+  transform: translateY(-10px);
+  width: 100%;
+  font-size: 40px;
+  text-align: center;
+  padding: 0;
   -webkit-text-stroke-width: 5px;
   -webkit-text-stroke-color: #3fb7f5;
   transform: translateY(-10px);
@@ -690,10 +692,6 @@ export default {
   justify-content: space-around;
   width: 100%;
   padding-bottom: 10px;
-}
-
-.joinLeave {
-  margin-left: 20px;
 }
 
 .join,
@@ -943,12 +941,6 @@ hr {
 
   .closeBtn {
     margin-right: 15px;
-  }
-
-  .title,
-  .titleStroke,
-  .titleBg {
-    margin-right: 95px;
   }
 
   .newComment {
