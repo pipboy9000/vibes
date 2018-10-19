@@ -524,7 +524,7 @@ export default {
   border: 4px white solid;
   width: 65px;
   height: 65px;
-  background: #22dbe3a8;
+  background: #5dc8ff;
   float: left;
   color: white;
   display: inline-flex;

@@ -1,6 +1,8 @@
 <template>
   <div class="list" v-if="hasVibes" :class="{open :isOpen, closed: !isOpen && ready}">
     <div class="topBar" v-if="isMobile">
+      <!-- <div class="logo"></div> -->
+      <Logo class="logo" :size="40"></Logo>
       <div class="closeBtn" @click="close">
         <div></div>
         <div></div>
@@ -25,6 +27,7 @@
 
 <script>
 import ListItem from "./listItem";
+import Logo from "./logo";
 import { EventBus } from "../event-bus";
 
 export default {
@@ -36,7 +39,7 @@ export default {
       isMobile: false
     };
   },
-  components: { ListItem },
+  components: { ListItem, Logo },
   methods: {
     open() {
       this.isMobile = window.innerWidth < 650 ? true : false;
@@ -91,9 +94,14 @@ export default {
   position: absolute;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  /* justify-content: flex-end; */
   background: white;
-  border-bottom: 2px #dfdfdf solid;
+  border-bottom: 1px #dfdfdf solid;
+}
+
+.logo {
+  margin-left: 15px;
 }
 
 .items {
@@ -250,7 +258,16 @@ export default {
   }
 
   .closeBtn {
-    margin-right: 10px;
+    margin-right: 20px;
+    background: #ffffff;
+    border: 4px #5dc8ff solid;
+    width: 50px;
+    height: 50px;
+    box-shadow: unset;
+  }
+
+  .closeBtn > div {
+    background: #5dc8ff;
   }
 
   @keyframes openAnim {
@@ -288,9 +305,10 @@ export default {
   .items {
     width: 100vw;
     padding-right: 0;
-    padding-bottom: 10px;
     max-height: 480px;
     margin-top: 80px;
+    box-shadow: -20px 10px 43px -10px;
+    overflow-y: auto;
   }
 
   .items::-webkit-scrollbar-track {
