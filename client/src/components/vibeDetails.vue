@@ -34,22 +34,6 @@
                 <div class="emoji">{{vibe.emojis[2]}}</div>
             </div>
           </div>
-          <div class="pictures">
-            <gallery :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
-            <div class="sendPicButtonContainer">
-              <button class="sendPicButton" @click="sendPic">+</button>
-            </div>
-            <div class="picture" v-for="(picture) in uploadingPictures" :key="picture.id">
-              <img class="gallery-img" :src="picture.thumbnailUrl" >
-              <pulse-loader class="spinner" :color="loaderColor" :loading="true"></pulse-loader>
-            </div>
-            <div class="picture" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)">
-              <img class="gallery-img" :src="picture.thumbnailUrl" >
-            </div>
-          </div>
-          <div class="users" v-if="vibe.users.length > 0">
-            <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square'">
-          </div>
           <div class="info">
             <img class="creatorPic" :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=square'">
             <div class="details">
@@ -60,13 +44,32 @@
               </div>
             </div>
           </div>
+          <div class="users" v-if="vibe.users.length > 0">
+            <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square'">
+          </div>
+          <div class="pictures">
+            <gallery :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
+            <div v-if="inVibe" class="sendPicButtonContainer">
+              <label v-if="useHtmlCamera" class="cameraButton">Take a picture
+                <input type="file" accept="image/*" capture @change="fileLoaded">
+              </label>
+              <button v-if="!useHtmlCamera" class="cameraButton" @click="sendPic">Take a picture</button>
+            </div>
+            <div class="picture" v-for="(picture) in uploadingPictures" :key="picture.id">
+              <img class="gallery-img" :src="picture.thumbnailUrl" >
+              <pulse-loader class="spinner" :color="loaderColor" :loading="true"></pulse-loader>
+            </div>
+            <div class="picture" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)">
+              <img class="gallery-img" :src="picture.thumbnailUrl" >
+            </div>
+          </div>
           <hr>
           <div class="comments">
             <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
           </div>
         </div>
       </div>
-      <div class="newComment">
+      <div v-if="inVibe" class="newComment">
           <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
           <button>></button>
       </div>
@@ -142,14 +145,26 @@ export default {
         this.$router.replace({ query: { ...q, img: e.index } });
       }
     },
-    sendPic() {
-      //console.log(firebase.storage());
-      //console.log(firebase.storage().ref());
-      //firebase.storage().ref("pepo").putString("123");
-      //console.log("after");
+    removeBase64Prefix(base64Str) {
+      return base64Str.substr(base64Str.indexOf(",") + 1);
+    },
+    fileLoaded(e) {
+        var self = this;
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length)
+          return;
+        if (files && files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            self.uploadPicture(self.removeBase64Prefix(e.target.result));
+          }
+          reader.readAsDataURL(files[0]);
+        }
+    },
+    uploadPicture(cordovaImageData){
       var self = this;
       const base64JpegPrefix = "data:image/jpeg;base64,";
-
+      
       function removePictureFromUploading(id) {
         self.uploadingPictures = self.uploadingPictures.filter(
           pic => pic.id !== id
@@ -217,9 +232,7 @@ export default {
                 var reader = new FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = function() {
-                  var imageData = reader.result.substr(
-                    reader.result.indexOf(",") + 1
-                  );
+                  var imageData = self.removeBase64Prefix(reader.result);
                   resolve(imageData);
                 };
               });
@@ -227,6 +240,48 @@ export default {
         });
       }
 
+      // imageData is either a base64 encoded string or a file URI
+      // If it's base64 (DATA_URL):
+      //let base64Image = 'data:image/jpeg;base64,' + imageData;
+      console.log("getPicture success callback");
+
+      generateThumbnail(cordovaImageData).then(thumbnailImageData => {
+        var dateStr = new Date().getTime().toString();
+        var fullUploadPromise = uploadBase64(
+          cordovaImageData,
+          self.firebaseStorage.child(dateStr).child("full")
+        );
+
+        var thumbnailUploadPromise = uploadBase64(
+          thumbnailImageData,
+          self.firebaseStorage.child(dateStr).child("thumb")
+        );
+
+        var localPicture = {
+          id: dateStr,
+          vibeId: self.vibe.id,
+          imgUrl: base64JpegPrefix + cordovaImageData,
+          thumbnailUrl: base64JpegPrefix + thumbnailImageData
+        };
+        self.uploadingPictures.unshift(localPicture);
+        Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(
+          urls => {
+            var picture = {
+              vibeId: self.vibe.id,
+              imgUrl: urls[0],
+              thumbnailUrl: urls[1]
+            };
+            socket.newPicture({
+              token: self.$store.getters.token,
+              picture
+            });
+            removePictureFromUploading(dateStr);
+          }
+        );
+      });
+    },
+    sendPic() {
+      var self = this;
       console.log("setting camera options");
       const options = {
         quality: 100,
@@ -239,47 +294,7 @@ export default {
       };
 
       this.camera.getPicture(
-        cordovaImageData => {
-          // imageData is either a base64 encoded string or a file URI
-          // If it's base64 (DATA_URL):
-          //let base64Image = 'data:image/jpeg;base64,' + imageData;
-          console.log("getPicture success callback");
-
-          generateThumbnail(cordovaImageData).then(thumbnailImageData => {
-            var dateStr = new Date().getTime().toString();
-            var fullUploadPromise = uploadBase64(
-              cordovaImageData,
-              self.firebaseStorage.child(dateStr).child("full")
-            );
-
-            var thumbnailUploadPromise = uploadBase64(
-              thumbnailImageData,
-              self.firebaseStorage.child(dateStr).child("thumb")
-            );
-
-            var localPicture = {
-              id: dateStr,
-              vibeId: self.vibe.id,
-              imgUrl: base64JpegPrefix + cordovaImageData,
-              thumbnailUrl: base64JpegPrefix + thumbnailImageData
-            };
-            self.uploadingPictures.push(localPicture);
-            Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(
-              urls => {
-                var picture = {
-                  vibeId: self.vibe.id,
-                  imgUrl: urls[0],
-                  thumbnailUrl: urls[1]
-                };
-                socket.newPicture({
-                  token: self.$store.getters.token,
-                  picture
-                });
-                removePictureFromUploading(dateStr);
-              }
-            );
-          });
-        },
+        cordovaImageData => self.uploadPicture(cordovaImageData),
         err => {
           // Handle error
           console.error("error in camera callback:");
@@ -341,6 +356,14 @@ export default {
     }
   },
   computed: {
+    useHtmlCamera() {
+      function isAndroidOrIos() {
+        return navigator.userAgent.indexOf("Android") != -1 || 
+        navigator.userAgent.indexOf("iPhone") != -1 ||
+        navigator.userAgent.indexOf("iPad") != -1 
+      }
+      return (isAndroidOrIos() && device.platform === "browser");
+    },
     largePictures() {
       return this.vibePictures.map(x => x.imgUrl);
     },
@@ -837,6 +860,7 @@ hr {
 }
 
 .sendPicButtonContainer {
+  
 }
 
 @media (max-width: 570px) {
@@ -892,5 +916,26 @@ hr {
     margin-top: 20px;
     margin-left: 0px;
   }
+}
+
+label.cameraButton {
+  display: inline-block;
+  margin: 1em 0;
+
+  /* Styles to make it look like a button */
+  padding: 0.5em;
+  border: 2px solid #666;
+  border-color: #EEE #CCC #CCC #EEE;
+  background-color: #DDD;
+}
+
+/* Look like a clicked/depressed button */
+label.cameraButton:active {
+  border-color: #CCC #EEE #EEE #CCC;
+}
+
+/* This is the part that actually hides the 'Choose file' text box for camera inputs */
+label.cameraButton input {
+  display: none;
 }
 </style>
