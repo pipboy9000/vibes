@@ -1,7 +1,14 @@
 <template>
     <div class="main" v-if="vibe" :class="{open: isOpen, closed: !isOpen}">
       <canvas id="img-canvas" width="200" height="150"></canvas>
-      <div class="scrollBarDiv">
+          <div class="topBar" v-if="isMobile">
+            <Logo class="logo" :size="40" :shadow="false" :plain="true"></Logo>
+            <div class="closeBtn" @click="close">
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+      <div class="scrollBarDiv" ref="scrollBarDiv">
         <div class="bg">
           <div class="titleWrapper" ref="titleWrapper">
               <div class="titleBg"></div>
@@ -73,7 +80,7 @@
           <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
           <button>></button>
       </div>
-      <div class="closeBtn" @click="close">
+      <div class="closeBtn" @click="close" v-if="!isMobile">
           <div></div>
           <div></div>
       </div>
@@ -90,21 +97,24 @@ import VueGallery from "vue-gallery";
 import Pica from "pica";
 const pica = Pica();
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import Logo from "./logo";
 
 export default {
   name: "VibeDetails",
   components: {
     comment,
     gallery: VueGallery,
-    PulseLoader
+    PulseLoader,
+    Logo
   },
   data() {
     return {
+      isMobile: false,
       isMounted: false,
       isOpen: false,
       time: null,
       commentTxt: "",
-      titlePxSizeBase: 65,
+      titlePxSizeBase: 45,
       maxTitleHeight: 150,
       firebaseStorage: this.$root.firebaseStorage,
       firebase: this.$root.firebase,
@@ -149,22 +159,21 @@ export default {
       return base64Str.substr(base64Str.indexOf(",") + 1);
     },
     fileLoaded(e) {
-        var self = this;
-        var files = e.target.files || e.dataTransfer.files;
-        if (!files.length)
-          return;
-        if (files && files[0]) {
-          var reader = new FileReader();
-          reader.onload = function (e) {
-            self.uploadPicture(self.removeBase64Prefix(e.target.result));
-          }
-          reader.readAsDataURL(files[0]);
-        }
+      var self = this;
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      if (files && files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          self.uploadPicture(self.removeBase64Prefix(e.target.result));
+        };
+        reader.readAsDataURL(files[0]);
+      }
     },
-    uploadPicture(cordovaImageData){
+    uploadPicture(cordovaImageData) {
       var self = this;
       const base64JpegPrefix = "data:image/jpeg;base64,";
-      
+
       function removePictureFromUploading(id) {
         self.uploadingPictures = self.uploadingPictures.filter(
           pic => pic.id !== id
@@ -264,20 +273,18 @@ export default {
           thumbnailUrl: base64JpegPrefix + thumbnailImageData
         };
         self.uploadingPictures.unshift(localPicture);
-        Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(
-          urls => {
-            var picture = {
-              vibeId: self.vibe.id,
-              imgUrl: urls[0],
-              thumbnailUrl: urls[1]
-            };
-            socket.newPicture({
-              token: self.$store.getters.token,
-              picture
-            });
-            removePictureFromUploading(dateStr);
-          }
-        );
+        Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(urls => {
+          var picture = {
+            vibeId: self.vibe.id,
+            imgUrl: urls[0],
+            thumbnailUrl: urls[1]
+          };
+          socket.newPicture({
+            token: self.$store.getters.token,
+            picture
+          });
+          removePictureFromUploading(dateStr);
+        });
       });
     },
     sendPic() {
@@ -307,6 +314,8 @@ export default {
       if (!this.open || !this.isMounted || !this.vibe) return;
 
       this.$nextTick(function() {
+        this.$refs.scrollBarDiv.style.marginTop = this.isMobile ? "80px" : "0";
+
         //title resize
         var fontSize = this.titlePxSizeBase;
         var title = this.$refs.title;
@@ -332,6 +341,7 @@ export default {
       });
     },
     open() {
+      this.isMobile = window.innerWidth < 650 ? true : false;
       this.isOpen = true;
       this.resizeLayout();
     },
@@ -358,11 +368,13 @@ export default {
   computed: {
     useHtmlCamera() {
       function isAndroidOrIos() {
-        return navigator.userAgent.indexOf("Android") != -1 || 
-        navigator.userAgent.indexOf("iPhone") != -1 ||
-        navigator.userAgent.indexOf("iPad") != -1 
+        return (
+          navigator.userAgent.indexOf("Android") != -1 ||
+          navigator.userAgent.indexOf("iPhone") != -1 ||
+          navigator.userAgent.indexOf("iPad") != -1
+        );
       }
-      return (isAndroidOrIos() && device.platform === "browser");
+      return isAndroidOrIos() && device.platform === "browser";
     },
     largePictures() {
       return this.vibePictures.map(x => x.imgUrl);
@@ -478,7 +490,7 @@ export default {
 .closed {
   pointer-events: none;
   transform: translateX(-10px);
-  left: -570px;
+  left: -650px;
   animation: closeAnim;
   animation-duration: 0.25s;
   animation-timing-function: ease-out;
@@ -490,9 +502,10 @@ export default {
 }
 
 .scrollBarDiv {
-  width: 495px;
+  width: 505px;
   height: 100%;
   overflow-y: auto;
+  margin-top: 80px;
 }
 
 .scrollBarDiv::-webkit-scrollbar {
@@ -521,6 +534,42 @@ export default {
 .scrollBarDiv::-webkit-scrollbar-corner {
   background: transparent;
 }
+.topBar {
+  position: absolute;
+  width: 100vw;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* justify-content: flex-end; */
+  /* background: white; */
+  background: #5dc8ff;
+  border-bottom: 1px #dfdfdf solid;
+  margin-top: 0px;
+}
+
+.topBar > .closeBtn {
+  cursor: pointer;
+  border-radius: 50px;
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  color: white;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 10px;
+  box-sizing: border-box;
+  box-shadow: unset;
+  margin: 0;
+  margin-right: 20px;
+  position: relative;
+}
+
+.logo {
+  margin-left: 20px;
+}
 
 /* items */
 .bg {
@@ -536,7 +585,7 @@ export default {
 
 .main {
   height: 100%;
-  width: 570px;
+  width: 580px;
   overflow-y: hidden;
   overflow-x: hidden;
 }
@@ -578,6 +627,10 @@ export default {
 
 .closeBtn > div:nth-child(2) {
   transform: rotate(-45deg);
+}
+
+.topBar > .closeBtn > div {
+  background: #5dc8ff;
 }
 
 .titleWrapper {
@@ -860,10 +913,9 @@ hr {
 }
 
 .sendPicButtonContainer {
-  
 }
 
-@media (max-width: 570px) {
+@media (max-width: 650px) {
   .main {
     width: 100%;
   }
@@ -925,13 +977,13 @@ label.cameraButton {
   /* Styles to make it look like a button */
   padding: 0.5em;
   border: 2px solid #666;
-  border-color: #EEE #CCC #CCC #EEE;
-  background-color: #DDD;
+  border-color: #eee #ccc #ccc #eee;
+  background-color: #ddd;
 }
 
 /* Look like a clicked/depressed button */
 label.cameraButton:active {
-  border-color: #CCC #EEE #EEE #CCC;
+  border-color: #ccc #eee #eee #ccc;
 }
 
 /* This is the part that actually hides the 'Choose file' text box for camera inputs */

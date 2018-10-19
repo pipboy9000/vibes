@@ -2,7 +2,7 @@
   <div class="list" v-if="hasVibes" :class="{open :isOpen, closed: !isOpen && ready}">
     <div class="topBar" v-if="isMobile">
       <!-- <div class="logo"></div> -->
-      <Logo class="logo" :size="40"></Logo>
+      <Logo class="logo" :size="40" :shadow="false" :plain="true"></Logo>
       <div class="closeBtn" @click="close">
         <div></div>
         <div></div>
@@ -96,7 +96,8 @@ export default {
   align-items: center;
   justify-content: space-between;
   /* justify-content: flex-end; */
-  background: white;
+  /* background: white; */
+  background: #5dc8ff;
   border-bottom: 1px #dfdfdf solid;
 }
 
@@ -194,6 +195,10 @@ export default {
   margin-left: 10px;
   align-items: center;
   box-shadow: 0px 2px 6px -1px #00000030;
+}
+
+.topBar > .closeBtn {
+  border: unset;
 }
 
 .closeBtn > div {
