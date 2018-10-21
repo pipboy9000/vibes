@@ -5,7 +5,7 @@ var fs = require("fs");
 var {
   appId,
   appSecret
-} = require("./facebook");
+} = require("./facebook")
 
 
 //https: //graph.facebook.com/debug_token?&input_token=EAAOsItZCIcdUBABmObiBzvc46tCNZChZBpzxmmYIw6TwLEfYlpOSbQgS8a6DdM3BO3C2s1JqQn2ox5frRx5oIoLDqx5lgzB0Cb4ezD7i4yU96KPhwXq8550keIGUj2xywO2AEKmv8OHGMkpkzxeC5LZCOtE1ZBLQL753qTXIXwS9ZCXJZAA6rZACi1K07krCyqViHhcwHVNvZCAZDZD&access_token=1033690713453013|e8408dd116c7abe3d6242969b9bf4b6c
@@ -53,7 +53,7 @@ function validate(token) {
           return false;
         })
       } else {
-        console.log(chalk.red("user credentials invalid-"));
+        console.log(chalk.red("validate.js - user credentials invalid-"));
         console.log(res.data.data.error);
         return false;
       }

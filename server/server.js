@@ -40,7 +40,7 @@ io.on('connection', function (socket) {
 
         socket.emit('login', data);
       } else {
-        console.log("user credentials invalid");
+        console.log("server.js - user credentials invalid");
       }
     });
   });
