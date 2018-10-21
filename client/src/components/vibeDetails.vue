@@ -124,10 +124,6 @@ export default {
       slide: false //check if link change was from a slide
     };
   },
-  // created() {
-  //   debugger;
-
-  // },
   mounted() {
     this.isMounted = true;
     var self = this;
@@ -581,6 +577,7 @@ export default {
   overflow-y: hidden;
   overflow-x: hidden;
   min-height: 100%;
+  padding-bottom: 60px;
 }
 
 .main {
@@ -593,7 +590,7 @@ export default {
 .closeBtn {
   cursor: pointer;
   border-radius: 50px;
-  border: 4px white solid;
+  border: 3px white solid;
   width: 65px;
   height: 65px;
   background: #5dc8ff;
@@ -802,6 +799,8 @@ export default {
 }
 
 .creatorPic {
+  width: 50px;
+  height: 50px;
   border-radius: 70px;
 }
 

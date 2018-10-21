@@ -73,11 +73,11 @@ export default {
       if (!this.titleWidth) {
         this.$nextTick(function() {
           this.titleWidth = this.$refs.titleBg.clientWidth - 30;
-          this.$refs.titleInput.select();
+          this.$refs.titleInput.focus();
         });
       } else {
         this.$nextTick(function() {
-          this.$refs.titleInput.select();
+          this.$refs.titleInput.focus();
         });
       }
       setTimeout(this.resizeTitle, 0);

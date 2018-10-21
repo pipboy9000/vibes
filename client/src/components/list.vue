@@ -81,7 +81,7 @@ export default {
 
 <style scoped="true">
 .list {
-  padding: 10px;
+  padding: 15px 0 0 10px;
   transform: translateX(-565px);
   position: absolute;
   float: left;
