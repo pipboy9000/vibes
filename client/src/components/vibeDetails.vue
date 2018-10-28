@@ -56,29 +56,32 @@
           </div>
           <div class="pictures">
             <gallery :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
+            <div class="thumbSmall" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)" 
+            :style="{ backgroundImage: 'url(' + picture.thumbnailUrl + ')' }"
+            :class="{thumbBig: idx %4 == 0}">
+            </div>
+            <!-- demo with random pictures from picsum-->
+            <!-- <div class="thumbSmall" v-for="idx in 30" :key="idx" @click="openImg(idx)" 
+            :style="{ backgroundImage: 'url(https://picsum.photos/200/300/?random&r=' + Math.random() + ')' }"
+            :class="{thumbBig: idx %4 == 0}">
+            </div> -->
+          </div>
             <div v-if="inVibe" class="sendPicButtonContainer">
               <label v-if="useHtmlCamera" class="cameraButton">Take a picture
                 <input type="file" accept="image/*" capture @change="fileLoaded">
               </label>
               <button v-if="!useHtmlCamera" class="cameraButton" @click="sendPic">Take a picture</button>
             </div>
-            <div class="picture" v-for="(picture) in uploadingPictures" :key="picture.id">
-              <img class="gallery-img" :src="picture.thumbnailUrl" >
-              <pulse-loader class="spinner" :color="loaderColor" :loading="true"></pulse-loader>
-            </div>
-            <div class="picture" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)">
-              <img class="gallery-img" :src="picture.thumbnailUrl" >
-            </div>
-          </div>
           <hr>
           <div class="comments">
+            <h2>Comments:</h2>
             <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
           </div>
         </div>
       </div>
       <div v-if="inVibe" class="newComment">
           <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
-          <button>></button>
+          <button @click="sendNewComment">></button>
       </div>
       <div class="closeBtn" @click="close" v-if="!isMobile">
           <div></div>
@@ -577,7 +580,6 @@ export default {
   overflow-y: hidden;
   overflow-x: hidden;
   min-height: 100%;
-  padding-bottom: 60px;
 }
 
 .main {
@@ -804,6 +806,23 @@ export default {
   border-radius: 70px;
 }
 
+.thumbSmall {
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.thumbBig {
+  width: 100%;
+  height: 100%;
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
 .picture {
   width: 200px;
   height: 150px;
@@ -812,14 +831,15 @@ export default {
 .pictures {
   box-sizing: border-box;
   width: 100%;
-  height: 200px;
-  overflow-x: scroll;
-  display: flex;
+  overflow-x: hidden;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-auto-rows: 160px;
+  grid-auto-flow: dense;
+  grid-gap: 0;
   margin-top: 25px;
-  background: black;
   padding-top: 10px;
   padding-bottom: 10px;
-  overflow-x: auto;
 }
 
 .users {
@@ -842,12 +862,15 @@ export default {
 }
 
 .comments {
-  padding-bottom: 60px;
   width: 100%;
+  padding-bottom: 120px;
+}
+
+.comments > h2 {
+  text-align: left;
 }
 
 .newComment {
-  display: inline-block;
   bottom: 0;
   left: 0;
   position: absolute;
@@ -855,10 +878,14 @@ export default {
   height: 10%;
   display: flex;
   align-items: center;
+  background: #fff;
+  justify-content: space-between;
+  box-shadow: -30px 20px 47px;
+  border-top: 1px solid #eaeaea;
 }
 
 .newComment > input {
-  width: 70%;
+  width: 80%;
   height: 40%;
   background: #dddddd;
   border: 1px solid #c7c7c7;
@@ -877,8 +904,9 @@ export default {
   font-family: "ABeeZee", sans-serif;
   border-radius: 100px;
   position: relative;
-  width: 10%;
-  margin-left: 2%;
+  width: 15%;
+  margin-left: 15px;
+  margin-right: 15px;
   border: 1px solid #c7c7c7;
   height: 80%;
   padding: 10px;
@@ -951,13 +979,18 @@ hr {
   }
 }
 
-@media (max-width: 410px) {
+@media (max-width: 420px) {
   .top {
     flex-direction: column-reverse;
   }
   .joinLeave {
     margin-top: 20px;
     margin-left: 0px;
+  }
+
+  .pictures {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-auto-rows: 120px;
   }
 }
 

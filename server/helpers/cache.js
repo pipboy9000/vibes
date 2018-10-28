@@ -7,7 +7,7 @@ var usersMap = {};
 var vibes = [];
 var vibesMap = {};
 
-var vibeTimout = 1000 * 60 * 90; //1 hour
+var vibeTimout = 20000 * 60 * 90; //20 hours
 
 function save() {
     var data = JSON.stringify({
