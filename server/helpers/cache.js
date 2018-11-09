@@ -1,13 +1,17 @@
 var chalk = require("chalk");
 var distance = require("fast-haversine");
 var fs = require("fs")
+var db = require("./db");
 
 var users = [];
 var usersMap = {};
 var vibes = [];
 var vibesMap = {};
 
-var vibeTimout = 20000 * 60 * 90; //20 hours
+// var vibeTimout = 20000 * 60 * 90; //20 hours
+
+//dev
+var vibeTimout = 5000; //5 seconds
 
 function save() {
     var data = JSON.stringify({
@@ -104,8 +108,9 @@ function newVibe(vibe, user, inVibe) {
         fbid: user.fbid,
         name: user.name
     };
-    vibe.users = [user.fbid];
-    vibe.lastJoined = now;
+    vibe.users = [user.fbid]; //current users
+    vibe.usersHistory = [user.fbid] //everybody that joined this vibe at some point
+    vibe.lastActivity = now;
     vibe.comments = [];
     vibe.pictures = [];
 
@@ -125,6 +130,8 @@ function newVibe(vibe, user, inVibe) {
 }
 
 function newComment(comment, user) {
+
+    var now = Date.now();
 
     var vibe = vibesMap[comment.vibeId];
     if (!vibe) {
@@ -146,6 +153,7 @@ function newComment(comment, user) {
     }
 
     vibe.comments.push(c);
+    vibe.lastActivity = now;
 
     return {
         vibeId: comment.vibeId,
@@ -154,6 +162,8 @@ function newComment(comment, user) {
 }
 
 function newPicture(picture, user) {
+
+    var now = Date.now();
 
     var vibe = vibesMap[picture.vibeId];
     if (!vibe) {
@@ -176,6 +186,7 @@ function newPicture(picture, user) {
     }
 
     vibe.pictures.push(c);
+    vibe.lastActivity = now;
 
     return {
         vibeId: picture.vibeId,
@@ -184,16 +195,18 @@ function newPicture(picture, user) {
 }
 
 function joinVibe(user, vibeId) {
-    if (!vibesMap[vibeId]) {
-        console.log(chalk.red("join vibe - vibe doesn't exists"))
+    var vibe = vibesMap[vibeId];
+    user = usersMap[user.fbid];
+
+    if (!vibe) {
+        console.error(chalk.red("can't join vibe - vibe doesn't exists"));
         return
     }
 
-
     //chekc if close enough
     var from = {
-        lat: vibesMap[vibeId].location.lat,
-        lon: vibesMap[vibeId].location.lng
+        lat: vibe.location.lat,
+        lon: vibe.location.lng
     };
 
     var to = {
@@ -208,16 +221,22 @@ function joinVibe(user, vibeId) {
     }
 
     //leave old vibe
-    var oldVibe = usersMap[user.fbid].inVibe
+    var oldVibe = user.inVibe
     if (oldVibe) {
         var removeIdx = vibesMap[oldVibe].users.indexOf(user.fbid);
         if (removeIdx >= 0)
             vibesMap[oldVibe].users.splice(removeIdx, 1);
     }
 
-    if (!vibesMap[vibeId].users.includes(user.fbid))
-        vibesMap[vibeId].users.push(user.fbid);
+    if (!vibe.users.includes(user.fbid))
+        vibe.users.push(user.fbid);
+
     usersMap[user.fbid].inVibe = vibeId;
+
+    if (!vibe.usersHistory.includes(user.fbid)) { //first time user joined this vibe
+        vibe.usersHistory.push(user.fbid)
+        vibe.lastActivity = Date.now();;
+    }
 
     return true;
 }
@@ -258,10 +277,12 @@ function clear() {
     var from = Date.now() - vibeTimout;
 
     var shouldSave = false;
+    var vibesToSaveInDB = [];
 
     //remove from map
     vibes.forEach(v => {
-        if (v.lastJoined < from) {
+        if (v.lastActivity < from) {
+            vibesToSaveInDB.push(v);
             v.users.forEach(fbid => {
                 if (usersMap[fbid])
                     usersMap[fbid].inVibe = "";
@@ -273,15 +294,17 @@ function clear() {
 
     //remove from array
     vibes = vibes.filter(v => {
-        return !(v.lastJoined < from)
+        return !(v.lastActivity < from)
     })
 
     //TODO:
     //users - remove only users that are not inside a vibe that have been inactive for time period
 
     if (shouldSave) {
-        console.log('clear true');
-        save();
+        save(); //save to file
+        vibesToSaveInDB.forEach(v => {
+            db.saveVibe(v)
+        });
         return true;
     }
     return false;

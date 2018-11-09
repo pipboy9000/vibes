@@ -56,15 +56,15 @@
           </div>
           <div class="pictures">
             <gallery :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
-            <div class="thumbSmall" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)" 
+            <!-- <div class="thumbSmall" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)" 
             :style="{ backgroundImage: 'url(' + picture.thumbnailUrl + ')' }"
             :class="{thumbBig: idx %4 == 0}">
-            </div>
-            <!-- demo with random pictures from picsum-->
-            <!-- <div class="thumbSmall" v-for="idx in 30" :key="idx" @click="openImg(idx)" 
-            :style="{ backgroundImage: 'url(https://picsum.photos/200/300/?random&r=' + Math.random() + ')' }"
-            :class="{thumbBig: idx %4 == 0}">
             </div> -->
+            <!-- demo with random pictures from picsum-->
+            <div class="thumbSmall" v-for="idx in 30" :key="idx" @click="openImg(idx)" 
+            :style="{ backgroundImage: 'url(https://picsum.photos/400/400/?random&r=' + Math.random() + ')' }"
+            :class="{thumbBig: idx %4 == 0}">
+            </div>
           </div>
             <div v-if="inVibe" class="sendPicButtonContainer">
               <label v-if="useHtmlCamera" class="cameraButton">Take a picture
