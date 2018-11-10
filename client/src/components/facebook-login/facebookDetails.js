@@ -1,5 +1,5 @@
 // for this to work:
-// 1. go to https: //developers.facebook.com/tools/explorer/
+// 1. go to https://developers.facebook.com/tools/explorer/
 // 2. change application to - vibes-dev
 // 3. click on 'get access token'
 // 4. copy the access token and paste in loginDetails.accessToken

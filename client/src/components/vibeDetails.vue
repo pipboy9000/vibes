@@ -54,24 +54,19 @@
           <div class="users" v-if="vibe.users.length > 0">
             <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square'">
           </div>
+          <div v-if="inVibe" class="sendPicButtonContainer">
+            <label v-if="useHtmlCamera" class="cameraButton">Take a picture
+              <input type="file" accept="image/*" capture @change="fileLoaded">
+            </label>
+            <button v-if="!useHtmlCamera" class="cameraButton" @click="sendPic">Take a picture</button>
+          </div>
           <div class="pictures">
-            <gallery :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
+            <gallery v-if="!isNative" :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
             <div class="thumbSmall" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)" 
             :style="{ backgroundImage: 'url(' + picture.thumbnailUrl + ')' }"
             :class="{thumbBig: idx %4 == 0}">
             </div>
-            <!-- demo with random pictures from picsum-->
-            <!-- <div class="thumbSmall" v-for="idx in 30" :key="idx" @click="openImg(idx)" 
-            :style="{ backgroundImage: 'url(https://picsum.photos/200/300/?random&r=' + Math.random() + ')' }"
-            :class="{thumbBig: idx %4 == 0}">
-            </div> -->
           </div>
-            <div v-if="inVibe" class="sendPicButtonContainer">
-              <label v-if="useHtmlCamera" class="cameraButton">Take a picture
-                <input type="file" accept="image/*" capture @change="fileLoaded">
-              </label>
-              <button v-if="!useHtmlCamera" class="cameraButton" @click="sendPic">Take a picture</button>
-            </div>
           <hr>
           <div class="comments">
             <h2>Comments:</h2>
@@ -124,7 +119,8 @@ export default {
       index: null,
       loaderColor: "#d5effd",
       uploadingPictures: [],
-      slide: false //check if link change was from a slide
+      slide: false, //check if link change was from a slide,
+      demoPics: null,
     };
   },
   mounted() {
@@ -143,6 +139,7 @@ export default {
     openImg(idx) {
       var q = this.$route.query;
       this.$router.push({ query: { ...q, img: idx } });
+      if (this.isNative) PhotoViewer.show(this.largePictures[idx]);
     },
     closeImg() {
       if (+this.$route.query.img >= 0) this.$router.go(-1);
@@ -365,21 +362,35 @@ export default {
     }
   },
   computed: {
+    isNative() {
+      return this.$root.cordova.device.platform !== "browser";
+    },
+    isAndroidOrIPhoneBrowser() {
+      return (
+        navigator.userAgent.indexOf("Android") != -1 ||
+        navigator.userAgent.indexOf("iPhone") != -1 ||
+        navigator.userAgent.indexOf("iPad") != -1
+      );
+    },
     useHtmlCamera() {
-      function isAndroidOrIos() {
-        return (
-          navigator.userAgent.indexOf("Android") != -1 ||
-          navigator.userAgent.indexOf("iPhone") != -1 ||
-          navigator.userAgent.indexOf("iPad") != -1
-        );
-      }
-      return isAndroidOrIos() && device.platform === "browser";
+      return this.isAndroidOrIPhoneBrowser && device.platform === "browser";
     },
     largePictures() {
       return this.vibePictures.map(x => x.imgUrl);
     },
     vibePictures() {
-      return this.vibe.pictures.reverse();
+      if (!this.demoPics) {
+        this.demoPics = [];
+        for (var i=0; i<30; i++) {
+          var url = 'https://picsum.photos/200/300/?random&r=' + Math.random();
+          this.demoPics.push({
+            imgUrl: url,
+            thumbnailUrl: url
+          });
+        }
+      }
+      var returnPics = this.vibe.pictures.reverse().concat(this.demoPics);
+      return returnPics;
     },
     camera() {
       return this.$root.cordova.camera;
