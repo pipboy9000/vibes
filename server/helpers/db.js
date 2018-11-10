@@ -1,7 +1,7 @@
 var chalk = require("chalk");
 
 const MongoClient = require("mongodb").MongoClient;
-const ObjectID = require('mongodb').ObjectID
+const ObjectID = require('mongodb').ObjectID;
 const url = "mongodb://localhost:27017";
 const dbName = "vibes";
 
@@ -25,15 +25,31 @@ async function saveVibe(vibe) {
                 _id: fbid
             }, {
                 $push: {
-                    vibes: vibeId
+                    vibes: {
+                        id: vibeId,
+                        title: vibe.title,
+                        createdAt: vibe.createdAt
+                    }
                 }
             }, {
                 upsert: true
-            })
+            });
+        });
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
+
+
+async function getAlbum(fbid) {
+    try {
+        const db = await getDb();
+        let res = await db.collection("album").findOne({
+            _id: fbid
         });
         console.log(res);
     } catch (err) {
-        console.error(err.stack);
+        console.error(err);
     }
 }
 
