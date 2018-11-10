@@ -147,5 +147,5 @@ server.listen(port, function () {
   console.log('listening on port ' + port);
   setInterval(checkPiggyBack, 5000);
   setInterval(cache.save, 30000); //save cache state
-  setInterval(clearVibes, 20000);
+  setInterval(clearVibes, 10000);
 });

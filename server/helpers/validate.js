@@ -2,6 +2,8 @@ var axios = require("axios");
 var chalk = require("chalk");
 var fs = require("fs");
 
+const SAVE_INTERVAL = 30000;
+
 var {
   appId,
   appSecret
@@ -22,7 +24,7 @@ function validate(token) {
   // };
   // return Promise.resolve(user);
 
-  if (accessTokens[token] && accessTokens[token].createdAt > Date.now() - 86400000)
+  if (accessTokens[token])
     return Promise.resolve(accessTokens[token]);
 
   console.log(chalk.blue("validate token with fb"));
@@ -49,16 +51,16 @@ function validate(token) {
           console.log(chalk.green("valid"));
           return user;
         }).catch(err => {
-          console.log(err)
+          console.error(err);
           return false;
         })
       } else {
-        console.log(chalk.red("validate.js - user credentials invalid-"));
-        console.log(res.data.data.error);
+        console.error(chalk.red("validate.js - user credentials invalid-"));
+        console.error(chalk.red(res.data.data.error));
         return false;
       }
     }).catch(err => {
-      console.log(chalk.red(err.message));
+      console.error(chalk.red(err.message));
       return false;
     });
 }
@@ -99,7 +101,7 @@ function load() {
 
 function init() {
   load();
-  setInterval(save, 5000);
+  setInterval(save, SAVE_INTERVAL);
 }
 
 init();
