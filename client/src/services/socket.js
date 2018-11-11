@@ -2,20 +2,24 @@ import socketio from "socket.io-client";
 import store from "../store";
 
 //developement 
-// var socketAdress = "https://vibes-web.herokuapp.com";
-// var socketAdress = "http://192.168.43.3:8080";
+var socketAddress = process.env.SOCKET_ADDRESS;
+
+ var socketAddress = "https://vibes-web.herokuapp.com";
+//var socketAddress = "http://172.16.0.95:8080";
 // var port = 80;
 //socketAdress = socketAdress.replace(port, "8080");
 // var io = socketio.connect(socketAdress);
 // var io = socketio.connect("localhost:8080");
 
+
+
 //prod
 console.log("env: " + process.env.NODE_ENV)
 console.log("process.env.SOCKET_ADDRESS: " + process.env.SOCKET_ADDRESS)
 if (process.env.NODE_ENV == 'production') {
-  var io = socketio.connect();
+  var io = socketio.connect(socketAddress);
 } else {
-  var io = socketio.connect(process.env.SOCKET_ADDRESS);
+  var io = socketio.connect(socketAddress);
 }
 
 //from server
