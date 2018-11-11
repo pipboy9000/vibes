@@ -11,7 +11,7 @@ var vibesMap = {};
 // var vibeTimout = 20000 * 60 * 90; //20 hours
 
 //dev
-var vibeTimout = 5000; //5 seconds
+var vibeTimout = 15000; //5 seconds
 
 function save() {
     var data = JSON.stringify({

@@ -14,7 +14,8 @@ export default new Vuex.Store({
     serverLocation: undefined, //user location on server
     vibes: [],
     users: [],
-    loggedIn: false
+    loggedIn: false,
+    album: null
   },
   getters: {
     getVibeById: (state) => (id) => {

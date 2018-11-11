@@ -1,7 +1,7 @@
 var chalk = require("chalk");
 
 const MongoClient = require("mongodb").MongoClient;
-const ObjectID = require('mongodb').ObjectID;
+const ObjectID = require('mongodb').ObjectID
 const url = "mongodb://localhost:27017";
 const dbName = "vibes";
 
@@ -47,7 +47,7 @@ async function getAlbum(fbid) {
         let res = await db.collection("album").findOne({
             _id: fbid
         });
-        console.log(res);
+        return res;
     } catch (err) {
         console.error(err);
     }
@@ -247,5 +247,6 @@ async function getAlbum(fbid) {
 // };
 
 module.exports = {
-    saveVibe
+    saveVibe,
+    getAlbum
 };

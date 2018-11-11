@@ -129,6 +129,16 @@ io.on('connection', function (socket) {
       }
     });
   });
+
+  socket.on("getAlbum", function (token) {
+    validate(token).then(user => {
+      var album = db.getAlbum(user.fbid);
+      if (album) {
+        piggyBack.leaveVibe();
+        socket.emit("setAlbum", album);
+      }
+    });
+  })
 });
 
 function checkPiggyBack() {

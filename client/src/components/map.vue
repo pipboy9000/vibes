@@ -60,7 +60,7 @@ export default {
 
   methods: {
     getVibeSize(numUsers) {
-      return Math.round(numUsers * 150 * 0.8);
+      return Math.round(numUsers * 150 * 0.8) + 25;
     },
     focus(location, zoom) {
       if (location) {
@@ -108,14 +108,14 @@ export default {
     },
     getNewCircle(vibe) {
       return new google.maps.Circle({
-        strokeColor: "#ff13c4",
-        strokeOpacity: 0.5,
-        strokeWeight: 3,
+        strokeColor: "#000",
+        strokeOpacity: 0,
+        strokeWeight: 0,
         fillColor: "#ff6ada",
         fillOpacity: 0.25,
         map: this.map,
         center: vibe.location,
-        radius: this.getVibeSize(vibe.users.length)
+        radius: this.getVibeSize(vibe.users.length + 2)
       });
     },
     renderUsers(users) {

@@ -27,8 +27,13 @@ io.on("setComments", comments => store.dispatch("setComments", comments));
 io.on("joinVibe", vibeId => store.dispatch("joinVibe", vibeId));
 io.on("leaveVibe", _ => store.dispatch("leaveVibe"));
 io.on("setPictures", pictures => store.dispatch("setPictures", pictures));
+io.on("setAlbum", album => store.dispatch("setAlbum", album));
 
 //to server
+function getAlbum(me) {
+  io.emit("getAlbum", me);
+}
+
 function newVibe(vibe) {
   io.emit("newVibe", vibe);
 }
