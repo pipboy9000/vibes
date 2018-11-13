@@ -61,11 +61,16 @@
             <button v-if="!useHtmlCamera" class="cameraButton" @click="sendPic">Take a picture</button>
           </div>
           <div class="pictures">
-            <gallery v-if="!isNative" :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
+              <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
+              <a v-for="(picture, idx) in newPictures" :key="idx" class="thumbSmall" href="#" @click="index = idx">
+                <img :src="picture.thumbSrc"/>
+              </a>
+
+            <!-- <gallery v-if="!isNative" :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
             <div class="thumbSmall" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)" 
             :style="{ backgroundImage: 'url(' + picture.thumbnailUrl + ')' }"
             :class="{thumbBig: idx %4 == 0}">
-            </div>
+            </div> -->
           </div>
           <hr>
           <div class="comments">
@@ -96,6 +101,7 @@ import Pica from "pica";
 const pica = Pica();
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import Logo from "./logo";
+import { PhotoGallery } from 'vue-photo-gallery';
 
 export default {
   name: "VibeDetails",
@@ -103,7 +109,8 @@ export default {
     comment,
     gallery: VueGallery,
     PulseLoader,
-    Logo
+    Logo,
+    PhotoGallery
   },
   data() {
     return {
@@ -377,6 +384,16 @@ export default {
     },
     largePictures() {
       return this.vibePictures.map(x => x.imgUrl);
+    },
+    newPictures() {
+      return this.vibePictures.map(x => {
+        return {
+          src: x.imgUrl,
+          thumbSrc: x.thumbnailUrl,
+          w: 1600,
+          h: 1600
+        }
+      });
     },
     vibePictures() {
       if (!this.demoPics) {

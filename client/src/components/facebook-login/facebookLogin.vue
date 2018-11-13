@@ -17,8 +17,8 @@ import {
   fbLogout,
   fbLogin,
   fbGetUserDetails
-  // } from "./helpers-dev.js";
-} from "./helpers.js";
+  } from "./helpers-dev.js";
+// } from "./helpers.js";
 
 import icon from "./icon.png";
 export default {

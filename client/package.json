@@ -13,7 +13,8 @@
     "test": "npm run unit",
     "build": "node build/build.js",
     "build-browser": "cordova build browser",
-    "android": "npm run build && cordova run android"
+    "android": "npm run build && cordova run android",
+    "ios": "npm run build && cordova run ios --buildFlag='-UseModernBuildSystem=0'"
   },
   "dependencies": {
     "com-sarriaroman-photoviewer": "^1.1.18",
@@ -35,6 +36,7 @@
     "vue": "^2.5.17",
     "vue-cordova": "^0.1.2",
     "vue-gallery": "^1.4.0",
+    "vue-photo-gallery": "^1.0.1",
     "vue-router": "^3.0.1",
     "vue-socket.io": "^2.1.1-b",
     "vue-spinner": "^1.0.3",
