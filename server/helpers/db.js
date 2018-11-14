@@ -2,7 +2,7 @@ var chalk = require("chalk");
 
 const MongoClient = require("mongodb").MongoClient;
 const ObjectID = require('mongodb').ObjectID
-const url = "mongodb://localhost:27017";
+const url = process.env.MONGO_URL || "mongodb://localhost:27017";
 const dbName = "vibes";
 
 var connectSettings = {
@@ -35,6 +35,17 @@ async function saveVibe(vibe) {
                 upsert: true
             });
         });
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
+
+async function saveFutureVibe(vibe) {
+    try {
+        const db = await getDb();
+        let res = await db.collection("future-vibes").insertOne(vibe);
+        var vibeId = res.insertedId.toString();
+        return vibeId;
     } catch (err) {
         console.error(err.stack);
     }
@@ -248,5 +259,6 @@ async function getAlbum(fbid) {
 
 module.exports = {
     saveVibe,
+    saveFutureVibe,
     getAlbum
 };
