@@ -15,7 +15,7 @@ app.get('/save-vibe', function (req, res) {
         lng: q.lng,
         lat: q.lat,
         date: q.date
-    }).then(result => res.send('result: '+result));
+    }).then(vibeId => res.send({vibeId}));
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

@@ -1,12 +1,25 @@
 <template>
   <div class="hello">
     <div>
-    Lng:<input type="text" v-model="lng"><br/>
-    Lat:<input type="text" v-model="lat"><br/>
-    Vibe title:<input type="text" v-model="title"><br/>
-    Date and time:<datetime type="datetime" v-model="date"></datetime><br/>
-    <button @click="save">Save</button><br/>
-    Response: {{response}}<br/>
+      Lng:<input type="text" v-model="lng"><br/>
+      Lat:<input type="text" v-model="lat"><br/>
+      Vibe title:<input type="text" v-model="title"><br/>
+      Date and time:<datetime type="datetime" v-model="date"></datetime><br/>
+      <button @click="save">Save</button><br/>
+
+      <div v-if="response">
+        <div v-if="operationStatus == 'success'" class="success">
+          Operation succeeded.<br/>
+          Vibe ID: {{response.data.vibeId}}
+        </div>
+        <div v-if="operationStatus == 'failure'" class="failure">
+          Operation Failed.<br/>
+          {{response}}
+        </div>
+      </div>
+      <div v-if="waiting">
+        Waiting for server...
+      </div>
     </div>
     <Map></Map>
   </div>
@@ -31,7 +44,9 @@ export default {
       lng: 0,
       lat: 0,
       date: new Date().toISOString(),
-      response: null
+      operationStatus: null,
+      response: null,
+      waiting: false
     }
   },
   mounted() {
@@ -43,15 +58,29 @@ export default {
       this.lat = location.lat;
     },
     save() {
-      axios
-      .get('http://localhost:3030/save-vibe', {
+      this.waiting = true;
+      this.response = null;
+      axios.get('http://localhost:3030/save-vibe', {
         params: {
           title: this.title,
           lng: this.lng,
           lat: this.lat,
           date: this.date
         } 
-      }).then(response => (this.response = response))
+      }).then(response => {
+        this.waiting = false;
+        if (response.status == 200) {
+          this.operationStatus = "success"
+          debugger;
+        } else {
+          this.operationStatus = "failure"
+        }
+        this.response = response
+      }, err => {
+        this.waiting = false;
+        this.operationStatus = "failure"
+        this.response = "Error. Did you run admin/server.js? " + err.toString()
+      });
     }
   }
 }
@@ -71,5 +100,11 @@ li {
 }
 a {
   color: #42b983;
+}
+.success {
+  color: green;
+}
+.failure {
+  color: red;
 }
 </style>
