@@ -12,8 +12,8 @@ app.get('/save-vibe', function (req, res) {
     var q = req.query;
     db.saveFutureVibe({
         title: q.title,
-        x: q.x,
-        y: q.y,
+        lng: q.lng,
+        lat: q.lat,
         date: q.date
     }).then(result => res.send('result: '+result));
 });

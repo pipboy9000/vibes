@@ -17,7 +17,8 @@ export default {
       circles: [],
       vibeMarkers: [],
       userMarkers: [],
-      userInfoWindow: null
+      userInfoWindow: null,
+      mockLocation: {}
     };
   },
   mounted() {
@@ -29,6 +30,10 @@ export default {
 
     var mockX = 32.080032199999996;
     var mockY = 34.769544399999996;
+    this.mockLocation = { 
+        lat: mockX, 
+        lng: mockY 
+      };
     this.map = new google.maps.Map(this.$refs.map, {
       zoom: 17,
       center: { 
@@ -40,6 +45,7 @@ export default {
 
     this.map.addListener("click", function(e) {
       self.userInfoWindow.close();
+      EventBus.$emit("mapClicked", {lat: e.latLng.lat(), lng: e.latLng.lng()});
     });
 
     //init the custom overlay object to use as an infowindow
@@ -163,11 +169,7 @@ export default {
   },
   computed: {
     location() {
-      
-      return {
-        lat:mockX, 
-        lng:mockY
-        }
+      return this.mockLocation;
     },
     vibes() {
       return {}
@@ -181,7 +183,6 @@ export default {
   },
   watch: {
     location(newLoc, oldLoc) {
-      this.myGhost.setPosition(newLoc);
       if (!oldLoc) {
         this.focus(newLoc, 17);
       }
