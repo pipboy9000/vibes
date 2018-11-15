@@ -1,22 +1,28 @@
 <template>
   <div class="hello">
+    <div>
     Location x:<input type="text" v-model="x"><br/>
     Location y:<input type="text" v-model="y"><br/>
     Vibe title:<input type="text" v-model="title"><br/>
     Date and time:<datetime type="datetime" v-model="date"></datetime><br/>
     <button @click="save">Save</button><br/>
     Response: {{response}}<br/>
+    </div>
+    <Map></Map>
   </div>
 </template>
 
 <script>
 const axios = require('axios');
 import { Datetime } from 'vue-datetime'
+import Map from "./map";
+import { EventBus } from "../../../client/src/event-bus.js";
 import 'vue-datetime/dist/vue-datetime.css'
 
 export default {
-  name: 'HelloWorld',
+  name: 'Dashboard',
   components: {
+    Map,
     datetime: Datetime
   },
   data() {
