@@ -28,7 +28,10 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
-        <string>need location access to find things nearby</string>
+        <string>Vibes needs to access your location to show you what's happening nearby</string>
+    </edit-config>
+    <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+        <string>Vibes needs camera access so you can take photos of your vibes</string>
     </edit-config>
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
     <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
