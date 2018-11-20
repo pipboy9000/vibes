@@ -176,6 +176,10 @@ export default {
       }
     },
     uploadPicture(cordovaImageData) {
+      var size = cordovaImageData.length*3/4;
+      console.log("Picture Size: "+size);
+      alert("Picture Size: "+size/1024+"KB");
+
       var self = this;
       const base64JpegPrefix = "data:image/jpeg;base64,";
 
@@ -296,7 +300,7 @@ export default {
       var self = this;
       console.log("setting camera options");
       const options = {
-        quality: 100,
+        quality: 80,
         destinationType: this.camera.DestinationType.DATA_URL,
         encodingType: this.camera.EncodingType.JPEG,
         mediaType: this.camera.MediaType.PICTURE,
