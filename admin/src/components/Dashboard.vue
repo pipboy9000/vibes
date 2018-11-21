@@ -60,7 +60,7 @@ export default {
     save() {
       this.waiting = true;
       this.response = null;
-      axios.get('http://localhost:3030/save-vibe', {
+      axios.get('/save-vibe', {
         params: {
           title: this.title,
           lng: this.lng,
