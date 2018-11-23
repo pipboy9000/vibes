@@ -1,5 +1,3 @@
-// To create new version, run the following in cmd, in the root directory of project:
-//   1. grunt bump-build-deploy-to-4 --verbose
 
 module.exports = function (grunt) {
     var path = require('path');

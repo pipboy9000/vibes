@@ -18,6 +18,12 @@
   },
   "devDependencies": {
     "@vue/cli-service": "^3.1.4",
+    "grunt": "^1.0.3",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-git": "^1.0.10",
+    "grunt-npm-command": "^0.1.2",
+    "load-grunt-tasks": "^4.0.0",
     "vue-template-compiler": "^2.5.17"
   },
   "postcss": {

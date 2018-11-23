@@ -41,8 +41,8 @@ export default {
   data() {
     return {
       title: "Happy Hour in...",
-      lng: 0,
-      lat: 0,
+      lng: 1,
+      lat: 1,
       date: new Date().toISOString(),
       operationStatus: null,
       response: null,
