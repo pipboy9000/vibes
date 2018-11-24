@@ -19,7 +19,9 @@ app.get('/save-vibe', function (req, res) {
         title: q.title,
         lng: q.lng,
         lat: q.lat,
-        date: q.date
+        date: q.date,
+        isRecurring: q.isRecurring,
+        daysRecurring: q.daysRecurring 
     }).then(vibeId => res.send({vibeId}));
 });
 

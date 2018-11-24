@@ -5,6 +5,15 @@
       Lat:<input type="text" v-model="lat"><br/>
       Vibe title:<input type="text" v-model="title"><br/>
       Date and time:<datetime type="datetime" v-model="date"></datetime><br/>
+      Recurring:<input type="checkbox" v-model="isRecurring">
+      <div v-if="isRecurring">
+      <button @click="selectAllDays">Select All</button>
+      <button @click="selectNoDays">Select None</button><br/>
+      <span v-for="(day, idx) in daysRecurring" :key="idx">
+        {{day.name}}:<input type="checkbox" v-model="day.recurring">
+      </span>
+      </div>
+      <br/>
       <button @click="save">Save</button><br/>
 
       <div v-if="response">
@@ -46,7 +55,38 @@ export default {
       date: new Date().toISOString(),
       operationStatus: null,
       response: null,
-      waiting: false
+      waiting: false,
+      isRecurring: false,
+      daysRecurring: [
+          {
+            name:'Sunday',
+            recurring: false
+          },
+          {
+            name:'Monday',
+            recurring: false
+          },
+          {
+            name:'Tuesday',
+            recurring: false
+          },
+          {
+            name:'Wednesday',
+            recurring: false
+          },
+          {
+            name:'Thursday',
+            recurring: false
+          },
+          {
+            name:'Friday',
+            recurring: false
+          },
+          {
+            name:'Saturday',
+            recurring: false
+          },
+      ]
     }
   },
   mounted() {
@@ -57,21 +97,30 @@ export default {
       this.lng = location.lng;
       this.lat = location.lat;
     },
+    selectAllDays() {
+      this.daysRecurring.forEach(day => day.recurring = true)
+    },
+    selectNoDays() {
+      this.daysRecurring.forEach(day => day.recurring = false)
+    },
     save() {
       this.waiting = true;
       this.response = null;
-      axios.get('/save-vibe', {
+      const serverUrl = process.env.NODE_ENV === 'production' ? '/save-vibe' : 'http://localhost:3030/save-vibe'
+      let mappedDays = this.isRecurring ? this.daysRecurring.map(day => day.recurring ? 1 : 0) : null
+      axios.get(serverUrl, {
         params: {
           title: this.title,
           lng: this.lng,
           lat: this.lat,
-          date: this.date
+          date: this.date,
+          isRecurring: this.isRecurring,
+          daysRecurring: mappedDays
         } 
       }).then(response => {
         this.waiting = false;
         if (response.status == 200) {
           this.operationStatus = "success"
-          debugger;
         } else {
           this.operationStatus = "failure"
         }
