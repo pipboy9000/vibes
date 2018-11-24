@@ -93,9 +93,10 @@ export default {
     EventBus.$on("mapClicked", this.locationSelected);
   },
   methods: {
-    locationSelected(location) {
-      this.lng = location.lng;
-      this.lat = location.lat;
+    locationSelected(e) {
+      this.title = `Happy Hour in ${e.placeName}`;
+      this.lng = e.lng;
+      this.lat = e.lat;
     },
     selectAllDays() {
       this.daysRecurring.forEach(day => day.recurring = true)

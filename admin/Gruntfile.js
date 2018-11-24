@@ -43,7 +43,7 @@ module.exports = function (grunt) {
                         expand: true,
                         dot: true,
                         cwd: '<%= paths.server %>',
-                        src: ['server.js','package.json','package-lock.json'],
+                        src: ['server.js','package.json','package-lock.json', 'helpers/*'],
                         dest: '<%= paths.prod %>',
                         flatten: false
                     },

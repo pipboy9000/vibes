@@ -43,9 +43,21 @@ export default {
       disableDefaultUI: true
     });
 
+    var service = new google.maps.places.PlacesService(this.map);
+
     this.map.addListener("click", function(e) {
       self.userInfoWindow.close();
-      EventBus.$emit("mapClicked", {lat: e.latLng.lat(), lng: e.latLng.lng()});
+      service.getDetails({
+          placeId: e.placeId
+        }, function(place, status) {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            EventBus.$emit("mapClicked", {
+              placeName: place.name,
+              lat: e.latLng.lat(), 
+              lng: e.latLng.lng()
+              });
+          }
+        });
     });
 
     //init the custom overlay object to use as an infowindow
