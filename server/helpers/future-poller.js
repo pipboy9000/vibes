@@ -11,10 +11,8 @@ function startPolling() {
             name: "Dan Levin"
         };
         futureVibes.then(result => {
-            result
-            .filter(
-                vibe => vibe.isRecurring === 'false' && 
-                Date.parse(vibe.date) < new Date().getTime())
+            result.filter(
+                vibe => Date.parse(vibe.date) < new Date().getTime())
             .forEach(futureVibe => {
                 let vibe = {
                     title: futureVibe.title,
