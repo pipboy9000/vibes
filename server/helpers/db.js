@@ -61,6 +61,16 @@ async function getFutureVibes() {
     }
 }
 
+async function removeFutureVibe(_id) {
+    try {
+        const db = await getDb();
+        let res = await db.collection("future-vibes").deleteOne({_id});
+        return res;
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
+
 async function getAlbum(fbid) {
     try {
         const db = await getDb();
@@ -270,5 +280,6 @@ module.exports = {
     saveVibe,
     saveFutureVibe,
     getFutureVibes,
+    removeFutureVibe,
     getAlbum
 };

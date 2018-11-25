@@ -11,7 +11,11 @@ function startPolling() {
             name: "Dan Levin"
         };
         futureVibes.then(result => {
-            result.forEach(futureVibe => {
+            result
+            .filter(
+                vibe => vibe.isRecurring === 'false' && 
+                Date.parse(vibe.date) < new Date().getTime())
+            .forEach(futureVibe => {
                 let vibe = {
                     title: futureVibe.title,
                     location: {
@@ -21,10 +25,11 @@ function startPolling() {
                     emojis: [null, null, null]
                 };
                 cache.newVibe(vibe, user, false);
+                db.removeFutureVibe(futureVibe._id);
                 piggyBack.newVibe();
             });
         })
-    }, 2000);
+    }, 10000);
     // }, 0);
 }
 
