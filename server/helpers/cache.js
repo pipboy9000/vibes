@@ -26,7 +26,7 @@ function save() {
 
 function load() {
     fs.readFile('cache.json', (err, str) => {
-        if (err) {
+        if (err || str.length == 0) {
             var data = {};
             return;
         }

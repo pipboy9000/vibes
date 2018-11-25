@@ -1,3 +1,5 @@
+process.env.MONGO_URL = "mongodb://admin:1qaz1qaz@ds039281.mlab.com:39281/vibes" //TODO: remove
+
 const express = require('express');
 var app = express();
 var server = require('http').Server(app);
@@ -5,6 +7,9 @@ var io = require('socket.io')(server);
 
 var cache = require('./helpers/cache');
 var piggyBack = require('./helpers/piggyback');
+
+var futureVibesPoller = require('./helpers/future-poller');
+futureVibesPoller.startPolling();
 
 var {
   validate

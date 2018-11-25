@@ -12,7 +12,7 @@ function login() {
 
 function newVibe() {
     full = true;
-    data.vibes = cache.getVibes();
+    data.users = cache.getUsers();
     data.vibes = cache.getVibes();
 }
 

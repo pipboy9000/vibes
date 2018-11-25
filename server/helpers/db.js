@@ -51,6 +51,15 @@ async function saveFutureVibe(vibe) {
     }
 }
 
+async function getFutureVibes() {
+    try {
+        const db = await getDb();
+        let res = await db.collection("future-vibes").find();
+        return res;
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
 
 async function getAlbum(fbid) {
     try {
@@ -260,5 +269,6 @@ async function getAlbum(fbid) {
 module.exports = {
     saveVibe,
     saveFutureVibe,
+    getFutureVibes,
     getAlbum
 };
