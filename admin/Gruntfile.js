@@ -3,8 +3,11 @@ module.exports = function (grunt) {
     var path = require('path');
 
     var cwd = process.cwd();
-    var basePath = path.dirname(cwd);
+    console.log(`cwd: ${cwd}`)
+    // var basePath = path.dirname(cwd);
+    var basePath = cwd;
     var prodPath = path.join(basePath,'prod');
+    console.log(`prodPath: ${prodPath}`)
     
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-npm-command');
@@ -12,10 +15,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
 
     grunt.initConfig({
-        pkg: grunt.file.readJSON('../server/package.json'),
+        pkg: grunt.file.readJSON('./package.json'),
         paths: {
-            client: path.join(cwd,'platforms','browser','www'),
-            server: path.join(basePath, 'server'),
+            client: path.join(cwd,'dist'),
+            server: path.join(basePath),
             public: path.join(prodPath, 'public'),
             prod: prodPath
         },
@@ -40,7 +43,7 @@ module.exports = function (grunt) {
                         expand: true,
                         dot: true,
                         cwd: '<%= paths.server %>',
-                        src: ['**/*','!**/node_modules/**','!**/public/**'],
+                        src: ['server.js','package.json','package-lock.json', 'helpers/*'],
                         dest: '<%= paths.prod %>',
                         flatten: false
                     },
@@ -96,12 +99,6 @@ module.exports = function (grunt) {
                     args: ['build']
                 }
             },
-            'cordova-build-browser': {
-                options: {
-                    cmd: 'run',
-                    args: ['build-browser']
-                }
-            },
         },
 
     });
@@ -109,7 +106,6 @@ module.exports = function (grunt) {
     grunt.registerTask('deploy', [
         'clean:prod',
         'npm-command:webpack-build-app',
-        'npm-command:cordova-build-browser',
         'copy:main',
         'gitadd',
         'gitcommit',

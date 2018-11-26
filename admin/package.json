@@ -1,0 +1,39 @@
+{
+  "name": "admin",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "chalk": "^2.4.1",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "luxon": "^1.6.2",
+    "mongodb": "^3.1.10",
+    "vue": "^2.5.17",
+    "vue-datetime": "^1.0.0-beta.8"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^3.1.4",
+    "grunt": "^1.0.3",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-git": "^1.0.10",
+    "grunt-npm-command": "^0.1.2",
+    "load-grunt-tasks": "^4.0.0",
+    "vue-template-compiler": "^2.5.17"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}

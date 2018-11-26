@@ -102,6 +102,8 @@ const pica = Pica();
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import Logo from "./logo";
 import { PhotoGallery } from 'vue-photo-gallery';
+import GoogleImageSearch from 'free-google-image-search';
+console.dir(GoogleImageSearch);
 
 export default {
   name: "VibeDetails",
@@ -174,6 +176,10 @@ export default {
       }
     },
     uploadPicture(cordovaImageData) {
+      var size = cordovaImageData.length*3/4;
+      console.log("Picture Size: "+size);
+      alert("Picture Size: "+size/1024+"KB");
+
       var self = this;
       const base64JpegPrefix = "data:image/jpeg;base64,";
 
@@ -294,7 +300,7 @@ export default {
       var self = this;
       console.log("setting camera options");
       const options = {
-        quality: 100,
+        quality: 80,
         destinationType: this.camera.DestinationType.DATA_URL,
         encodingType: this.camera.EncodingType.JPEG,
         mediaType: this.camera.MediaType.PICTURE,
@@ -347,6 +353,18 @@ export default {
       this.isMobile = window.innerWidth < 650 ? true : false;
       this.isOpen = true;
       this.resizeLayout();
+
+      this.demoPics = [];
+        if (this.vibe.title) {
+          GoogleImageSearch.searchImage(this.vibe.title).then((res) => {
+            res.forEach(url => {
+              this.demoPics.push({
+              imgUrl: url,
+              thumbnailUrl: url
+            });
+            })
+          }, err => console.error(err))
+        }
     },
     close() {
       this.$router.go(-1);
@@ -396,16 +414,17 @@ export default {
       });
     },
     vibePictures() {
-      if (!this.demoPics) {
-        this.demoPics = [];
-        for (var i=0; i<30; i++) {
-          var url = 'https://picsum.photos/200/300/?random&r=' + Math.random();
-          this.demoPics.push({
-            imgUrl: url,
-            thumbnailUrl: url
-          });
-        }
-      }
+      // if (!this.demoPics) {
+        
+ 
+        // for (var i=0; i<30; i++) {
+        //   var url = 'https://picsum.photos/200/300/?random&r=' + Math.random();
+        //   this.demoPics.push({
+        //     imgUrl: url,
+        //     thumbnailUrl: url
+        //   });
+        // }
+      // }
       var returnPics = this.vibe.pictures.reverse().concat(this.demoPics);
       return returnPics;
     },

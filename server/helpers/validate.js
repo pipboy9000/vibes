@@ -78,7 +78,7 @@ function save() {
 
 function load() {
   fs.readFile("tokens.json", (err, str) => {
-    if (err) {
+    if (err || str.length == 0) {
       accessTokens = {};
       userTokensMap = {};
       return;
