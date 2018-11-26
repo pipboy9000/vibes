@@ -18,6 +18,11 @@ app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
 
+app.get('/preview', function (req, res) {
+  console.log('preview');
+  res.sendfile(__dirname + '/public/mobilePreview.html');
+});
+
 io.on('connection', function (socket) {
   console.log('socket connected');
   socket.emit('setVibes', cache.getVibes());

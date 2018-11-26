@@ -4,12 +4,12 @@ import store from "../store";
 //developement 
 var socketAddress = process.env.SOCKET_ADDRESS;
 
- var socketAddress = "https://vibes-web.herokuapp.com";
+//  var socketAddress = "https://vibes-web.herokuapp.com";
 //var socketAddress = "http://172.16.0.95:8080";
 // var port = 80;
 //socketAdress = socketAdress.replace(port, "8080");
 // var io = socketio.connect(socketAdress);
-// var io = socketio.connect("localhost:8080");
+var io = socketio.connect("localhost:8080");
 
 
 
