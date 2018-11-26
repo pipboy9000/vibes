@@ -16,6 +16,7 @@ Vue.use(VueCordova, {
 
 Vue.use(VueFire)
 
+// TODO: move to config
 const config = {
   apiKey: "AIzaSyBZMsNwP9iJ8UlthPPSQtI7fNgYkl2KH9o",
   authDomain: "agents-802b1.firebaseapp.com",

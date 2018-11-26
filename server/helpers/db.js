@@ -4,15 +4,17 @@ const MongoClient = require("mongodb").MongoClient;
 const ObjectID = require('mongodb').ObjectID
 const url = process.env.MONGO_URL || "mongodb://localhost:27017";
 const dbName = "vibes";
+let dbInstance = null;
+MongoClient.connect(url, connectSettings).then(client => {
+    dbInstance = client.db(dbName)
+});
 
 var connectSettings = {
     useNewUrlParser: true
 };
 
 function getDb() {
-    return MongoClient.connect(url, connectSettings).then(client => {
-        return client.db(dbName)
-    })
+    return dbInstance;
 }
 
 async function saveVibe(vibe) {

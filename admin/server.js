@@ -1,4 +1,3 @@
-process.env.MONGO_URL = "mongodb://admin:1qaz1qaz@ds039281.mlab.com:39281/vibes"
 var db = require("./helpers/db");
 
 const express = require('express');

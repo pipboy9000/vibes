@@ -4,15 +4,17 @@ const MongoClient = require("mongodb").MongoClient;
 const ObjectID = require('mongodb').ObjectID
 const url = process.env.MONGO_URL || "mongodb://localhost:27017";
 const dbName = "vibes";
+let dbInstance = null;
 
 var connectSettings = {
     useNewUrlParser: true
 };
+MongoClient.connect(url, connectSettings).then(client => {
+    dbInstance = client.db(dbName)
+});
 
 function getDb() {
-    return MongoClient.connect(url, connectSettings).then(client => {
-        return client.db(dbName)
-    })
+    return dbInstance;
 }
 
 async function saveVibe(vibe) {
@@ -51,6 +53,25 @@ async function saveFutureVibe(vibe) {
     }
 }
 
+async function getFutureVibes() {
+    try {
+        const db = await getDb();
+        let res = await db.collection("future-vibes").find();
+        return res;
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
+
+async function removeFutureVibe(_id) {
+    try {
+        const db = await getDb();
+        let res = await db.collection("future-vibes").deleteOne({_id});
+        return res;
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
 
 async function getAlbum(fbid) {
     try {
@@ -260,5 +281,7 @@ async function getAlbum(fbid) {
 module.exports = {
     saveVibe,
     saveFutureVibe,
+    getFutureVibes,
+    removeFutureVibe,
     getAlbum
 };
