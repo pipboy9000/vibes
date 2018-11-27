@@ -64,6 +64,16 @@ async function saveCacheState(users, vibes) {
     }
 }
 
+async function loadCacheState() {
+    try {
+        const db = await getDb();
+        let res = await db.collection("cache").findOne({id:1});
+        return res;
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
+
 async function getFutureVibes() {
     try {
         const db = await getDb();
@@ -295,5 +305,6 @@ module.exports = {
     getFutureVibes,
     removeFutureVibe,
     getAlbum,
-    saveCacheState
+    saveCacheState,
+    loadCacheState
 };

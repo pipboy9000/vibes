@@ -28,13 +28,8 @@ function save() {
 }
 
 function load() {
-    fs.readFile('cache.json', (err, str) => {
-        if (err || str.length == 0) {
-            var data = {};
-            return;
-        }
-
-        var data = JSON.parse(str);
+    db.loadCacheState().then(data => {
+        if (!data) return;
 
         if (data.hasOwnProperty("vibes"))
             vibes = data.vibes;
@@ -49,6 +44,8 @@ function load() {
         vibes.forEach(v => {
             vibesMap[v.id] = v
         })
+    }, err => {
+        console.error(err);
     })
 }
 
