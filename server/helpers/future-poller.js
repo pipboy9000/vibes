@@ -11,6 +11,8 @@ function startPolling() {
             name: "Dan Levin"
         };
         futureVibes.then(result => {
+            if (!result) return;
+            
             result.forEach(futureVibe => {
                 if (Date.parse(futureVibe.date) > new Date().getTime()) return;
 
@@ -26,6 +28,8 @@ function startPolling() {
                 db.removeFutureVibe(futureVibe._id);
                 piggyBack.newVibe();
             });
+        }, err => {
+            console.error(err);
         })
     }, config.futureVibes.pollingInterval);
 }
