@@ -246,30 +246,30 @@ export default new Vuex.Store({
       context.commit("setComments", pictures);
     },
     setLoginDetails: (context, loginDetails) => {
-      console.log("in store.js setLoginDetails. printing loginDetails and context:")
-      console.dir(loginDetails)
-      console.dir(context)
+      // console.log("in store.js setLoginDetails. printing loginDetails and context:")
+      // console.dir(loginDetails)
+      // console.dir(context)
       context.commit("setLoginDetails", loginDetails);
       if (context.getters.me) {
-        console.log("calling socket.login. context.getters.me:")
-        console.dir(context.getters.me)
+        // console.log("calling socket.login. context.getters.me:")
+        // console.dir(context.getters.me)
         socket.login(context.getters.me);
       } else {
-        console.log(context.state)
+        // console.log(context.state)
       }
     },
     setUserDetails: (context, userDetails) => {
-      console.log("in store.js setUserDetails. printing userDetails and context:")
-      console.dir(userDetails)
-      console.dir(context)
+      // console.log("in store.js setUserDetails. printing userDetails and context:")
+      // console.dir(userDetails)
+      // console.dir(context)
       context.commit("setUserDetails", userDetails);
 
-      console.log(context.state.loginDetails);
-      console.log(context.state.location);
-      console.log(context.state.userDetails);
+      // console.log(context.state.loginDetails);
+      // console.log(context.state.location);
+      // console.log(context.state.userDetails);
       if (context.getters.me) {
-        console.log("calling socket.login. context.getters.me:")
-        console.dir(context.getters.me)
+        // console.log("calling socket.login. context.getters.me:")
+        // console.dir(context.getters.me)
         socket.login(context.getters.me);
       }
     },
