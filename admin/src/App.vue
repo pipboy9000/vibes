@@ -1,17 +1,12 @@
 <template>
   <div id="app">
-    <Dashboard/>
+    <router-view/>
   </div>
 </template>
 
 <script>
-import Dashboard from './components/Dashboard.vue'
-
 export default {
-  name: 'app',
-  components: {
-    Dashboard
-  }
+  name: 'app'
 }
 </script>
 
@@ -22,6 +17,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
