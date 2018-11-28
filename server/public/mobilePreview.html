@@ -1,5 +1,18 @@
-<div class="preview">
+<div class="preview" onclick="next()">
 </div>
+
+<script type="text/javascript">
+    var totalImgs = 3;
+    var currentImg = 0;
+    var img = document.getElementsByClassName("preview")[0];
+
+    function next() {
+        currentImg++;
+        if (currentImg == totalImgs)
+            currentImg = 0
+        img.style.backgroundImage = "url('/img" + currentImg + ".png')";
+    }
+</script>
 
 <style>
     body {
@@ -10,7 +23,7 @@
     .preview {
         width: 100%;
         height: 100%;
-        background: url('/preview.png');
+        background: url('/img0.png');
         background-size: contain;
         background-repeat: no-repeat;
     }
