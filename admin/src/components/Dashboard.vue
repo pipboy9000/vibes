@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form novalidate class="md-layout" @submit.prevent="validateUser">
+    <form novalidate class="md-layout" @submit.prevent="validateVibe">
       <md-card class="md-layout-item md-size-50 md-small-size-100">
         <md-card-header>
           <div class="md-title">New Vibe</div>
@@ -72,7 +72,7 @@
         </md-card-actions>
       </md-card>
 
-      <md-snackbar :md-active.sync="userSaved">The user {{ lastUser }} was saved with success!</md-snackbar>
+      <md-snackbar v-if="operationStatus == 'success'" :md-active.sync="vibeSaved">Vibe saved. Vibe ID: {{response.data.vibeId}}</md-snackbar>
     </form>
     <div>
       <div v-if="response">
@@ -84,9 +84,6 @@
           Operation Failed.<br/>
           {{response}}
         </div>
-      </div>
-      <div v-if="waiting">
-        Waiting for server...
       </div>
     </div>
     <Map></Map>
@@ -125,12 +122,11 @@ export default {
         isRecurring: false,
         daysRecurring: [],
       },
-      userSaved: false,
+      vibeSaved: false,
       sending: false,
       lastUser: null,
       operationStatus: null,
       response: null,
-      waiting: false,
     }
   },
   validations: {
@@ -167,22 +163,12 @@ export default {
         this.$v.$reset()
         this.form.vibeName = null
         this.form.lastName = null
+        this.form.lat = null
+        this.form.lng = null
         this.form.date = new Date().toISOString()
       },
-      saveUser () {
-        this.sending = true
-
-        // Instead of this timeout, here you can call your API
-        window.setTimeout(() => {
-          //this.lastUser = `${this.form.vibeName} ${this.form.lastName}`
-          this.userSaved = true
-          this.sending = false
-          this.clearForm()
-        }, 1500)
-      },
-      validateUser () {
+      validateVibe() {
         this.$v.$touch()
-
         if (!this.$v.$invalid) {
           this.saveVibe()
         }
@@ -202,21 +188,20 @@ export default {
       this.sending = true;
       this.response = null;
       const serverUrl = process.env.NODE_ENV === 'production' ? '/save-vibe' : 'http://localhost:3030/save-vibe'
-      let mappedDays = this.isRecurring ? this.daysRecurring.map(day => day.recurring ? 1 : 0) : null
       axios.get(serverUrl, {
         params: {
           title: this.form.vibeName,
-          lng: this.lng,
-          lat: this.lat,
+          lng: this.form.lng,
+          lat: this.form.lat,
           date: this.form.date,
-          isRecurring: this.isRecurring,
-          daysRecurring: mappedDays
+          isRecurring: this.form.isRecurring,
+          daysRecurring: this.form.isRecurring ? this.form.daysRecurring : []
         } 
       }).then(response => {
         this.sending = false;
         if (response.status == 200) {
           this.operationStatus = "success"
-          this.userSaved = true
+          this.vibeSaved = true
           this.clearForm()
         } else {
           this.operationStatus = "failure"

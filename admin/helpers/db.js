@@ -4,17 +4,17 @@ const MongoClient = require("mongodb").MongoClient;
 const ObjectID = require('mongodb').ObjectID
 const url = process.env.MONGO_URL || "mongodb://localhost:27017";
 const dbName = "vibes";
-let dbInstance = null;
+let connectionInstance = null;
 
 var connectSettings = {
     useNewUrlParser: true
 };
-MongoClient.connect(url, connectSettings).then(client => {
-    dbInstance = client.db(dbName)
-});
 
-function getDb() {
-    return dbInstance;
+async function getDb() {
+    if (connectionInstance) return connectionInstance;
+    let client = await MongoClient.connect(url, connectSettings);
+    connectionInstance = client.db(dbName);
+    return connectionInstance;
 }
 
 async function saveVibe(vibe) {
@@ -43,11 +43,28 @@ async function saveVibe(vibe) {
 }
 
 async function saveFutureVibe(vibe) {
+    const db = await getDb();
+    let res = await db.collection("future-vibes").insertOne(vibe);
+    var vibeId = res.insertedId.toString();
+    return vibeId;
+}
+
+async function saveCacheState(users, vibes) {
+    try {
+        let cacheObj = {id:1, users, vibes};
+        const db = await getDb();
+        let res = await db.collection("cache").update({id:1}, cacheObj, {upsert:true});
+        return res;
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
+
+async function loadCacheState() {
     try {
         const db = await getDb();
-        let res = await db.collection("future-vibes").insertOne(vibe);
-        var vibeId = res.insertedId.toString();
-        return vibeId;
+        let res = await db.collection("cache").findOne({id:1});
+        return res;
     } catch (err) {
         console.error(err.stack);
     }
@@ -283,5 +300,7 @@ module.exports = {
     saveFutureVibe,
     getFutureVibes,
     removeFutureVibe,
-    getAlbum
+    getAlbum,
+    saveCacheState,
+    loadCacheState
 };
