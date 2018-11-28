@@ -1,21 +1,21 @@
 var cache = require('./cache');
 var db = require('./db');
 var piggyBack = require('./piggyback');
+const config = require('./config');
 
 function startPolling() {
     setInterval(() => {
-    // setTimeout(() => {
         let futureVibes = db.getFutureVibes();
         let user = {
             fbid: "10156492526329808",
             name: "Dan Levin"
         };
         futureVibes.then(result => {
-            result
-            .filter(
-                vibe => vibe.isRecurring === 'false' && 
-                Date.parse(vibe.date) < new Date().getTime())
-            .forEach(futureVibe => {
+            if (!result) return;
+            
+            result.forEach(futureVibe => {
+                if (Date.parse(futureVibe.date) > new Date().getTime()) return;
+
                 let vibe = {
                     title: futureVibe.title,
                     location: {
@@ -28,9 +28,10 @@ function startPolling() {
                 db.removeFutureVibe(futureVibe._id);
                 piggyBack.newVibe();
             });
+        }, err => {
+            console.error(err);
         })
-    }, 10000);
-    // }, 0);
+    }, config.futureVibes.pollingInterval);
 }
 
 module.exports = {

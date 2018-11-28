@@ -11,20 +11,17 @@ var socketAddress = process.env.SOCKET_ADDRESS;
 // var io = socketio.connect(socketAdress);
 var io = socketio.connect("localhost:8080");
 
-
-
-//prod
 console.log("env: " + process.env.NODE_ENV)
 console.log("process.env.SOCKET_ADDRESS: " + process.env.SOCKET_ADDRESS)
 if (process.env.NODE_ENV == 'production') {
-  var io = socketio.connect(socketAddress);
+  var io = socketio.connect();
 } else {
   var io = socketio.connect(socketAddress);
 }
 
 //from server
 io.on("login", data => store.dispatch("login", data));
-io.on("setData", data => store.dispatch("setData", data));
+io.on("setData", data => {store.dispatch("setData", data)});
 io.on("setServerLocation", user => store.dispatch("setServerLocation", user));
 io.on("newVibe", vibe => store.dispatch("newVibe", vibe));
 io.on("setComments", comments => store.dispatch("setComments", comments));

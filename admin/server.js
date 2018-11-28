@@ -1,4 +1,3 @@
-process.env.MONGO_URL = "mongodb://admin:1qaz1qaz@ds039281.mlab.com:39281/vibes"
 var db = require("./helpers/db");
 
 const express = require('express');
@@ -22,7 +21,12 @@ app.get('/save-vibe', function (req, res) {
         date: q.date,
         isRecurring: q.isRecurring,
         daysRecurring: q.daysRecurring 
-    }).then(vibeId => res.send({vibeId}));
+    })
+    .then(vibeId => res.send({vibeId}))
+    .catch(err => {
+        console.error(err);
+        res.status(500).send(err.toString())
+    });
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

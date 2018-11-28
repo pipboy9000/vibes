@@ -16,7 +16,8 @@ Vue.use(VueCordova, {
 
 Vue.use(VueFire)
 
-const config = {
+// TODO: move to config
+const fbConfig = {
   apiKey: "AIzaSyBZMsNwP9iJ8UlthPPSQtI7fNgYkl2KH9o",
   authDomain: "agents-802b1.firebaseapp.com",
   databaseURL: "https://agents-802b1.firebaseio.com",
@@ -25,7 +26,7 @@ const config = {
   messagingSenderId: "147558985153",
 };
 
-const firebaseApp = firebase.initializeApp(config)
+const firebaseApp = firebase.initializeApp(fbConfig)
 const firebaseDb = firebaseApp.database()
 const firebaseStorage = firebaseApp.storage().ref('/pics')
 // const firestoreDb = firebase.firestore()

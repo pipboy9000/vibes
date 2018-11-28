@@ -11,14 +11,14 @@
 <script>
 import Vue from "vue";
 
+
 import {
   loadFbSdk,
   getLoginStatus,
   fbLogout,
   fbLogin,
   fbGetUserDetails
-  // } from "./helpers-dev.js";
-} from "./helpers.js";
+} from "./fb-helpers.js";
 
 import icon from "./icon.png";
 export default {

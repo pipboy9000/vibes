@@ -14,24 +14,14 @@ var vibesMap = {};
 var vibeTimout = 15000; //5 seconds
 
 function save() {
-    var data = JSON.stringify({
-        users,
-        vibes
+    db.saveCacheState(users, vibes).then(res => {
+        console.log(res);
     });
-    fs.writeFile('cache.json', data, function (err) {
-        if (err)
-            throw err
-    })
 }
 
 function load() {
-    fs.readFile('cache.json', (err, str) => {
-        if (err || str.length == 0) {
-            var data = {};
-            return;
-        }
-
-        var data = JSON.parse(str);
+    db.loadCacheState().then(data => {
+        if (!data) return;
 
         if (data.hasOwnProperty("vibes"))
             vibes = data.vibes;
@@ -46,6 +36,8 @@ function load() {
         vibes.forEach(v => {
             vibesMap[v.id] = v
         })
+    }, err => {
+        console.error(err);
     })
 }
 
