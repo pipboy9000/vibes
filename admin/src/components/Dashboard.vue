@@ -47,11 +47,13 @@
               </md-field>
             </div>
           </div>
-          <div class="md-layout md-gutter">
-            <div class="md-layout-item md-small-size-100">
+          <div class="md-layout">
+            <div class="md-alignment-top-left">
               <md-checkbox v-model="form.isRecurring">Recurring</md-checkbox>
             </div>
-            <div v-if="form.isRecurring" class="md-layout-item md-small-size-100">
+          </div>
+          <div class="md-layout">
+            <div class="md-small-size-100 md-alignment-top-left" v-if="form.isRecurring">
               <md-button class="md-primary" @click="selectAllDays">All</md-button>
               <md-button class="md-primary" @click="selectNoDays">None</md-button>
               <md-checkbox v-model="form.daysRecurring" value="0">Sunday</md-checkbox>
@@ -72,20 +74,8 @@
         </md-card-actions>
       </md-card>
 
-      <md-snackbar v-if="operationStatus == 'success'" :md-active.sync="vibeSaved">Vibe saved. Vibe ID: {{response.data.vibeId}}</md-snackbar>
+      <md-snackbar md-position="left" :md-active.sync="operationReturned">{{response}}</md-snackbar>
     </form>
-    <div>
-      <div v-if="response">
-        <div v-if="operationStatus == 'success'" class="success">
-          Operation succeeded.<br/>
-          Vibe ID: {{response.data.vibeId}}
-        </div>
-        <div v-if="operationStatus == 'failure'" class="failure">
-          Operation Failed.<br/>
-          {{response}}
-        </div>
-      </div>
-    </div>
     <Map></Map>
   </div>
 </template>
@@ -122,7 +112,7 @@ export default {
         isRecurring: false,
         daysRecurring: [],
       },
-      vibeSaved: false,
+      operationReturned: false,
       sending: false,
       lastUser: null,
       operationStatus: null,
@@ -148,6 +138,8 @@ export default {
   },
   mounted() {
     EventBus.$on("mapClicked", this.locationSelected);
+  },
+  computed: {
   },
   methods: {
     getValidationClass (fieldName) {
@@ -187,6 +179,7 @@ export default {
     saveVibe() {
       this.sending = true;
       this.response = null;
+      this.operationStatus = null
       const serverUrl = process.env.NODE_ENV === 'production' ? '/save-vibe' : 'http://localhost:3030/save-vibe'
       axios.get(serverUrl, {
         params: {
@@ -199,18 +192,20 @@ export default {
         } 
       }).then(response => {
         this.sending = false;
+        this.operationReturned = true;
         if (response.status == 200) {
-          this.operationStatus = "success"
-          this.vibeSaved = true
+          this.operationStatus = 'success'
           this.clearForm()
+          this.response = `Vibe saved. Vibe ID: ${response.data.vibeId}`
         } else {
-          this.operationStatus = "failure"
+          this.operationStatus = 'failure'
+          this.response = response
         }
-        this.response = response
       }, err => {
         this.sending = false;
-        this.operationStatus = "failure"
-        this.response = "Error. Did you run admin/server.js? " + err.toString()
+        this.operationReturned = true;
+        this.operationStatus = 'failure'
+        this.response = `Error. Did you run admin/server.js? ${err.toString()}`
       });
     }
   }
