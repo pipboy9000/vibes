@@ -3,8 +3,8 @@
     <md-content class="md-elevation-3">
 
       <div class="title">
-        <img src="https://vuematerial.io/assets/logo-color.png">
-        <div class="md-title">Vibes Admin Dashboard</div>
+        <img src="@/assets/logo.png">
+        <div class="md-title">Welcome to the Dashboard</div>
       </div>
 
       <div class="form">
@@ -19,8 +19,7 @@
         </md-field>
       </div>
 
-      <div class="actions md-layout md-alignment-center-space-between">
-        <a href="/resetpassword">Reset password</a>
+      <div class="actions md-layout md-alignment-bottom-right">
         <md-button class="md-raised md-primary" @click="auth">Log in</md-button>
       </div>
 
