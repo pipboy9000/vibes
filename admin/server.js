@@ -13,6 +13,8 @@ app.get('/', function (req, res) {
   });
 
 app.get('/save-vibe', function (req, res) {
+    checkUserPasswordInCacheLoadedFromDb(req)
+
     var q = req.query;
     db.saveFutureVibe({
         title: q.title,
@@ -23,6 +25,15 @@ app.get('/save-vibe', function (req, res) {
         daysRecurring: q.daysRecurring 
     })
     .then(vibeId => res.send({vibeId}))
+    .catch(err => {
+        console.error(err);
+        res.status(500).send(err.toString())
+    });
+});
+
+app.get('/get-vibes', function (req, res) {
+    db.getFutureVibes()
+    .then(cursor => cursor.toArray().then(vibes => res.send({vibes})))
     .catch(err => {
         console.error(err);
         res.status(500).send(err.toString())
