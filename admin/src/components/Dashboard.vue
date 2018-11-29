@@ -58,18 +58,20 @@
                   <md-checkbox v-model="form.isRecurring">Recurring</md-checkbox>
                 </div>
               </div>
-              <div class="md-layout">
-                <div class="md-small-size-100 md-alignment-top-left" v-if="form.isRecurring">
+              <div v-if="form.isRecurring">
+                <div class="md-layout">
                   <md-button class="md-primary" @click="selectAllDays">All</md-button>
                   <md-button class="md-primary" @click="selectNoDays">None</md-button>
-                  <md-checkbox v-model="form.daysRecurring" value="0">Sunday</md-checkbox>
-                  <md-checkbox v-model="form.daysRecurring" value="1">Monday</md-checkbox>
-                  <md-checkbox v-model="form.daysRecurring" value="2">Tuesday</md-checkbox>
-                  <md-checkbox v-model="form.daysRecurring" value="3">Wednesday</md-checkbox>
-                  <md-checkbox v-model="form.daysRecurring" value="4">Thursday</md-checkbox>
-                  <md-checkbox v-model="form.daysRecurring" value="5">Friday</md-checkbox>
-                  <md-checkbox v-model="form.daysRecurring" value="6">Saturday</md-checkbox>
                 </div>
+                <div class="md-layout">
+                  <md-button
+                    v-for="(day, idx) in form.daysRecurring"
+                    :key="idx"
+                    class="md-icon-button md-raised"
+                    @click="toggleDay(idx)"
+                    v-bind:class="{ 'md-primary': day.recurring }"
+                  >{{day.name}}</md-button>
+                  </div>
               </div>
             </md-card-content>
 
@@ -118,7 +120,36 @@ export default {
         lat: null,
         lng: null,
         isRecurring: false,
-        daysRecurring: []
+        daysRecurring: [
+          {
+            name: "S",
+            recurring: false
+          },
+          {
+            name: "M",
+            recurring: false
+          },
+          {
+            name: "T",
+            recurring: false
+          },
+          {
+            name: "W",
+            recurring: false
+          },
+          {
+            name: "T",
+            recurring: false
+          },
+          {
+            name: "F",
+            recurring: false
+          },
+          {
+            name: "S",
+            recurring: false
+          }
+        ]
       },
       operationReturned: false,
       sending: false,
@@ -149,6 +180,10 @@ export default {
   },
   computed: {},
   methods: {
+    toggleDay(idx) {
+      this.form.daysRecurring[idx].recurring = !this.form.daysRecurring[idx]
+        .recurring;
+    },
     getValidationClass(fieldName) {
       const field = this.$v.form[fieldName];
 
@@ -178,15 +213,18 @@ export default {
       this.form.lat = e.lat;
     },
     selectAllDays() {
-      this.form.daysRecurring = ["0", "1", "2", "3", "4", "5", "6"];
+      this.form.daysRecurring.forEach(day => (day.recurring = true));
     },
     selectNoDays() {
-      this.form.daysRecurring = [];
+      this.form.daysRecurring.forEach(day => (day.recurring = false));
     },
     saveVibe() {
       this.sending = true;
       this.response = null;
       this.operationStatus = null;
+      let mappedDays = this.form.isRecurring
+        ? this.form.daysRecurring.map(day => (day.recurring ? 1 : 0))
+        : null;
       const serverUrl =
         process.env.NODE_ENV === "production"
           ? "/save-vibe"
@@ -199,7 +237,7 @@ export default {
             lat: this.form.lat,
             date: this.form.date,
             isRecurring: this.form.isRecurring,
-            daysRecurring: this.form.isRecurring ? this.form.daysRecurring : []
+            daysRecurring: this.form.isRecurring ? mappedDays : []
           }
         })
         .then(

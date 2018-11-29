@@ -1,6 +1,12 @@
 <template>
   <div>
-    <md-list class="md-double-line">
+    <md-empty-state v-if="vibes.length==0"
+      md-icon="devices_other"
+      md-label="No future vibes loaded"
+      md-description="Try requesting future vibes again">
+      <md-button class="md-primary md-raised" @click="getFutureVibes">Get future vibes</md-button>
+    </md-empty-state>
+    <md-list v-if="vibes.length>0" class="md-double-line">
       <md-subheader>Future Vibes</md-subheader>
 
       <md-list-item v-for="(vibe, key) in vibes" :key="key" :vibe="vibe">
