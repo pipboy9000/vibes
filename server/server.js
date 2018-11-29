@@ -1,4 +1,3 @@
-
 const express = require('express');
 var app = express();
 var server = require('http').Server(app);
@@ -19,12 +18,11 @@ var port = process.env.PORT || 8080;
 app.use(express.static('public'))
 
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/preview', function (req, res) {
-  console.log('preview');
-  res.sendfile(__dirname + '/public/mobilePreview.html');
+  res.sendFile(__dirname + '/public/mobilePreview.html');
 });
 
 io.on('connection', function (socket) {
