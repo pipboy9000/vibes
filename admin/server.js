@@ -39,8 +39,25 @@ app.get('/save-vibe', function (req, res) {
 });
 
 app.get('/get-vibes', function (req, res) {
+    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+        return res.status(500).send('user authentication failed.');
+    }
+
     db.getFutureVibes()
     .then(cursor => cursor.toArray().then(vibes => res.send({vibes})))
+    .catch(err => {
+        console.error(err);
+        res.status(500).send(err.toString())
+    });
+});
+
+app.get('/delete-vibe', function (req, res) {
+    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+        return res.status(500).send('user authentication failed.');
+    }
+
+    db.removeFutureVibe(req.query.id)
+    .then(res.send({}))
     .catch(err => {
         console.error(err);
         res.status(500).send(err.toString())

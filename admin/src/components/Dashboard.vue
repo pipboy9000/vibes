@@ -200,6 +200,7 @@ export default {
       this.form.lat = null;
       this.form.lng = null;
       this.form.date = new Date().toISOString();
+      this.form.isRecurring = false;
     },
     validateVibe() {
       this.$v.$touch();
@@ -248,6 +249,8 @@ export default {
               this.operationStatus = "success";
               this.clearForm();
               this.response = `Vibe saved. Vibe ID: ${response.data.vibeId}`;
+              debugger
+              EventBus.$emit("refreshVibeList");
             } else {
               this.operationStatus = "failure";
               this.response = response;

@@ -1,7 +1,8 @@
 var chalk = require("chalk");
 
-const MongoClient = require("mongodb").MongoClient;
-const ObjectID = require('mongodb').ObjectID
+const mongodb = require('mongodb')
+const MongoClient = mongodb.MongoClient;
+const ObjectID = mongodb.ObjectID
 const url = process.env.MONGO_URL || "mongodb://localhost:27017";
 const dbName = "vibes";
 let connectionInstance = null;
@@ -83,7 +84,7 @@ async function getFutureVibes() {
 async function removeFutureVibe(_id) {
     try {
         const db = await getDb();
-        let res = await db.collection("future-vibes").deleteOne({_id});
+        let res = await db.collection("future-vibes").deleteOne({_id: new ObjectID(_id)});
         return res;
     } catch (err) {
         console.error(err.stack);
