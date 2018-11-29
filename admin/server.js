@@ -6,6 +6,10 @@ var cors = require('cors')
 app.use(cors())
 var port = process.env.PORT || 3030;
 
+function checkUserPasswordInCacheLoadedFromDb() {
+    return true;
+}
+
 app.use(express.static('public'));
 
 app.get('/', function (req, res) {
@@ -13,7 +17,9 @@ app.get('/', function (req, res) {
   });
 
 app.get('/save-vibe', function (req, res) {
-    checkUserPasswordInCacheLoadedFromDb(req)
+    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+        return res.status(500).send('user authentication failed.');
+    }
 
     var q = req.query;
     db.saveFutureVibe({
@@ -21,8 +27,9 @@ app.get('/save-vibe', function (req, res) {
         lng: q.lng,
         lat: q.lat,
         date: q.date,
-        isRecurring: q.isRecurring,
-        daysRecurring: q.daysRecurring 
+        isRecurring: q.isRecurring === 'true',
+        daysRecurring: q.daysRecurring,
+        lastActivated: null 
     })
     .then(vibeId => res.send({vibeId}))
     .catch(err => {

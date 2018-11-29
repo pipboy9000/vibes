@@ -14,7 +14,14 @@ function startPolling() {
             if (!result) return;
             
             result.forEach(futureVibe => {
-                if (Date.parse(futureVibe.date) > new Date().getTime()) return;
+                let currentDate = new Date();
+                let currentDateTime = currentDate.getTime();
+                let currentDayIdx = currentDate.getDay();
+                if (Date.parse(futureVibe.date) > currentDateTime) return;
+                if (futureVibe.lastActivated != null && 
+                    Date.parse(futureVibe.lastActivated) - currentDateTime < 
+                    config.futureVibes.minTimeBeforeNextActivation) return;
+                if (futureVibe.isRecurring && futureVibe.daysRecurring[currentDayIdx] == '0') return;
 
                 let vibe = {
                     title: futureVibe.title,
@@ -25,7 +32,10 @@ function startPolling() {
                     emojis: [null, null, null]
                 };
                 cache.newVibe(vibe, user, false);
-                db.removeFutureVibe(futureVibe._id);
+                if (futureVibe.isRecurring) {
+                    db.updateFutureVibeActivated(futureVibe._id, currentDate.toISOString());
+                }
+                else db.removeFutureVibe(futureVibe._id);
                 piggyBack.newVibe();
             });
         }, err => {

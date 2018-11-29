@@ -94,6 +94,16 @@ async function removeFutureVibe(_id) {
     }
 }
 
+async function updateFutureVibeActivated(_id, lastActivated) {
+    try {
+        const db = await getDb();
+        let res = await db.collection("future-vibes").update({_id}, {lastActivated});
+        return res;
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
+
 async function getAlbum(fbid) {
     try {
         const db = await getDb();
@@ -306,5 +316,6 @@ module.exports = {
     removeFutureVibe,
     getAlbum,
     saveCacheState,
-    loadCacheState
+    loadCacheState,
+    updateFutureVibeActivated
 };

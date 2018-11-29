@@ -15,7 +15,7 @@ var vibeTimout = 15000; //5 seconds
 
 function save() {
     db.saveCacheState(users, vibes).then(res => {
-        console.log(res);
+        // console.log(res);
     });
 }
 
