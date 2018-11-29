@@ -17,11 +17,33 @@ function startPolling() {
                 let currentDate = new Date();
                 let currentDateTime = currentDate.getTime();
                 let currentDayIdx = currentDate.getDay();
-                if (Date.parse(futureVibe.date) > currentDateTime) return;
+
+                console.log(`checking future vibe: ${futureVibe.title}`)
+                console.log(`lastActivated: ${futureVibe.lastActivated}`)
+                console.log(`date: ${futureVibe.date}`)
+                console.log(`currentDateTime - Date.parse(futureVibe.lastActivated): ${currentDateTime - Date.parse(futureVibe.lastActivated)}`)
+                console.log(`config.futureVibes.minTimeBeforeNextActivation: ${config.futureVibes.minTimeBeforeNextActivation}`)
+
+                if (Date.parse(futureVibe.date) > currentDateTime) {
+                    console.log(`failed test: Date.parse(futureVibe.date) > currentDateTime`)
+                    return;
+                }
+
                 if (futureVibe.lastActivated != null && 
-                    Date.parse(futureVibe.lastActivated) - currentDateTime < 
-                    config.futureVibes.minTimeBeforeNextActivation) return;
-                if (futureVibe.isRecurring && futureVibe.daysRecurring[currentDayIdx] == '0') return;
+                    currentDateTime - Date.parse(futureVibe.lastActivated) < 
+                    config.futureVibes.minTimeBeforeNextActivation) {
+                        console.log(`failed test: (futureVibe.lastActivated != null && 
+                            currentDateTime - Date.parse(futureVibe.lastActivated) < 
+                            config.futureVibes.minTimeBeforeNextActivation)`)
+                        return;
+                    }
+
+                if (futureVibe.isRecurring && futureVibe.daysRecurring[currentDayIdx] == '0') {
+                    console.log(`futureVibe.isRecurring && futureVibe.daysRecurring[currentDayIdx] == '0'`)
+                    return;
+                }
+
+                console.log('passed all tests. creating vibe.')
 
                 let vibe = {
                     title: futureVibe.title,

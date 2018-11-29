@@ -1,6 +1,6 @@
 const devConfig = {
     futureVibes: {
-        pollingInterval: 1000,
+        pollingInterval: 10000,
         minTimeBeforeNextActivation: 1000 * 60 * 60 * 24, // 24 hours
     }
 }
