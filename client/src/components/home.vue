@@ -8,10 +8,10 @@
             <FacebookLogin></FacebookLogin>
           </div>
         </div>
-          <mapUI></mapUI>
-          <list></list>
-          <vibe-details></vibe-details>
-          <NewVibeForm></NewVibeForm>
+        <mapUI></mapUI>
+        <vibe-details></vibe-details>
+        <NewVibeForm></NewVibeForm>
+        <div class="preview"></div>
   </div>
 </template>
 
@@ -22,7 +22,6 @@ import Logo from "./logo";
 import MapUI from "./mapUI";
 import NewVibeForm from "./newVibeForm";
 import VibeDetails from "./vibeDetails";
-import List from "./list";
 
 import { EventBus } from "../event-bus";
 
@@ -33,7 +32,6 @@ export default {
     FacebookLogin,
     Logo,
     NewVibeForm,
-    List,
     VibeDetails,
     MapUI
   }
@@ -41,6 +39,17 @@ export default {
 </script>
 
 <style scoped="true">
+.preview {
+  position: absolute;
+  width: 1080px;
+  height: -webkit-fill-available;
+  background: url("/static/ref.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .main {
   position: absolute;
   width: 100%;

@@ -8,14 +8,14 @@
 
 <script>
 export default {
-  props: ["size", "thickness", "color"],
+  props: ["size", "thickness", "color", "radius"],
   mounted() {
     this.$refs.plus.style.width = this.size + "px";
     this.$refs.plus.style.height = this.size + "px";
 
     this.$refs.hor.style.width = this.size + "px";
     this.$refs.hor.style.height = this.thickness + "px";
-    this.$refs.hor.style.borderRadius = this.thickness + "px";
+    this.$refs.hor.style.borderRadius = this.radius + "px";
     this.$refs.hor.style.background = this.color;
   }
 };

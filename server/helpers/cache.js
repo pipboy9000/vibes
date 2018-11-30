@@ -11,8 +11,7 @@ var vibesMap = {};
 // var vibeTimout = 20000 * 60 * 90; //20 hours
 
 //dev
-var vibeTimout = 15000; //5 seconds
-
+var vibeTimout = 60 * 60 * 30; //30 minutes
 function save() {
     db.saveCacheState(users, vibes).then(res => {
         // console.log(res);
