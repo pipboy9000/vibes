@@ -9,12 +9,16 @@
           <div class="title">{{ vibe.title }}</div>
         </div>
       </div>
+      <div class="bottom">
+        <p>Created by {{ vibe.createdBy.name }}</p>
+        <p>{{ time }}</p>
+      </div>
     </div>
 </template>
 
 
 <script>
-import { timeAgo } from "../services/timeAgo";
+import { timeAgo } from "../services/timeAgo.js";
 import { EventBus } from "../event-bus";
 import { getDistance, formatDistance } from "../services/maps.js";
 
@@ -58,7 +62,13 @@ export default {
 .top {
   height: 50%;
   width: 100%;
-  position: absolute;
+  float: left;
+}
+
+.bottom {
+  width: 100%;
+  height: 50%;
+  float: left;
 }
 
 .left,
@@ -68,11 +78,13 @@ export default {
 }
 
 .left {
-  width: 29%;
+  width: 28%;
 }
 
 .right {
-  width: 71%;
+  width: 72%;
+  display: flex;
+  align-items: center;
 }
 
 .left > img {
@@ -81,5 +93,34 @@ export default {
   margin-left: 12px;
   margin-top: 14px;
   border-radius: 61px;
+}
+
+.title {
+  max-width: 100%;
+  text-align: left;
+  font-family: "Black Han Sans", sans-serif;
+  font-size: 22px;
+  white-space: pre-wrap;
+  line-height: 32px;
+  margin-top: 5px;
+  margin-left: 1px;
+}
+
+.bottom > p:nth-child(1) {
+  font-family: "Roboto", sans-serif;
+  text-align: left;
+  margin: 0;
+  margin-left: 17px;
+  font-size: 19px;
+  margin-top: 2px;
+}
+
+.bottom > p:nth-child(2) {
+  font-family: "Roboto", sans-serif;
+  text-align: left;
+  margin: 0;
+  margin-left: 19px;
+  font-size: 13px;
+  margin-top: 3px;
 }
 </style>
