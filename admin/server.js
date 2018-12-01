@@ -16,6 +16,14 @@ app.get('/', function (req, res) {
     res.sendfile(__dirname + '/index.html');
   });
 
+app.get('/auth', function (req, res) {
+    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+        return res.status(403).send('user authentication failed.');
+    } else {
+        return res.status(200).send();
+    }
+});
+
 app.get('/save-vibe', function (req, res) {
     if (!checkUserPasswordInCacheLoadedFromDb(req)) {
         return res.status(500).send('user authentication failed.');
