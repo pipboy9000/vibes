@@ -1,11 +1,11 @@
 <template>
   <div>
-    <form>
+    <v-form ref="form" v-model="form.valid" lazy-validation>
       <v-text-field
         v-model="form.vibeName"
-        :error-messages="nameErrors"
         label="Vibe Title"
         required
+        :rules="[v => !!v || 'Required']"
         :disabled="sending"
         @input="$v.form.vibeName.$touch()"
         @blur="$v.form.vibeName.$touch()"
@@ -16,11 +16,11 @@
             v-model="form.lat"
             label="Lat"
             required
+            :rules="[v => !!v || 'Required']"
             :disabled="sending"
             @input="$v.form.lat.$touch()"
             @blur="$v.form.lat.$touch()"
             prepend-icon="place"
-            :error-messages="latErrors"
           ></v-text-field>
         </v-flex>
 
@@ -29,11 +29,11 @@
             v-model="form.lng"
             label="Lng"
             required
+            :rules="[v => !!v || 'Required']"
             :disabled="sending"
             @input="$v.form.lng.$touch()"
             @blur="$v.form.lng.$touch()"
             prepend-icon="place"
-            :error-messages="lngErrors"
           ></v-text-field>
         </v-flex>
       </v-layout>
@@ -57,6 +57,8 @@
               label="Date"
               prepend-icon="event"
               readonly
+              required
+              :rules="[v => !!v || 'Required']"
             ></v-text-field>
             <v-date-picker v-model="form.date" no-title scrollable>
               <v-spacer></v-spacer>
@@ -87,7 +89,7 @@
               prepend-icon="access_time"
               readonly
               required
-              :error-messages="timeErrors"
+              :rules="[v => !!v || 'Required']"
             ></v-text-field>
             <v-time-picker
               v-if="form.timeMenu"
@@ -113,11 +115,11 @@
         >{{day.name}}</v-btn>
       </div>
 
-      <v-btn @click="validateVibe()">Save vibe</v-btn>
+      <v-btn @click="validate()">Save vibe</v-btn>
       <v-btn @click="clearForm">clear</v-btn>
       <v-progress-linear v-if="sending" color="primary" indeterminate></v-progress-linear>
       <v-snackbar v-model="operationReturned" left>{{response}}</v-snackbar>
-    </form>
+    </v-form>
   </div>
 </template>
 
@@ -139,6 +141,7 @@ export default {
   data() {
     return {
       form: {
+        valid: true,
         time: null,
         dateMenu: false,
         timeMenu: false,
@@ -185,60 +188,17 @@ export default {
       response: null
     };
   },
-  validations: {
-    form: {
-      vibeName: {
-        required,
-        minLength: minLength(3),
-        maxLength: maxLength(10)
-      },
-      lat: {
-        required
-      },
-      lng: {
-        required
-      },
-      time: {
-        required
-      }
-    }
-  },
   mounted() {
     EventBus.$on("mapClicked", this.locationSelected);
   },
-  computed: {
-    nameErrors() {
-      const errors = [];
-      if (!this.$v.form.vibeName.$dirty) return errors;
-      !this.$v.form.vibeName.required && errors.push("Title required.");
-      return errors;
-    },
-    timeErrors() {
-      const errors = [];
-      if (!this.$v.form.time.$dirty) return errors;
-      !this.$v.form.time.required && errors.push("Time required.");
-      return errors;
-    },
-    latErrors() {
-      const errors = [];
-      if (!this.$v.form.lat.$dirty) return errors;
-      !this.$v.form.lat.required && errors.push("Lat required.");
-      return errors;
-    },
-    lngErrors() {
-      const errors = [];
-      if (!this.$v.form.lng.$dirty) return errors;
-      !this.$v.form.lng.required && errors.push("Lng required.");
-      return errors;
-    }
-  },
+  computed: {},
   methods: {
     toggleDay(idx) {
       this.form.daysRecurring[idx].recurring = !this.form.daysRecurring[idx]
         .recurring;
     },
     getDayColor(idx) {
-      return this.form.daysRecurring[idx].recurring ? 'primary' : 'noraml'
+      return this.form.daysRecurring[idx].recurring ? "primary" : "noraml";
     },
     clearForm() {
       this.$v.$reset();
@@ -249,9 +209,8 @@ export default {
       this.form.time = null;
       this.form.isRecurring = false;
     },
-    validateVibe() {
-      this.$v.$touch();
-      if (!this.$v.$invalid) {
+    validate() {
+      if (this.$refs.form.validate()) {
         this.saveVibe();
       }
     },
