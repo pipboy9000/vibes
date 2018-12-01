@@ -5,7 +5,7 @@
         <NewVibe></NewVibe>
       </div>
       <div class="md-layout-item">
-        <FutureVibeList></FutureVibeList>
+        <!-- <FutureVibeList></FutureVibeList> -->
       </div>
     </div>
     <Map></Map>

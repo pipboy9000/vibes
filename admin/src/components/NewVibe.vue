@@ -1,57 +1,95 @@
 <template>
   <div>
+    <form>
+      <v-text-field
+        v-model="form.vibeName"
+        :error-messages="nameErrors"
+        :counter="10"
+        label="Vibe Title"
+        required
+        :disabled="sending"
+        @input="$v.form.vibeName.$touch()"
+        @blur="$v.form.vibeName.$touch()"
+      ></v-text-field>
+      <v-text-field
+        v-model="form.lat"
+        label="Lat"
+        required
+        :disabled="sending"
+        @input="$v.form.lat.$touch()"
+        @blur="$v.form.lat.$touch()"
+      ></v-text-field>
+      <v-text-field
+        v-model="form.lng"
+        label="Lng"
+        required
+        :disabled="sending"
+        @input="$v.form.lng.$touch()"
+        @blur="$v.form.lng.$touch()"
+      ></v-text-field>
+      <v-layout row wrap>
+        
+        <v-flex xs12 sm6 md4>
+          <v-menu
+            ref="dateMenu"
+            :close-on-content-click="false"
+            v-model="form.dateMenu"
+            :nudge-right="40"
+            :return-value.sync="form.date"
+            lazy
+            transition="scale-transition"
+            offset-y
+            full-width
+            min-width="290px"
+          >
+            <v-text-field
+              slot="activator"
+              v-model="form.date"
+              label="Date"
+              prepend-icon="event"
+              readonly
+            ></v-text-field>
+            <v-date-picker v-model="form.date" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+              <v-btn flat color="primary" @click="$refs.dateMenu.save(form.date)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-flex>
 
-        <form novalidate class="md-layout md-size-50" @submit.prevent="validateVibe">
-          <md-card class="md-layout-item">
-            <md-card-header>
-              <div class="md-title">New Vibe</div>
-            </md-card-header>
+        <v-flex xs12 sm6 md4>
+          <v-menu
+            ref="timeMenu"
+            :close-on-content-click="false"
+            v-model="form.timeMenu"
+            :nudge-right="40"
+            :return-value.sync="form.time"
+            lazy
+            transition="scale-transition"
+            offset-y
+            full-width
+            max-width="290px"
+            min-width="290px"
+          >
+            <v-text-field
+              slot="activator"
+              v-model="form.time"
+              label="Time"
+              prepend-icon="access_time"
+              readonly
+            ></v-text-field>
+            <v-time-picker
+              v-if="form.timeMenu"
+              v-model="form.time"
+              full-width
+              format="24hr"
+              @change="$refs.timeMenu.save(form.time)"
+            ></v-time-picker>
+          </v-menu>
+        </v-flex>
+      </v-layout>
 
-            <md-card-content>
-              <div class="md-layout md-gutter">
-                <div class="md-layout-item md-small-size-100">
-                  <md-field :class="getValidationClass('vibeName')">
-                    <label for="vibe-name">Vibe Title</label>
-                    <md-input
-                      name="vibe-name"
-                      id="vibe-name"
-                      v-model="form.vibeName"
-                      :disabled="sending"
-                    />
-                    <span class="md-error" v-if="!$v.form.vibeName.required">Required</span>
-                    <span class="md-error" v-else-if="!$v.form.vibeName.minlength">Too short</span>
-                  </md-field>
-                </div>
-              </div>
-
-              <div class="md-layout md-gutter">
-                <div class="md-layout-item md-small-size-100">
-                  <md-field :class="getValidationClass('date')">
-                    <md-icon>event</md-icon>
-                    <label for="vibe-date">When?</label>
-                    <md-input name="vibe-date" id="vibe-date" :disabled="true"/>
-                    <datetime type="datetime" v-model="form.date" input-id="vibe-date"></datetime>
-                  </md-field>
-                </div>
-              </div>
-
-              <div class="md-layout md-gutter">
-                <div class="md-layout-item md-small-size-100">
-                  <md-field :class="getValidationClass('lat')">
-                    <label for="vibe-lat">Lat</label>
-                    <md-input name="vibe-lat" id="vibe-lat" v-model="form.lat" :disabled="sending"/>
-                    <span class="md-error" v-if="!$v.form.lat.required">Required</span>
-                  </md-field>
-                </div>
-
-                <div class="md-layout-item md-small-size-100">
-                  <md-field :class="getValidationClass('lng')">
-                    <label for="vibe-lng">Lng</label>
-                    <md-input name="vibe-lng" id="vibe-lng" v-model="form.lng" :disabled="sending"/>
-                    <span class="md-error" v-if="!$v.form.lng.required">Required</span>
-                  </md-field>
-                </div>
-              </div>
+      <!--
               <div class="md-layout">
                 <div class="md-alignment-top-left">
                   <md-checkbox v-model="form.isRecurring">Recurring</md-checkbox>
@@ -71,19 +109,12 @@
                     v-bind:class="{ 'md-primary': day.recurring }"
                   >{{day.name}}</md-button>
                   </div>
-              </div>
-            </md-card-content>
-
-            <md-progress-bar md-mode="indeterminate" v-if="sending"/>
-
-            <md-card-actions>
-              <md-button type="submit" class="md-primary" :disabled="sending">create vibe</md-button>
-            </md-card-actions>
-          </md-card>
-
-          <md-snackbar md-position="left" :md-active.sync="operationReturned">{{response}}</md-snackbar>
-        </form>
-     
+      </div>-->
+      <v-btn @click="validateVibe()">Save vibe</v-btn>
+      <v-btn @click="clearForm">clear</v-btn>
+      <v-progress-linear v-if="sending" color="primary" indeterminate></v-progress-linear>
+      <v-snackbar v-model="operationReturned" left>{{response}}</v-snackbar>
+    </form>
   </div>
 </template>
 
@@ -105,9 +136,12 @@ export default {
   data() {
     return {
       form: {
+        time: null,
+        dateMenu: false,
+        timeMenu: false,
         vibeName: null,
         lastName: null,
-        date: new Date().toISOString(),
+        date: new Date().toISOString().substr(0, 10),
         lat: null,
         lng: null,
         isRecurring: false,
@@ -153,7 +187,8 @@ export default {
     form: {
       vibeName: {
         required,
-        minLength: minLength(3)
+        minLength: minLength(3),
+        maxLength: maxLength(10)
       },
       lat: {
         required
@@ -169,7 +204,16 @@ export default {
   mounted() {
     EventBus.$on("mapClicked", this.locationSelected);
   },
-  computed: {},
+  computed: {
+    nameErrors() {
+      const errors = [];
+      if (!this.$v.form.vibeName.$dirty) return errors;
+      !this.$v.form.vibeName.maxLength &&
+        errors.push("Title must be at most 10 characters long");
+      !this.$v.form.vibeName.required && errors.push("Title is required.");
+      return errors;
+    }
+  },
   methods: {
     toggleDay(idx) {
       this.form.daysRecurring[idx].recurring = !this.form.daysRecurring[idx]
@@ -194,6 +238,7 @@ export default {
       this.form.isRecurring = false;
     },
     validateVibe() {
+      debugger;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         this.saveVibe();
@@ -240,7 +285,7 @@ export default {
               this.operationStatus = "success";
               this.clearForm();
               this.response = `Vibe saved. Vibe ID: ${response.data.vibeId}`;
-              debugger
+              debugger;
               EventBus.$emit("refreshVibeList");
             } else {
               this.operationStatus = "failure";
