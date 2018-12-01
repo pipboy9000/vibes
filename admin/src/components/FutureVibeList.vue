@@ -1,37 +1,74 @@
 <template>
   <div>
-    <md-dialog-confirm
-      :md-active.sync="deleteConfirmActive"
-      md-title="Are you sure you want to delete?"
-      md-content="This will stop the vibe from being created again"
-      md-confirm-text="Delete"
-      md-cancel-text="Cancel"
-      @md-confirm="deleteFutureVibe" />
-
-    <md-empty-state
-      v-if="vibes.length==0"
-      md-icon="devices_other"
-      md-label="No future vibes loaded"
-      md-description="Try requesting future vibes again"
+    <v-dialog
+      v-model="deleteConfirmActive"
+      width="500"
     >
-      <md-button class="md-primary md-raised" @click="getFutureVibes">Get future vibes</md-button>
-    </md-empty-state>
-    <md-list v-if="vibes.length>0" class="md-double-line">
-      <md-subheader>Future Vibes</md-subheader>
+    <v-card>
+        <v-card-title class="headline">Are you sure you want to delete?</v-card-title>
 
-      <md-list-item v-for="(vibe, key) in vibes" :key="key" :vibe="vibe">
-        <md-icon class="md-primary">location_on</md-icon>
-        <div class="md-list-item-text">
-          <span>{{vibe.title}}</span>
-          <span>{{vibe.date}}</span>
-        </div>
-        <md-button class="md-icon-button md-list-action" @click="vibeToBeDeleted = vibe; deleteConfirmActive = true;">
-          <md-icon>delete</md-icon>
-        </md-button>
-      </md-list-item>
-    </md-list>
-    <md-progress-bar md-mode="indeterminate" v-if="sending"/>
-    <md-snackbar md-position="left" :md-active.sync="operationReturned">{{response}}</md-snackbar>
+        <v-card-text>
+          This will stop the vibe from being created again
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="deleteConfirmActive = false"
+          >
+            Cancel
+          </v-btn>
+
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="deleteFutureVibe()"
+          >
+            Delete Vibe
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <div v-if="vibes.length==0">
+    <v-icon>devices_other</v-icon>
+    No future vibes loaded.
+      <v-btn primary raised @click="getFutureVibes">Get future vibes</v-btn>
+    </div>
+
+    <v-list two-line v-if="vibes.length>0">
+
+<v-subheader>Future Vibes</v-subheader>
+          <template v-for="(vibe, index) in vibes">
+            <v-subheader
+              v-if="vibe.title"
+              :key="vibe._id"
+            >
+              {{ vibe.title }}
+            </v-subheader>
+
+            <v-list-tile
+              :key="vibe.title"
+              avatar
+              @click=""
+            >
+<v-icon>location_on</v-icon>
+              <v-list-tile-content>
+                <v-list-tile-title v-html="vibe.title"></v-list-tile-title>
+                <v-list-tile-sub-title v-html="vibe.date"></v-list-tile-sub-title>
+              </v-list-tile-content>
+              <v-btn raised icon @click="vibeToBeDeleted = vibe; deleteConfirmActive = true;">
+                <v-icon>delete</v-icon>
+                </v-btn>
+            </v-list-tile>
+          </template>
+        </v-list>
+      
+      <v-progress-linear v-if="sending" color="primary" indeterminate></v-progress-linear>
+      <v-snackbar v-model="operationReturned" left>{{response}}</v-snackbar>
   </div>
 </template>
 
@@ -59,6 +96,7 @@ export default {
   methods: {
     deleteFutureVibe() {
       let vibe = this.vibeToBeDeleted;
+      this.deleteConfirmActive = false;
       this.sending = true;
       this.response = null;
       this.operationStatus = null;
