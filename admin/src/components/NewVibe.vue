@@ -4,31 +4,40 @@
       <v-text-field
         v-model="form.vibeName"
         :error-messages="nameErrors"
-        :counter="10"
         label="Vibe Title"
         required
         :disabled="sending"
         @input="$v.form.vibeName.$touch()"
         @blur="$v.form.vibeName.$touch()"
       ></v-text-field>
-      <v-text-field
-        v-model="form.lat"
-        label="Lat"
-        required
-        :disabled="sending"
-        @input="$v.form.lat.$touch()"
-        @blur="$v.form.lat.$touch()"
-      ></v-text-field>
-      <v-text-field
-        v-model="form.lng"
-        label="Lng"
-        required
-        :disabled="sending"
-        @input="$v.form.lng.$touch()"
-        @blur="$v.form.lng.$touch()"
-      ></v-text-field>
       <v-layout row wrap>
-        
+        <v-flex xs12 sm6 md4>
+          <v-text-field
+            v-model="form.lat"
+            label="Lat"
+            required
+            :disabled="sending"
+            @input="$v.form.lat.$touch()"
+            @blur="$v.form.lat.$touch()"
+            prepend-icon="place"
+            :error-messages="latErrors"
+          ></v-text-field>
+        </v-flex>
+
+        <v-flex xs12 sm6 md4>
+          <v-text-field
+            v-model="form.lng"
+            label="Lng"
+            required
+            :disabled="sending"
+            @input="$v.form.lng.$touch()"
+            @blur="$v.form.lng.$touch()"
+            prepend-icon="place"
+            :error-messages="lngErrors"
+          ></v-text-field>
+        </v-flex>
+      </v-layout>
+      <v-layout row wrap>
         <v-flex xs12 sm6 md4>
           <v-menu
             ref="dateMenu"
@@ -77,6 +86,8 @@
               label="Time"
               prepend-icon="access_time"
               readonly
+              required
+              :error-messages="timeErrors"
             ></v-text-field>
             <v-time-picker
               v-if="form.timeMenu"
@@ -88,28 +99,20 @@
           </v-menu>
         </v-flex>
       </v-layout>
+      <v-checkbox v-model="form.isRecurring" label="Recurring"></v-checkbox>
+      <div v-if="form.isRecurring">
+        <v-btn flat @click="selectAllDays">All</v-btn>
+        <v-btn flat @click="selectNoDays">None</v-btn>
+        <v-btn
+          v-for="(day, idx) in form.daysRecurring"
+          raised
+          icon
+          :key="idx"
+          @click="toggleDay(idx)"
+          v-bind:color="getDayColor(idx)"
+        >{{day.name}}</v-btn>
+      </div>
 
-      <!--
-              <div class="md-layout">
-                <div class="md-alignment-top-left">
-                  <md-checkbox v-model="form.isRecurring">Recurring</md-checkbox>
-                </div>
-              </div>
-              <div v-if="form.isRecurring">
-                <div class="md-layout">
-                  <md-button class="md-primary" @click="selectAllDays">All</md-button>
-                  <md-button class="md-primary" @click="selectNoDays">None</md-button>
-                </div>
-                <div class="md-layout">
-                  <md-button
-                    v-for="(day, idx) in form.daysRecurring"
-                    :key="idx"
-                    class="md-icon-button md-raised"
-                    @click="toggleDay(idx)"
-                    v-bind:class="{ 'md-primary': day.recurring }"
-                  >{{day.name}}</md-button>
-                  </div>
-      </div>-->
       <v-btn @click="validateVibe()">Save vibe</v-btn>
       <v-btn @click="clearForm">clear</v-btn>
       <v-progress-linear v-if="sending" color="primary" indeterminate></v-progress-linear>
@@ -140,7 +143,6 @@ export default {
         dateMenu: false,
         timeMenu: false,
         vibeName: null,
-        lastName: null,
         date: new Date().toISOString().substr(0, 10),
         lat: null,
         lng: null,
@@ -196,7 +198,7 @@ export default {
       lng: {
         required
       },
-      date: {
+      time: {
         required
       }
     }
@@ -208,9 +210,25 @@ export default {
     nameErrors() {
       const errors = [];
       if (!this.$v.form.vibeName.$dirty) return errors;
-      !this.$v.form.vibeName.maxLength &&
-        errors.push("Title must be at most 10 characters long");
-      !this.$v.form.vibeName.required && errors.push("Title is required.");
+      !this.$v.form.vibeName.required && errors.push("Title required.");
+      return errors;
+    },
+    timeErrors() {
+      const errors = [];
+      if (!this.$v.form.time.$dirty) return errors;
+      !this.$v.form.time.required && errors.push("Time required.");
+      return errors;
+    },
+    latErrors() {
+      const errors = [];
+      if (!this.$v.form.lat.$dirty) return errors;
+      !this.$v.form.lat.required && errors.push("Lat required.");
+      return errors;
+    },
+    lngErrors() {
+      const errors = [];
+      if (!this.$v.form.lng.$dirty) return errors;
+      !this.$v.form.lng.required && errors.push("Lng required.");
       return errors;
     }
   },
@@ -219,26 +237,19 @@ export default {
       this.form.daysRecurring[idx].recurring = !this.form.daysRecurring[idx]
         .recurring;
     },
-    getValidationClass(fieldName) {
-      const field = this.$v.form[fieldName];
-
-      if (field) {
-        return {
-          "md-invalid": field.$invalid && field.$dirty
-        };
-      }
+    getDayColor(idx) {
+      return this.form.daysRecurring[idx].recurring ? 'primary' : 'noraml'
     },
     clearForm() {
       this.$v.$reset();
       this.form.vibeName = null;
-      this.form.lastName = null;
       this.form.lat = null;
       this.form.lng = null;
-      this.form.date = new Date().toISOString();
+      this.form.date = new Date().toISOString().substr(0, 10);
+      this.form.time = null;
       this.form.isRecurring = false;
     },
     validateVibe() {
-      debugger;
       this.$v.$touch();
       if (!this.$v.$invalid) {
         this.saveVibe();
