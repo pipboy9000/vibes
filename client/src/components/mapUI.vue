@@ -8,15 +8,15 @@
     <div class="sideBtns">
       <div class="zoom">
         <div class="zoomIn" @click="zoomIn">
-          <plus-icon class="plusIcon" :size="19" :thickness="7" :radius="2" :color="'#8be0ff'"></plus-icon>
+          <i class="fas fa-plus"></i>
         </div>
         <hr>
         <div class="zoomOut" @click="zoomOut">
-          <minus-icon :size="19" :thickness="7" :radius="2" :color="'#8be0ff'"></minus-icon>
+          <i class="fas fa-minus"></i>
         </div>
       </div>
       <div class="focusBtn" @click="focus">
-        <i class="fas fa-crosshairs" style="font-size: 35px; color: rgb(139, 224, 255);"></i>
+        <i class="fas fa-crosshairs"></i>
       </div>
     </div>
   </div>
@@ -68,16 +68,16 @@ export default {
   user-select: none;
   position: absolute;
   width: 90%;
-  max-width: 410px;
-  height: 60px;
+  max-width: 318px;
+  height: 46px;
   background-color: #8be0ff;
   left: 50%;
   -webkit-transform: translateX (-50%);
   transform: translateX(-50%);
-  bottom: 31px;
-  border-radius: 10px;
+  bottom: 24px;
+  border-radius: 5px;
   font-family: "Fredoka One", cursive;
-  font-size: 29px;
+  font-size: 23px;
   line-height: 70px;
   color: white;
   -webkit-box-shadow: 0px 0px 0px 6px rgba(0, 0, 0, 0.1);
@@ -93,17 +93,19 @@ export default {
   width: min-content;
   height: min-content;
   position: absolute;
-  right: 16px;
-  bottom: 314px;
+  right: 13px;
+  bottom: 243px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   user-select: none;
+  font-size: 25px;
+  color: rgb(139, 224, 255);
 }
 
 .focusBtn {
-  width: 66px;
-  height: 66px;
+  width: 52px;
+  height: 52px;
   border-radius: 60px;
   display: flex;
   align-items: center;
@@ -112,11 +114,6 @@ export default {
   -moz-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
   box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
   background: #fff;
-}
-
-.focusBtn > img {
-  width: 28px;
-  height: 28px;
 }
 
 hr {
@@ -128,21 +125,20 @@ hr {
 }
 
 .zoom {
-  margin-bottom: 16px;
-  width: 66px;
-  height: 118px;
+  margin-bottom: 12px;
+  width: 52px;
+  height: 90px;
   border-radius: 60px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   line-height: 48px;
-  font-size: 39px;
   font-family: cursive;
-  color: white;
   -webkit-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
   -moz-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
   box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
   background: #fff;
+  font-size: 20px;
 }
 
 .zoomIn {

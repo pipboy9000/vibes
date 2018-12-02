@@ -1,5 +1,5 @@
 <template>
-  <div class="list">
+  <div class="list" ref="list">
     <div class="items">
       <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
     </div>
@@ -19,6 +19,12 @@ export default {
       isMobile: false
     };
   },
+  mounted() {
+    this.$refs.list.addEventListener("mousedown", function(e) {
+      debugger;
+      console.log("down");
+    });
+  },
   components: { ListItem },
   methods: {},
   computed: {
@@ -35,18 +41,19 @@ export default {
 <style scoped="true">
 .list {
   width: 100%;
-  height: 187px;
+  height: 145px;
   position: absolute;
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
-  bottom: 106px;
+  bottom: 82px;
+  scroll-snap-type: x mandatory;
 }
 
 .list::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  height: 6px;
+  width: 6px;
 }
 .list::-webkit-scrollbar-button {
   width: 33px;

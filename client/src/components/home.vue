@@ -11,7 +11,7 @@
         <mapUI></mapUI>
         <vibe-details></vibe-details>
         <NewVibeForm></NewVibeForm>
-        <div class="preview"></div>
+        <!-- <div class="preview"></div> -->
   </div>
 </template>
 
