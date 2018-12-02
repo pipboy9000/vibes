@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-app>
     <v-navigation-drawer v-model="drawer" floating app mobile-break-point="1">
       <div v-show="inVibeCreationMode">
       <v-layout justify-center>
@@ -8,7 +8,9 @@
       </div>
       <div v-show="!inVibeCreationMode">
       <v-layout justify-center>
+        <v-flex>
         <FutureVibeList></FutureVibeList>
+        </v-flex>
       </v-layout>
       </div>
     </v-navigation-drawer>
@@ -17,18 +19,18 @@
       <v-toolbar-title>Application</v-toolbar-title>
     </v-toolbar>
     <v-content>
-      <v-container>
-        <div class="mapContainer">
-          <v-layout justify-center>
-            <Map></Map>
+      <v-container fluid fill-height>
+          <v-layout justify-center align-center>
+            <v-flex fill-height d-flex xs12>
+              <Map></Map>
+            </v-flex>
           </v-layout>
-        </div>
       </v-container>
     </v-content>
     <v-footer color="indigo" app>
       <span class="white--text">&copy; 2017</span>
     </v-footer>
-  </div>
+  </v-app> 
 </template>
 
 <script>
@@ -58,7 +60,4 @@ export default {
 
 <style lang="scss" scoped>
 
-.mapContainer {
-  height: 400px;
-}
 </style>
