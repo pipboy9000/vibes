@@ -32,8 +32,10 @@ app.get('/save-vibe', function (req, res) {
     var q = req.query;
     db.saveFutureVibe({
         title: q.title,
-        lng: q.lng,
-        lat: q.lat,
+        location: {
+            lng: q.lng,
+            lat: q.lat,
+        },
         date: q.date,
         isRecurring: q.isRecurring === 'true',
         daysRecurring: q.daysRecurring,

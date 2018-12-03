@@ -30,14 +30,14 @@ export default {
     EventBus.$on("zoomOut", this.zoomOut);
     EventBus.$on("focus", this.focusSelf);
 
-    var mockX = 32.080032199999996;
-    var mockY = 34.769544399999996;
+    var mockX = 32.090042199999996;
+    var mockY = 34.779544399999996;
     this.mockLocation = { 
         lat: mockX, 
         lng: mockY 
       };
     this.map = new google.maps.Map(this.$refs.map, {
-      zoom: 17,
+      zoom: 15,
       center: { 
         lat: mockX, 
         lng: mockY 
@@ -112,7 +112,7 @@ export default {
         fillOpacity: 0.25,
         map: this.map,
         center: vibe.location,
-        radius: this.getVibeSize(vibe.users.length + 2)
+        radius: this.getVibeSize(vibe.users ? vibe.users.length + 2 : 2)
       });
     },
     
@@ -122,7 +122,7 @@ export default {
         var vibe = vibes[vibeId];
         if (i < this.circles.length) {
           this.circles[i].setCenter(vibe.location);
-          this.circles[i].setRadius(this.getVibeSize(vibe.users.length));
+          this.circles[i].setRadius(this.getVibeSize(vibe.users ? vibe.users.length : 0));
         } else {
           var circle = this.getNewCircle(vibe);
           this.circles.push(circle);
@@ -186,7 +186,7 @@ export default {
       return this.mockLocation;
     },
     vibes() {
-      return {}
+      return this.$store.state.vibes;
     },
     users() {
       return {}
@@ -198,7 +198,7 @@ export default {
   watch: {
     location(newLoc, oldLoc) {
       if (!oldLoc) {
-        this.focus(newLoc, 17);
+        this.focus(newLoc, 15);
       }
     },
     vibes(newVibes) {
