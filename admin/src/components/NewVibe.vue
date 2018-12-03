@@ -1,114 +1,123 @@
 <template>
-  <div>
-    <v-form ref="form" v-model="form.valid" lazy-validation>
-      <v-text-field
-        v-model="form.vibeName"
-        label="Vibe Title"
-        required
-        :rules="[v => !!v || 'Required']"
-        :disabled="sending"
-      ></v-text-field>
-      <v-layout row wrap>
+  <v-card class="elevation-3">
+    <v-card-title primary-title>
+      Create New Vibe
+      <v-spacer></v-spacer>
+      <v-btn raised icon @click="closeCard()">
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-card-title>
+    <v-card-text>
+      <v-form ref="form" v-model="form.valid" lazy-validation>
         <v-text-field
-          v-model="form.lat"
-          label="Lat"
+          v-model="form.vibeName"
+          label="Vibe Title"
           required
           :rules="[v => !!v || 'Required']"
           :disabled="sending"
-          prepend-icon="place"
         ></v-text-field>
-      </v-layout>
-      <v-layout row wrap>
-        <v-text-field
-          v-model="form.lng"
-          label="Lng"
-          required
-          :rules="[v => !!v || 'Required']"
-          :disabled="sending"
-          prepend-icon="place"
-        ></v-text-field>
-      </v-layout>
-      <v-layout row wrap>
-        <v-menu
-          ref="dateMenu"
-          :close-on-content-click="false"
-          v-model="form.dateMenu"
-          :nudge-right="40"
-          :return-value.sync="form.date"
-          lazy
-          transition="scale-transition"
-          offset-y
-          full-width
-          min-width="290px"
-        >
+        <v-layout row wrap>
           <v-text-field
-            slot="activator"
-            v-model="form.date"
-            label="Date"
-            prepend-icon="event"
-            readonly
+            v-model="form.lat"
+            label="Lat"
             required
             :rules="[v => !!v || 'Required']"
+            :disabled="sending"
+            prepend-icon="place"
           ></v-text-field>
-          <v-date-picker v-model="form.date" no-title scrollable>
-            <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-            <v-btn flat color="primary" @click="$refs.dateMenu.save(form.date)">OK</v-btn>
-          </v-date-picker>
-        </v-menu>
-      </v-layout>
-      <v-layout row wrap>
-        <v-menu
-          ref="timeMenu"
-          :close-on-content-click="false"
-          v-model="form.timeMenu"
-          :nudge-right="40"
-          :return-value.sync="form.time"
-          lazy
-          transition="scale-transition"
-          offset-y
-          full-width
-          max-width="290px"
-          min-width="290px"
-        >
+        </v-layout>
+        <v-layout row wrap>
           <v-text-field
-            slot="activator"
-            v-model="form.time"
-            label="Time"
-            prepend-icon="access_time"
-            readonly
+            v-model="form.lng"
+            label="Lng"
             required
             :rules="[v => !!v || 'Required']"
+            :disabled="sending"
+            prepend-icon="place"
           ></v-text-field>
-          <v-time-picker
-            v-if="form.timeMenu"
-            v-model="form.time"
+        </v-layout>
+        <v-layout row wrap>
+          <v-menu
+            ref="dateMenu"
+            :close-on-content-click="false"
+            v-model="form.dateMenu"
+            :nudge-right="40"
+            :return-value.sync="form.date"
+            lazy
+            transition="scale-transition"
+            offset-y
             full-width
-            format="24hr"
-            @change="$refs.timeMenu.save(form.time)"
-          ></v-time-picker>
-        </v-menu>
-      </v-layout>
-      <v-checkbox v-model="form.isRecurring" label="Recurring"></v-checkbox>
-      <div v-if="form.isRecurring">
-        <v-btn flat @click="selectAllDays">All</v-btn>
-        <v-btn flat @click="selectNoDays">None</v-btn>
-        <v-btn
-          v-for="(day, idx) in form.daysRecurring"
-          raised
-          icon
-          :key="idx"
-          @click="toggleDay(idx)"
-          v-bind:color="getDayColor(idx)"
-        >{{day.name}}</v-btn>
-      </div>
+            min-width="290px"
+          >
+            <v-text-field
+              slot="activator"
+              v-model="form.date"
+              label="Date"
+              prepend-icon="event"
+              readonly
+              required
+              :rules="[v => !!v || 'Required']"
+            ></v-text-field>
+            <v-date-picker v-model="form.date" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+              <v-btn flat color="primary" @click="$refs.dateMenu.save(form.date)">OK</v-btn>
+            </v-date-picker>
+          </v-menu>
+        </v-layout>
+        <v-layout row wrap>
+          <v-menu
+            ref="timeMenu"
+            :close-on-content-click="false"
+            v-model="form.timeMenu"
+            :nudge-right="40"
+            :return-value.sync="form.time"
+            lazy
+            transition="scale-transition"
+            offset-y
+            full-width
+            max-width="290px"
+            min-width="290px"
+          >
+            <v-text-field
+              slot="activator"
+              v-model="form.time"
+              label="Time"
+              prepend-icon="access_time"
+              readonly
+              required
+              :rules="[v => !!v || 'Required']"
+            ></v-text-field>
+            <v-time-picker
+              v-if="form.timeMenu"
+              v-model="form.time"
+              full-width
+              format="24hr"
+              @change="$refs.timeMenu.save(form.time)"
+            ></v-time-picker>
+          </v-menu>
+        </v-layout>
+        <v-checkbox v-model="form.isRecurring" label="Recurring"></v-checkbox>
+        <div v-if="form.isRecurring">
+          <v-btn flat @click="selectAllDays">All</v-btn>
+          <v-btn flat @click="selectNoDays">None</v-btn>
+          <v-btn
+            v-for="(day, idx) in form.daysRecurring"
+            raised
+            icon
+            :key="idx"
+            @click="toggleDay(idx)"
+            v-bind:color="getDayColor(idx)"
+          >{{day.name}}</v-btn>
+        </div>
 
-      <v-btn @click="validate()">Save vibe</v-btn>
-      <v-btn @click="clearForm">clear</v-btn>
-      <v-progress-linear v-if="sending" color="primary" indeterminate></v-progress-linear>
-      <v-snackbar v-model="operationReturned" left>{{response}}</v-snackbar>
-    </v-form>
-  </div>
+        <v-btn @click="validate()">Save vibe</v-btn>
+        <v-btn @click="clearForm">clear</v-btn>
+        <v-progress-linear v-if="sending" color="primary" indeterminate></v-progress-linear>
+        <v-snackbar v-model="operationReturned" left>{{response}}</v-snackbar>
+      </v-form>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
@@ -173,6 +182,9 @@ export default {
   },
   computed: {},
   methods: {
+    closeCard() {
+      EventBus.$emit("newVibeFormClosed");
+    },
     toggleDay(idx) {
       this.form.daysRecurring[idx].recurring = !this.form.daysRecurring[idx]
         .recurring;

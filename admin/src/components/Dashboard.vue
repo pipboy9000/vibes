@@ -3,30 +3,18 @@
     <v-navigation-drawer
       v-model="drawer"
       width="400"
+      floating
       app
       mobile-break-point="1"
       class="scroll-width"
     >
-      <!-- <div v-show="inVibeCreationMode"> -->
-      <div>
-        <v-layout row justify-center>
-          <v-flex xs11>
-            <v-card class="elevation-3">
-              <v-card-title primary-title>Create New Vibe</v-card-title>
-              <v-card-text>
-                <NewVibe></NewVibe>
-              </v-card-text>
-            </v-card>
+      <v-container>
+        <v-layout row wrap>
+          <v-flex xs12>
+            <component v-bind:is="currentCard"></component>
           </v-flex>
         </v-layout>
-      </div>
-      <div v-show="!inVibeCreationMode">
-        <v-layout justify-center>
-          <v-flex>
-            <FutureVibeList></FutureVibeList>
-          </v-flex>
-        </v-layout>
-      </div>
+      </v-container>
     </v-navigation-drawer>
     <v-toolbar color="indigo" dark fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
@@ -48,14 +36,14 @@
 </template>
 
 <script>
-import Map from "@/components/map";
-import DateSlider from "@/components/DateSlider";
-import NewVibe from "@/components/NewVibe";
-import FutureVibeList from "@/components/FutureVibeList";
-import { EventBus } from "../../../client/src/event-bus.js";
+import Map from '@/components/map';
+import DateSlider from '@/components/DateSlider';
+import NewVibe from '@/components/NewVibe';
+import FutureVibeList from '@/components/FutureVibeList';
+import { EventBus } from '../../../client/src/event-bus.js';
 
 export default {
-  name: "Dashboard",
+  name: 'Dashboard',
   components: {
     Map,
     NewVibe,
@@ -64,12 +52,17 @@ export default {
   },
   data: () => ({
     drawer: null,
-    inVibeCreationMode: false
+    currentCard: 'FutureVibeList'
   }),
   mounted() {
-    EventBus.$on("mapClicked", () => {
-      this.inVibeCreationMode = true;
+    EventBus.$on('mapClicked', () => {
+      this.currentCard = 'NewVibe';
     });
+    
+    EventBus.$on('newVibeFormClosed', () => {
+      this.currentCard = 'FutureVibeList';
+    });
+
   }
 };
 </script>
