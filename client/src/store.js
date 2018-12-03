@@ -324,6 +324,30 @@ export default new Vuex.Store({
       context.commit("setUsers", users);
     },
 
+    startVibe(context, title) {
+      debugger;
+      if (!context.state.location) {
+        console.log("location not ready");
+        return;
+      }
+
+      var location = context.state.location;
+
+      var vibe = {
+        title,
+        location
+      };
+
+      var token = context.getters.token;
+      var inVibe = context.state.inVibe;
+
+      socket.newVibe({
+        vibe,
+        token,
+        inVibe
+      });
+    },
+
     joinVibe(context, vibeId) {
       //remove from old vibe
       if (context.state.inVibe) {

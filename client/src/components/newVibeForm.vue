@@ -1,37 +1,22 @@
 <template>
   <transition name="fade">
     <div class="overlay" @click="close" v-if="show">
-        <div class="bg" @click="bgClicked">
-            <div class="titleWRapper">
-                <div ref="titleBg" class="titleBg"></div>
-                <div ref="titleStroke" class="titleStroke">{{title}}</div>
-                <input ref="titleInput" 
-                       class="title input" 
-                       placeholder="Title" 
-                       v-model="title" 
-                       @input="resizeTitle"
-                       @change="resizeTitle" 
-                       @paste="onPaste" 
-                       @keydown="resizeTitle" 
-                       maxlength="35">
-            </div>
-            <div class="tagsWrapper">
-                <div @click="selectEmoji(0)">
-                  <plus-icon class="addTagBtn" v-if="!emojis[0]" :size="30" :thickness="5" :color="'#bababa'"></plus-icon>
-                  <div v-else class="emoji">{{emojis[0]}}</div>
-                </div>
-                <div @click="selectEmoji(1)">
-                  <plus-icon class="addTagBtn" v-if="!emojis[1]" :size="30" :thickness="5" :color="'#bababa'"></plus-icon>
-                  <div v-else class="emoji">{{emojis[1]}}</div>
-                </div>
-                <div @click="selectEmoji(2)">
-                  <plus-icon class="addTagBtn" v-if="!emojis[2]" :size="30" :thickness="5" :color="'#bababa'"></plus-icon>
-                  <div v-else class="emoji">{{emojis[2]}}</div>
-                </div>
-            </div>
-              <!-- <textarea class="description" rows="10" placeholder="description" v-model="description"></textarea> -->
-              <div class="startBtn" @click="startVibe">Start</div>
+      <div class="bg" @click="bgClicked">
+        <div ref="title" class="title">
+          <p>New Vibe</p>
+          <div class="closeBtn">X</div>
         </div>
+
+        <div class="bottom">
+          <input ref="titleInput" 
+              class="title input" 
+              placeholder="What's your vibe?" 
+              v-model="title"
+              maxlength="35">
+          <hr>
+          <div class="startBtn" @click="startVibe">Start</div>
+        </div>
+      </div>
     </div>
   </transition>
 </template>
@@ -40,7 +25,6 @@
 import { EventBus } from "../event-bus";
 import socket from "../services/socket.js";
 import location from "../services/location.js";
-import plusIcon from "./plusIcon.vue";
 export default {
   name: "NewVibeForm",
   created() {
@@ -49,38 +33,13 @@ export default {
   data() {
     return {
       show: false,
-      title: "",
-      emojis: [null, null, null],
-      titleWidth: null,
-      titlePxSizeBase: 65
+      title: ""
     };
   },
-  components: {
-    plusIcon
-  },
-  mounted() {
-    window.addEventListener("resize", this.resizeTitle);
-    if (window.innerWidth <= 510) {
-      this.titlePxSizeBase = 35;
-    }
-  },
+  mounted() {},
   methods: {
-    onPaste() {
-      setTimeout(this.resizeTitle, 0);
-    },
     open() {
       this.show = true;
-      if (!this.titleWidth) {
-        this.$nextTick(function() {
-          this.titleWidth = this.$refs.titleBg.clientWidth - 30;
-          this.$refs.titleInput.focus();
-        });
-      } else {
-        this.$nextTick(function() {
-          this.$refs.titleInput.focus();
-        });
-      }
-      setTimeout(this.resizeTitle, 0);
     },
     close() {
       this.$router.go(-1);
@@ -88,54 +47,9 @@ export default {
     bgClicked(e) {
       e.stopPropagation();
     },
-    resizeTitle(e) {
-      if (window.innerWidth <= 510) {
-        this.titlePxSizeBase = 35;
-      } else {
-        this.titlePxSizeBase = 65;
-      }
-      if (!this.show) return;
-
-      var stroke = this.$refs.titleStroke;
-      var maxWidth = this.$refs.titleBg.clientWidth;
-      var input = this.$refs.titleInput;
-      var fontSize = this.titlePxSizeBase;
-
-      input.style.fontSize = fontSize + "px";
-      stroke.style.fontSize = fontSize + "px";
-
-      while (stroke.clientWidth > maxWidth) {
-        fontSize--;
-        stroke.style.fontSize = fontSize + "px";
-      }
-      input.style.fontSize = fontSize + "px";
-    },
-    selectEmoji(emojiIdx) {
-      var self = this;
-      EventBus.$emit("openEmojiSelector", emoji => {
-        self.emojis[emojiIdx] = emoji;
-        self.emojis = self.emojis.slice();
-      });
-    },
     startVibe() {
-      if (!this.$store.state.location) {
-        console.log("location not ready");
-        return;
-      }
-
-      var location = this.$store.state.location;
-
-      var vibe = {
-        title: this.title,
-        emojis: this.emojis,
-        location
-      };
-
-      var token = this.$store.getters.token;
-
-      var inVibe = this.$store.state.inVibe;
-
-      socket.newVibe({ vibe, token, inVibe });
+      debugger;
+      this.$store.dispatch("startVibe", this.title);
       this.close();
     }
   },
@@ -164,128 +78,104 @@ export default {
   height: 100%;
   background-color: #0000001f;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
 .bg {
   position: relative;
-  width: 100%;
-  max-width: 487px;
-  height: 100%;
-  max-height: min-content;
   background-color: white;
-  border-radius: 10px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  /* min-width: 420px; */
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 30px;
-}
-
-.titleWRapper {
-  width: 100%;
-  height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.titleBg {
-  left: 0;
-  right: 0;
-  top: 0;
-  position: absolute;
-  margin: 20px;
-  height: 65px;
-  border-radius: 10px;
-  background: #d5effd;
-}
-
-.titleStroke {
-  position: absolute;
-  background: transparent;
-  font-size: 65px;
-  text-align: center;
-  font-family: "Pacifico", cursive, sans-serif;
-  color: white;
-  border: none;
-  outline: none;
-  white-space: pre;
-  top: auto;
-  bottom: auto;
-  -webkit-text-stroke-width: 5px;
-  -webkit-text-stroke-color: #3fb7f5;
+  width: 90%;
+  min-width: 330px;
+  max-width: 400px;
+  border-radius: 3px;
+  height: 198px;
+  overflow: hidden;
 }
 
 .title {
-  position: absolute;
-  background: transparent;
-  font-size: 65px;
+  background: #8be0ff;
+  width: 100%;
+  height: 47px;
+  font-family: "Fredoka One", cursive;
   text-align: center;
-  font-family: "Pacifico", cursive, sans-serif;
-  color: white;
-  border: none;
-  outline: none;
-  white-space: pre;
-  top: auto;
-  bottom: auto;
-}
-
-.input {
-  width: 100%;
-}
-
-.title::placeholder {
-  color: #d0d0d0;
-}
-
-.tagsWrapper {
-  margin-top: 10px;
-  width: 100%;
-  height: 132px;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 
-.addTagBtn {
-  width: 90px;
-  height: 90px;
-  min-width: 90px;
-  min-height: 90px;
-  border-radius: 102px;
-  border: 5px solid #ababab;
-  background: #d2d2d2;
-  line-height: 80px;
-  font-size: 60px;
-  color: #bababa;
-  font-family: cursive;
+.title > p {
+  margin: 0;
+  color: #fff;
+  font-size: 24px;
 }
 
-.emoji {
-  transform: translateY(-6px);
-  font-size: 90px;
+.closeBtn {
+  float: right;
+  position: absolute;
+  right: 0;
+  background: #4acfff;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
+  color: white;
+  margin-right: 8px;
+  line-height: 30px;
 }
 
-.description::placeholder {
-  color: #d0d0d0;
+.bottom > input {
+  background: #fff;
+  font-size: 20px;
+  height: unset;
+  margin-top: 48px;
+  border: none;
+}
+
+.bottom > input::placeholder {
+  color: #b5b8b8;
+}
+
+.bottom > input:focus {
+  outline: none;
+}
+
+hr {
+  background: #95e0e3;
+  height: 3px;
+  width: 223px;
+  border: none;
+  border-radius: 10px;
+  margin: 0;
+}
+
+.bottom {
+  width: 100%;
+  background: transparent;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
 }
 
 .startBtn {
   cursor: pointer;
-  width: 100%;
   background: #3fb7f5;
-  max-width: 300px;
-  height: 52px;
-  margin-top: 20px;
+  height: 40px;
   border-radius: 5px;
-  font-size: 29px;
-  line-height: 52px;
   color: white;
   box-shadow: 0 5px 1px 1px #0002;
+  font-family: "Fredoka One", cursive;
+  line-height: 40px;
+  width: 100%;
+  max-width: 150px;
+  font-size: 20px;
+  margin-top: 17px;
 }
 
 .fade-enter-active,
@@ -294,53 +184,6 @@ export default {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
-}
-
-@media (max-width: 510px) {
-  .addTagBtn {
-    width: 65px;
-    height: 65px;
-    min-width: 65px;
-    min-height: 65px;
-    border: 3px solid #ababab;
-  }
-
-  .titleBg {
-    height: 55px;
-    margin: 12px;
-  }
-
-  .tagsWrapper {
-    height: 67px;
-    width: 85%;
-    margin-top: 0px;
-  }
-
-  .bg {
-    margin-top: 4vw;
-    margin-bottom: 0px;
-    width: 85%;
-    min-width: 350px;
-    border-radius: 15px;
-    padding-bottom: 22px;
-  }
-
-  .emoji {
-    font-size: 75px;
-  }
-
-  .overlay {
-    align-items: flex-start;
-    /* display: block; */
-  }
-
-  .startBtn {
-    width: 75%;
-    height: 40px;
-    font-size: 23px;
-    line-height: 43px;
-    max-width: 150px;
-  }
 }
 </style>
 

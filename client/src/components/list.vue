@@ -21,8 +21,7 @@ export default {
   },
   mounted() {
     this.$refs.list.addEventListener("mousedown", function(e) {
-      debugger;
-      console.log("down");
+      console.log("list - mousedown");
     });
   },
   components: { ListItem },

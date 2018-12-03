@@ -24,13 +24,11 @@
 
 <script>
 import { EventBus } from "../event-bus";
-import plusIcon from "./plusIcon";
-import minusIcon from "./minusIcon";
 import list from "./list";
 
 export default {
   name: "MapUI",
-  components: { plusIcon, minusIcon, list },
+  components: { list },
   methods: {
     zoomIn() {
       EventBus.$emit("zoomIn");

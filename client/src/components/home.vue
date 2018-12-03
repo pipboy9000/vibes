@@ -11,7 +11,7 @@
         <mapUI></mapUI>
         <vibe-details></vibe-details>
         <NewVibeForm></NewVibeForm>
-        <!-- <div class="preview"></div> -->
+        <div class="preview"></div>
   </div>
 </template>
 
@@ -41,7 +41,7 @@ export default {
 <style scoped="true">
 .preview {
   position: absolute;
-  width: 1080px;
+  width: 100%;
   height: -webkit-fill-available;
   background: url("/static/ref.png");
   background-size: contain;
