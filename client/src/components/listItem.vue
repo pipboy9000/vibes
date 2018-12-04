@@ -106,12 +106,13 @@ export default {
 .title {
   max-width: 100%;
   text-align: left;
-  font-family: "Black Han Sans", sans-serif;
-  font-size: 17px;
+  font-size: 20px;
   white-space: pre-wrap;
   line-height: 19px;
   margin-top: 6px;
   margin-left: 1px;
+  font-family: "Fredoka One", cursive;
+  padding-right: 10px;
 }
 
 .bottom > p:nth-child(1) {

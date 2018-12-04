@@ -4,7 +4,7 @@
       <div class="bg" @click="bgClicked">
         <div ref="title" class="title">
           <p>New Vibe</p>
-          <div class="closeBtn">X</div>
+          <div class="closeBtn" @click="close">X</div>
         </div>
 
         <div class="bottom">
@@ -48,7 +48,6 @@ export default {
       e.stopPropagation();
     },
     startVibe() {
-      debugger;
       this.$store.dispatch("startVibe", this.title);
       this.close();
     }
@@ -128,12 +127,23 @@ export default {
   line-height: 30px;
 }
 
+.bottom {
+  width: 100%;
+  background: transparent;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .bottom > input {
   background: #fff;
   font-size: 20px;
   height: unset;
-  margin-top: 48px;
+  margin-top: 10px;
   border: none;
+  color: #646464;
 }
 
 .bottom > input::placeholder {
@@ -151,16 +161,6 @@ hr {
   border: none;
   border-radius: 10px;
   margin: 0;
-}
-
-.bottom {
-  width: 100%;
-  background: transparent;
-  height: 150px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* justify-content: center; */
 }
 
 .startBtn {

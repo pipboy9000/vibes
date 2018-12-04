@@ -1,46 +1,20 @@
 <template>
-    <div class="main" v-if="vibe" :class="{open: isOpen, closed: !isOpen}">
+<transition name="fade">
+    <div class="scrollBarDiv" v-if="vibe">
       <canvas id="img-canvas" width="200" height="150"></canvas>
-          <div class="topBar" v-if="isMobile">
-            <Logo class="logo" :size="40" :shadow="false" :plain="true"></Logo>
-            <div class="closeBtn" @click="close">
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-      <div class="scrollBarDiv" ref="scrollBarDiv">
-        <div class="bg">
-          <div class="titleWrapper" ref="titleWrapper">
-              <div class="titleBg"></div>
-              <div class="titleStroke" ref="titleStroke">{{vibe.title}}</div>
-              <div class="title" ref="title">{{vibe.title}}</div>
-          </div>
-          <div class="top">
-            <div class="joinLeave">
-                <div class="join" v-if="!inVibe && vibe.distance < 50" @click="joinVibe">
-                  <div class="joinText">
-                    <span>Join!</span>
-                    <span>Join!</span>
-                  </div>
-                  <img src="../assets/join_arrow.png">
-                </div>
-                <div class="tooFar" v-else-if="!inVibe && vibe.distance > 50">
-                    <span>Too Far</span>
-                </div>
-                <div class="leave" v-else-if="inVibe" @click="leaveVibe">
-                  <img src="../assets/leave_arrow.png">
-                  <div class="leaveText">
-                    <span>Leave</span>
-                    <span>Leave</span>
-                  </div>
-                </div>
-            </div>
-            <div class="emojis">
-                <div class="emoji">{{vibe.emojis[0]}}</div>
-                <div class="emoji">{{vibe.emojis[1]}}</div>
-                <div class="emoji">{{vibe.emojis[2]}}</div>
-            </div>
-          </div>
+      <div class="bg">
+        <div class="cover">
+          <div class="colorOverlay"></div>
+        </div>
+        <div class="closeBtn">X</div>
+        <div class="users">
+          <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
+          <img v-for="uid in usersToDisplay" :src="'https://graph.facebook.com/' + uid + '/picture?type=large'" :key="uid">
+        </div>
+        <div class="editCover"></div>
+        <div class="bg"></div>
+        <div class="title"></div>
+
           <div class="info">
             <img class="creatorPic" :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=square'">
             <div class="details">
@@ -51,9 +25,7 @@
               </div>
             </div>
           </div>
-          <div class="users" v-if="vibe.users.length > 0">
-            <img class="profilePic" v-for="(user, idx) in vibe.users" :key="idx" :src="'https://graph.facebook.com/' + user + '/picture?type=square'">
-          </div>
+
           <div v-if="inVibe" class="sendPicButtonContainer">
             <label v-if="useHtmlCamera" class="cameraButton">Take a picture
               <input type="file" accept="image/*" capture @change="fileLoaded">
@@ -77,17 +49,13 @@
             <h2>Comments:</h2>
             <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
           </div>
-        </div>
       </div>
       <div v-if="inVibe" class="newComment">
           <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
           <button @click="sendNewComment">></button>
       </div>
-      <div class="closeBtn" @click="close" v-if="!isMobile">
-          <div></div>
-          <div></div>
-      </div>
     </div>    
+    </transition>
 </template>
 
 <script>
@@ -101,9 +69,7 @@ import Pica from "pica";
 const pica = Pica();
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import Logo from "./logo";
-import { PhotoGallery } from 'vue-photo-gallery';
-import GoogleImageSearch from 'free-google-image-search';
-console.dir(GoogleImageSearch);
+import { PhotoGallery } from "vue-photo-gallery";
 
 export default {
   name: "VibeDetails",
@@ -116,33 +82,25 @@ export default {
   },
   data() {
     return {
-      isMobile: false,
-      isMounted: false,
-      isOpen: false,
       time: null,
       commentTxt: "",
-      titlePxSizeBase: 45,
-      maxTitleHeight: 150,
       firebaseStorage: this.$root.firebaseStorage,
       firebase: this.$root.firebase,
       index: null,
       loaderColor: "#d5effd",
       uploadingPictures: [],
       slide: false, //check if link change was from a slide,
-      demoPics: null,
+      demoPics: null
     };
   },
   mounted() {
-    this.isMounted = true;
     var self = this;
-
     //keep timeago updated
     setInterval(function() {
       if (self.vibe) {
         self.time = timeAgo.format(self.vibe.createdAt);
       }
     }, 10000);
-    window.addEventListener("resize", this.resizeLayout);
   },
   methods: {
     openImg(idx) {
@@ -176,9 +134,9 @@ export default {
       }
     },
     uploadPicture(cordovaImageData) {
-      var size = cordovaImageData.length*3/4;
-      console.log("Picture Size: "+size);
-      alert("Picture Size: "+size/1024+"KB");
+      var size = (cordovaImageData.length * 3) / 4;
+      console.log("Picture Size: " + size);
+      alert("Picture Size: " + size / 1024 + "KB");
 
       var self = this;
       const base64JpegPrefix = "data:image/jpeg;base64,";
@@ -319,53 +277,6 @@ export default {
         options
       );
     },
-    resizeLayout(e) {
-      if (!this.open || !this.isMounted || !this.vibe) return;
-
-      this.$nextTick(function() {
-        this.$refs.scrollBarDiv.style.marginTop = this.isMobile ? "80px" : "0";
-
-        //title resize
-        var fontSize = this.titlePxSizeBase;
-        var title = this.$refs.title;
-        var titleStroke = this.$refs.titleStroke;
-        var titleWrapper = this.$refs.titleWrapper;
-        var maxHeight = this.maxTitleHeight;
-        var maxWidth = titleWrapper.clientWidth;
-
-        titleStroke.style.fontSize = fontSize + "px";
-
-        while (
-          titleStroke.clientHeight > maxHeight ||
-          titleStroke.clientWidth > maxWidth
-        ) {
-          fontSize--;
-          titleStroke.style.fontSize = fontSize + "px";
-        }
-
-        titleStroke.style.fontSize = fontSize - 5 + "px";
-        title.style.fontSize = fontSize - 5 + "px";
-        titleWrapper.style.height =
-          Math.max(titleStroke.clientHeight, 35) + "px";
-      });
-    },
-    open() {
-      this.isMobile = window.innerWidth < 650 ? true : false;
-      this.isOpen = true;
-      this.resizeLayout();
-
-      this.demoPics = [];
-        if (this.vibe.title) {
-          GoogleImageSearch.searchImage(this.vibe.title).then((res) => {
-            res.forEach(url => {
-              this.demoPics.push({
-              imgUrl: url,
-              thumbnailUrl: url
-            });
-            })
-          }, err => console.error(err))
-        }
-    },
     close() {
       this.$router.go(-1);
     },
@@ -410,23 +321,23 @@ export default {
           thumbSrc: x.thumbnailUrl,
           w: 1600,
           h: 1600
-        }
+        };
       });
     },
+    usersToDisplay() {
+      var me = this;
+      var arr = [];
+      for (var i = 0; i < 4; i++) {
+        if (
+          this.vibe.users[i] &&
+          this.vibe.users[i] != this.vibe.createdBy.fbid
+        )
+          arr.push(this.vibe.users[id]);
+      }
+      return arr;
+    },
     vibePictures() {
-      // if (!this.demoPics) {
-        
- 
-        // for (var i=0; i<30; i++) {
-        //   var url = 'https://picsum.photos/200/300/?random&r=' + Math.random();
-        //   this.demoPics.push({
-        //     imgUrl: url,
-        //     thumbnailUrl: url
-        //   });
-        // }
-      // }
-      var returnPics = this.vibe.pictures.reverse().concat(this.demoPics);
-      return returnPics;
+      return this.vibe.pictures;
     },
     camera() {
       return this.$root.cordova.camera;
@@ -464,7 +375,6 @@ export default {
         var vibe = this.$store.getters.getVibeById(vibeId);
         if (vibe) {
           this.$store.commit("setSelectedVibe", vibe);
-          this.open();
           var imgIdx = to.query.img;
           if (imgIdx >= 0) {
             this.index = +imgIdx;
@@ -472,8 +382,6 @@ export default {
             this.index = null;
           }
         }
-      } else {
-        this.isOpen = false;
       }
     },
     vibe(newVibe) {
@@ -487,7 +395,6 @@ export default {
         var vibe = this.$store.getters.getVibeById(vibeId);
         if (vibe) {
           this.$store.commit("setSelectedVibe", vibe);
-          this.open();
           let imgIdx = +this.$route.query.img;
           if (imgIdx >= 0) {
             this.index = null;
@@ -504,54 +411,12 @@ export default {
 </script>
 
 <style scoped="true">
-@keyframes openAnim {
-  from {
-    left: -600px;
-  }
-  to {
-    left: 0px;
-  }
-}
-
-@keyframes closeAnim {
-  from {
-    left: 0px;
-  }
-  to {
-    left: -600px;
-  }
-}
-
-.noAnim {
-  animation-duration: 0s;
-}
-
-.open {
-  left: 0px;
-  animation: openAnim;
-  animation-duration: 0.25s;
-  animation-timing-function: ease-out;
-}
-
-.closed {
-  pointer-events: none;
-  transform: translateX(-10px);
-  left: -650px;
-  animation: closeAnim;
-  animation-duration: 0.25s;
-  animation-timing-function: ease-out;
-}
-
-.wrapper {
-  position: absolute;
-  height: 100%;
-}
-
 .scrollBarDiv {
-  width: 505px;
+  position: absolute;
+  width: 100%;
   height: 100%;
-  overflow-y: auto;
-  margin-top: 80px;
+  max-width: 500px;
+  overflow-y: hidden;
 }
 
 .scrollBarDiv::-webkit-scrollbar {
@@ -580,46 +445,11 @@ export default {
 .scrollBarDiv::-webkit-scrollbar-corner {
   background: transparent;
 }
-.topBar {
-  position: absolute;
-  width: 100vw;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* justify-content: flex-end; */
-  /* background: white; */
-  background: #5dc8ff;
-  border-bottom: 1px #dfdfdf solid;
-  margin-top: 0px;
-}
-
-.topBar > .closeBtn {
-  cursor: pointer;
-  border-radius: 50px;
-  width: 50px;
-  height: 50px;
-  background: #fff;
-  color: white;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  padding: 10px;
-  box-sizing: border-box;
-  box-shadow: unset;
-  margin: 0;
-  margin-right: 20px;
-  position: relative;
-}
-
-.logo {
-  margin-left: 20px;
-}
 
 /* items */
 .bg {
-  width: 480px;
+  width: 100%;
+  max-width: 465px;
   background: white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   float: left;
@@ -629,80 +459,40 @@ export default {
   min-height: 100%;
 }
 
-.main {
+.cover {
+  position: absolute;
+  width: 100%;
+  height: 136px;
+  background: url("/static/goodvibes.jpg");
+  background-position: 48px -84px;
+  background-size: 269px;
+  top: 0;
+  left: 0;
+}
+
+.colorOverlay {
+  width: 100%;
   height: 100%;
-  width: 580px;
-  overflow-y: hidden;
-  overflow-x: hidden;
+  background: #3d3d3dd4;
 }
 
 .closeBtn {
   cursor: pointer;
   border-radius: 50px;
-  border: 3px white solid;
-  width: 65px;
-  height: 65px;
-  background: #5dc8ff;
-  float: left;
+  width: 40px;
+  height: 40px;
+  background: #0008;
   color: white;
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  padding: 10px;
-  box-sizing: border-box;
-  margin-left: 15px;
-  margin-top: 15px;
+  font-family: "Fredoka One", cursive;
+  display: flex;
   align-items: center;
-  box-shadow: 0px 6px 6px -1px #00000030;
+  justify-content: center;
+  margin-right: 10px;
+  margin-top: 10px;
+  align-items: center;
   position: absolute;
   top: 0;
   right: 0;
-}
-
-.closeBtn > div {
-  position: absolute;
-  width: 25px;
-  height: 5px;
-  background: white;
-  border-radius: 10px;
-}
-
-.closeBtn > div:nth-child(1) {
-  transform: rotate(45deg);
-}
-
-.closeBtn > div:nth-child(2) {
-  transform: rotate(-45deg);
-}
-
-.topBar > .closeBtn > div {
-  background: #5dc8ff;
-}
-
-.titleWrapper {
-  padding-top: 37px;
-  padding-bottom: 25px;
-  overflow: initial;
-  line-height: normal;
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-}
-
-.titleWrapper > div::first-letter {
-  text-transform: capitalize;
-}
-
-.titleBg {
-  background: #d5effd;
-  min-height: 55px;
-  height: 65%;
-  width: 100%;
-  margin-left: 20px;
-  margin-right: 20px;
-  border-radius: 8px 8px 8px 8px;
 }
 
 .title {
@@ -715,75 +505,6 @@ export default {
   font-size: 40px;
   text-align: center;
   padding: 0;
-}
-
-.titleStroke {
-  line-height: 1.1;
-  font-family: "Pacifico", cursive, sans-serif;
-  color: white;
-  position: absolute;
-  transform: translateY(-10px);
-  width: 100%;
-  font-size: 40px;
-  text-align: center;
-  padding: 0;
-  -webkit-text-stroke-width: 5px;
-  -webkit-text-stroke-color: #3fb7f5;
-  transform: translateY(-10px);
-}
-
-.top {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  width: 100%;
-  padding-bottom: 10px;
-}
-
-.join,
-.leave {
-  cursor: pointer;
-  font-family: "Pacifico", cursive, sans-serif;
-  font-size: 36px;
-  border-radius: 20px;
-  background: #ffe9f1;
-  box-shadow: -7px 7px 0px 0px #ff91de;
-  border: 4px solid #ff91de;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  width: 170px;
-  color: white;
-  padding: 0px 15px 0px 15px;
-}
-
-.leave {
-  background: #d5effd;
-  box-shadow: -7px 7px 0px 0px #92cded;
-  border: 4px solid #92cded;
-}
-
-.joinText,
-.leaveText {
-  user-select: none;
-  width: 100px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-}
-
-.joinText span:nth-child(1) {
-  -webkit-text-stroke: #ff99e0 5px;
-}
-
-.leaveText span:nth-child(1) {
-  -webkit-text-stroke: #92cded 5px;
-}
-
-.join span,
-.leave span {
-  position: absolute;
 }
 
 .tooFar {
@@ -890,13 +611,24 @@ export default {
 }
 
 .users {
-  box-sizing: border-box;
+  position: absolute;
   display: flex;
-  background: #efefef;
-  width: 100%;
-  flex-flow: wrap;
-  padding: 5px;
-  margin-top: 10px;
+  top: 111px;
+  left: 20px;
+}
+
+.users > img {
+  width: 30px;
+  height: 30px;
+  border-radius: 65px;
+  border: 2px solid white;
+}
+
+.users > :first-child {
+  width: 50px;
+  height: 50px;
+  border-radius: 65px;
+  border: 3px solid white;
 }
 
 .emojis {
@@ -984,63 +716,6 @@ hr {
   font-size: 100px;
 }
 
-.sendPicButtonContainer {
-}
-
-@media (max-width: 650px) {
-  .main {
-    width: 100%;
-  }
-
-  .wrapper {
-    width: 100%;
-  }
-
-  .scrollBarDiv {
-    width: 100%;
-  }
-
-  .scrollBarDiv::-webkit-scrollbar-track {
-    background: #d8d8d8;
-    border: 0px none #ffffff;
-  }
-
-  .bg {
-    width: 100%;
-  }
-
-  .tooFar > p {
-    padding: 10px 30px;
-  }
-
-  .closeBtn {
-    margin-right: 15px;
-  }
-
-  .newComment {
-    width: 100%;
-  }
-
-  .userPics {
-    display: none;
-  }
-}
-
-@media (max-width: 420px) {
-  .top {
-    flex-direction: column-reverse;
-  }
-  .joinLeave {
-    margin-top: 20px;
-    margin-left: 0px;
-  }
-
-  .pictures {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    grid-auto-rows: 120px;
-  }
-}
-
 label.cameraButton {
   display: inline-block;
   margin: 1em 0;
@@ -1060,5 +735,13 @@ label.cameraButton:active {
 /* This is the part that actually hides the 'Choose file' text box for camera inputs */
 label.cameraButton input {
   display: none;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

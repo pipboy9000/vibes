@@ -325,7 +325,6 @@ export default new Vuex.Store({
     },
 
     startVibe(context, title) {
-      debugger;
       if (!context.state.location) {
         console.log("location not ready");
         return;
