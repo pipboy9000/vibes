@@ -3,35 +3,35 @@
     <div class="scrollBarDiv" v-if="vibe">
       <canvas id="img-canvas" width="200" height="150"></canvas>
       <div class="bg">
-        <div class="cover">
-          <div class="colorOverlay"></div>
-        </div>
-        <div class="closeBtn">X</div>
-        <div class="users">
-          <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
-          <img v-for="uid in usersToDisplay" :src="'https://graph.facebook.com/' + uid + '/picture?type=large'" :key="uid">
-        </div>
-        <div class="editCover"></div>
-        <div class="bg"></div>
-        <div class="title"></div>
-
-          <div class="info">
-            <img class="creatorPic" :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=square'">
-            <div class="details">
-              <p>Created By: {{vibe.createdBy.name}}</p>
-              <div>
-                <img src="../assets/users_icon.png">
-                <span> {{vibe.users.length}} - {{distance}} - {{time}}.</span>
-              </div>
-            </div>
+        <div class="top">
+          <div class="cover">
+            <div class="colorOverlay"></div>
           </div>
-
-          <div v-if="inVibe" class="sendPicButtonContainer">
+          <div class="closeBtn">X</div>
+          <div class="users">
+            <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
+            <img v-for="(uid, idx) in usersToDisplay" :src="'https://graph.facebook.com/' + uid + '/picture?type=large'" :key="idx">
+            <p v-if="plusUsers > 0">+{{plusUsers}}</p>
+          </div>
+          <div class="editCover">
+            <i class="fas fa-pen-alt"></i>
+          </div>
+          <div class="title">!!Fun Party!!</div>
+          <div class="details">Created by {{vibe.createdBy.name}}<br>{{time}} | {{distance}}</div>
+        </div>
+        <div class="bottom">
+          <div class="joinLeave">
+            <p v-if="inVibe" @click="leaveVibe">i want out</p>
+            <p v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
+            <p v-else class="tooFar">too far</p>
+          </div>
+        </div>
+          <!-- <div v-if="inVibe" class="sendPicButtonContainer">
             <label v-if="useHtmlCamera" class="cameraButton">Take a picture
               <input type="file" accept="image/*" capture @change="fileLoaded">
             </label>
             <button v-if="!useHtmlCamera" class="cameraButton" @click="sendPic">Take a picture</button>
-          </div>
+          </div> -->
           <div class="pictures">
               <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
               <a v-for="(picture, idx) in newPictures" :key="idx" class="thumbSmall" href="#" @click="index = idx">
@@ -325,16 +325,22 @@ export default {
       });
     },
     usersToDisplay() {
+      //in the top part
       var me = this;
-      var arr = [];
+      var arr = [4, 4, 4, 4];
       for (var i = 0; i < 4; i++) {
         if (
           this.vibe.users[i] &&
           this.vibe.users[i] != this.vibe.createdBy.fbid
-        )
-          arr.push(this.vibe.users[id]);
+        ) {
+          arr.push(this.vibe.users[i]);
+        }
       }
       return arr;
+    },
+    plusUsers() {
+      //how many more users are in the vibe
+      return this.vibe.users.length - this.usersToDisplay.length;
     },
     vibePictures() {
       return this.vibe.pictures;
@@ -459,6 +465,12 @@ export default {
   min-height: 100%;
 }
 
+.top {
+  display: inline-block;
+  height: 285px;
+  width: 100%;
+}
+
 .cover {
   position: absolute;
   width: 100%;
@@ -481,7 +493,7 @@ export default {
   border-radius: 50px;
   width: 40px;
   height: 40px;
-  background: #0008;
+  background: #00000040;
   color: white;
   font-family: "Fredoka One", cursive;
   display: flex;
@@ -495,16 +507,68 @@ export default {
   right: 0;
 }
 
+.editCover {
+  cursor: pointer;
+  border-radius: 50px;
+  width: 40px;
+  height: 40px;
+  background: #00000040;
+  color: white;
+  font-family: "Fredoka One", cursive;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  align-items: center;
+  position: absolute;
+  top: 88px;
+  right: 0;
+}
+
 .title {
   line-height: 1.1;
-  font-family: "Pacifico", cursive, sans-serif;
-  color: white;
+  font-family: "Fredoka One", cursive;
+  color: #2d2d2d;
   position: absolute;
-  transform: translateY(-10px);
-  width: 100%;
-  font-size: 40px;
-  text-align: center;
+  max-width: 100%;
+  font-size: 36px;
+  text-align: left;
   padding: 0;
+  top: 175px;
+  left: 31px;
+}
+
+.details {
+  position: absolute;
+  font-family: "Roboto", sans-serif;
+  color: #000000b3;
+  font-size: 16px;
+  text-align: left;
+  top: 223px;
+  left: 32px;
+}
+
+.joinLeave {
+  width: 92%;
+  max-width: 324px;
+  background: #8be0ff;
+  height: 53px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.joinLeave > p {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  line-height: 53px;
+  font-family: "Fredoka One", cursive;
+  color: white;
+  font-size: 25px;
 }
 
 .tooFar {
@@ -521,57 +585,6 @@ export default {
   padding: 10px 35px;
   color: #e8e8e8;
   font-weight: bold;
-}
-
-.details {
-  height: 100%;
-  width: 100%;
-  display: inline-block;
-  font-family: "ABeeZee", sans-serif;
-  color: #b3b3b3;
-  font-size: 16px;
-  text-align: left;
-  padding-left: 5px;
-  font-style: italic;
-  height: fit-content;
-}
-
-.details > p {
-  color: #818181;
-  font-size: 15px;
-  font-weight: bold;
-  font-family: "ABeeZee", sans-serif;
-  margin: 7px 0px 0px 10px;
-}
-
-.details > div {
-  display: flex;
-  margin: 5px 0px 0px 20px;
-  font-size: 13px;
-}
-
-.details > div > img {
-  margin-right: 15px;
-  width: 18px;
-  height: 18px;
-}
-
-.profilePic {
-  width: 30px;
-  height: 30px;
-  margin: 1px;
-  border-radius: 70px;
-}
-
-.info {
-  padding: 20px;
-  display: flex;
-}
-
-.creatorPic {
-  width: 50px;
-  height: 50px;
-  border-radius: 70px;
 }
 
 .thumbSmall {
@@ -613,31 +626,28 @@ export default {
 .users {
   position: absolute;
   display: flex;
-  top: 111px;
-  left: 20px;
+  top: 102px;
+  left: 22px;
 }
 
 .users > img {
-  width: 30px;
-  height: 30px;
+  width: 21px;
+  height: 21px;
   border-radius: 65px;
-  border: 2px solid white;
+  border: 1px solid #ffffffbd;
+  margin-left: 4px;
 }
 
 .users > :first-child {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border-radius: 65px;
   border: 3px solid white;
+  margin: 0;
 }
 
-.emojis {
-  padding-right: 10px;
-  float: right;
-  display: inline-flex;
-  justify-content: center;
-  font-size: 40px;
-  opacity: 0.9;
+.users > :nth-child(2) {
+  margin-left: 10px;
 }
 
 .comments {
