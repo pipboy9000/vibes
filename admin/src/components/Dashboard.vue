@@ -29,7 +29,7 @@
         </v-layout>
       </v-container>
     </v-content>
-    <v-footer height="auto" app>
+    <v-footer height="auto" app pa-0>
       <DateSlider></DateSlider>
     </v-footer>
   </v-app>
