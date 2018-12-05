@@ -1,5 +1,6 @@
 <template>
 <transition name="fade">
+  <div>
     <div class="scrollBarDiv" v-if="vibe">
       <canvas id="img-canvas" width="200" height="150"></canvas>
       <div class="bg">
@@ -34,31 +35,18 @@
           <h2>Comments:</h2>
           <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
         </div>
-          <!-- <div v-if="inVibe" class="sendPicButtonContainer">
-            <label v-if="useHtmlCamera" class="cameraButton">Take a picture
-              <input type="file" accept="image/*" capture @change="fileLoaded">
-            </label>
-            <button v-if="!useHtmlCamera" class="cameraButton" @click="sendPic">Take a picture</button>
-          </div> -->
-          <!-- <div class="pictures">
-              <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
-              <a v-for="(picture, idx) in newPictures" :key="idx" class="thumbSmall" href="#" @click="index = idx">
-                <img :src="picture.thumbSrc"/>
-              </a> -->
-
-            <!-- <gallery v-if="!isNative" :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
-            <div class="thumbSmall" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)" 
-            :style="{ backgroundImage: 'url(' + picture.thumbnailUrl + ')' }"
-            :class="{thumbBig: idx %4 == 0}">
-            </div> -->
-          </div>
-      </div>
-      <div v-if="inVibe" class="newComment">
-          <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt">
-          <button @click="sendNewComment">></button>
       </div>
     </div>    
-    </transition>
+    </div>
+      <div v-if="inVibe" class="newComment">
+          <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt" placeholder="Type message">
+          <div class="newCommentButtons">
+            <div @click="sendNewComment">></div>
+            <div @click="sendPic"><i class="fas fa-camera"></i></div>
+          </div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -358,6 +346,7 @@ export default {
       return this.$store.state.vibes;
     },
     inVibe() {
+      if (!this.$store.state.selectedVibe) return;
       return this.$store.state.selectedVibe.id === this.$store.state.inVibe;
     },
     profilePicSrc() {
@@ -629,7 +618,7 @@ export default {
 
 .pictures {
   width: 100%;
-  height: 150px;
+  height: 160px;
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
@@ -665,46 +654,55 @@ export default {
   bottom: 0;
   left: 0;
   position: absolute;
-  width: 480px;
-  height: 10%;
+  width: 100%;
+  max-width: 465px;
+  min-height: 53px;
+  background: #000000c2;
   display: flex;
   align-items: center;
-  background: #fff;
   justify-content: space-between;
-  box-shadow: -30px 20px 47px;
-  border-top: 1px solid #eaeaea;
+  align-items: center;
 }
 
 .newComment > input {
-  width: 80%;
-  height: 40%;
-  background: #dddddd;
-  border: 1px solid #c7c7c7;
+  max-width: 76%;
+  background: #fff0;
   outline: none;
-  margin-left: 2%;
-  padding: 10px;
-  border-radius: 100px;
-  color: #373737;
-  font-family: "ABeeZee", sans-serif;
-  font-size: 1.1em;
+  color: #fff;
+  font-family: "Roboto", sans-serif;
+  display: inline-block;
+  border: none;
+  margin-left: 18px;
+  font-size: 17px;
 }
 
-.newComment > button {
-  padding: 10px;
+.newComment > input::placeholder {
+  color: lightgray;
+}
+
+.newCommentButtons {
+  width: 23%;
+  max-width: 85px;
+  height: 100%;
+  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.newCommentButtons > div {
+  color: #ffffffe6;
   font-size: 1.1em;
-  font-family: "ABeeZee", sans-serif;
-  border-radius: 100px;
   position: relative;
-  width: 15%;
-  margin-left: 15px;
-  margin-right: 15px;
-  border: 1px solid #c7c7c7;
-  height: 80%;
-  padding: 10px;
   outline: none;
-  font-size: 24px;
-  line-height: 10px;
+  font-size: 35px;
   text-align: center;
+  display: inline-block;
+}
+
+.newCommentButtons > div:nth-child(2) {
+  font-size: 20px;
+  padding-right: 20px;
 }
 
 .spinner {
