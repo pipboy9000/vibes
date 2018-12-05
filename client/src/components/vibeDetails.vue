@@ -21,10 +21,18 @@
         </div>
         <div class="bottom">
           <div class="joinLeave">
-            <p v-if="inVibe" @click="leaveVibe">i want out</p>
-            <p v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
-            <p v-else class="tooFar">too far</p>
+            <p class="leave" v-if="inVibe" @click="leaveVibe">i want out</p>
+            <p class="join" v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
+            <p class="tooFar" v-else>too far</p>
           </div>
+          <div class="pictures">
+            <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
+              <img v-for="i in 15" :key="i" class="thumb" href="#" @click="index = i" 
+              :src="'https://picsum.photos/200/300/?random/&r=' + Math.round(Math.random() * 1000)"/>
+        </div>
+        <div class="comments">
+          <h2>Comments:</h2>
+          <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
         </div>
           <!-- <div v-if="inVibe" class="sendPicButtonContainer">
             <label v-if="useHtmlCamera" class="cameraButton">Take a picture
@@ -32,22 +40,17 @@
             </label>
             <button v-if="!useHtmlCamera" class="cameraButton" @click="sendPic">Take a picture</button>
           </div> -->
-          <div class="pictures">
+          <!-- <div class="pictures">
               <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
               <a v-for="(picture, idx) in newPictures" :key="idx" class="thumbSmall" href="#" @click="index = idx">
                 <img :src="picture.thumbSrc"/>
-              </a>
+              </a> -->
 
             <!-- <gallery v-if="!isNative" :images="largePictures" :index="index" @close="closeImg" @onslideend="slideEnd"></gallery>
             <div class="thumbSmall" v-for="(picture, idx) in vibePictures" :key="idx" @click="openImg(idx)" 
             :style="{ backgroundImage: 'url(' + picture.thumbnailUrl + ')' }"
             :class="{thumbBig: idx %4 == 0}">
             </div> -->
-          </div>
-          <hr>
-          <div class="comments">
-            <h2>Comments:</h2>
-            <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
           </div>
       </div>
       <div v-if="inVibe" class="newComment">
@@ -368,6 +371,9 @@ export default {
     },
     distance() {
       return formatDistance(this.vibe.distance);
+    },
+    isTooFar() {
+      return this.vibe.distance < 25;
     }
   },
   watch: {
@@ -421,46 +427,50 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  max-width: 500px;
-  overflow-y: hidden;
+  max-width: 485px;
+  overflow-y: scroll;
 }
 
+.pictures::-webkit-scrollbar,
 .scrollBarDiv::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
+.pictures::-webkit-scrollbar-button,
 .scrollBarDiv::-webkit-scrollbar-button {
   width: 0px;
   height: 0px;
 }
+.pictures::-webkit-scrollbar-thumb,
 .scrollBarDiv::-webkit-scrollbar-thumb {
   background: #ffffff;
   border: 0px none #ffffff;
   border-radius: 50px;
 }
-.scrollBarDiv::-webkit-scrollbar-thumb:hover {
-  background: #fff;
-}
-.scrollBarDiv::-webkit-scrollbar-thumb:active {
-  background: #ffff;
-}
+
+.pictures::-webkit-scrollbar-track,
 .scrollBarDiv::-webkit-scrollbar-track {
   background: #0000;
   border: 0px none #ffffff;
 }
+.pictures::-webkit-scrollbar-corner,
 .scrollBarDiv::-webkit-scrollbar-corner {
   background: transparent;
 }
 
+.pictures::-webkit-scrollbar-thumb {
+  background: #8be0ff;
+}
+
 /* items */
 .bg {
+  height: fit-content;
   width: 100%;
   max-width: 465px;
   background: white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   float: left;
   position: relative;
-  overflow-y: hidden;
   overflow-x: hidden;
   min-height: 100%;
 }
@@ -551,7 +561,32 @@ export default {
 .joinLeave {
   width: 92%;
   max-width: 324px;
+  height: 53px;
+  line-height: 52px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Fredoka One", cursive;
+  font-size: 25px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.join,
+.leave {
   background: #8be0ff;
+  display: inline-block;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  color: white;
+}
+
+.tooFar {
+  width: 92%;
+  max-width: 324px;
   height: 53px;
   margin-left: auto;
   margin-right: auto;
@@ -559,68 +594,10 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.joinLeave > p {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  line-height: 53px;
-  font-family: "Fredoka One", cursive;
-  color: white;
-  font-size: 25px;
-}
-
-.tooFar {
-  display: flex;
-  align-items: center;
   border: 5px dashed #e8e8e8;
-  box-sizing: border-box;
-  border-radius: 10px;
-  font-size: 20px;
-}
-
-.tooFar > span {
-  margin: 0;
-  padding: 10px 35px;
   color: #e8e8e8;
-  font-weight: bold;
-}
-
-.thumbSmall {
-  width: 100%;
-  height: 100%;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  grid-column: span 1;
-  grid-row: span 1;
-}
-
-.thumbBig {
-  width: 100%;
-  height: 100%;
-  grid-column: span 2;
-  grid-row: span 2;
-}
-
-.picture {
-  width: 200px;
-  height: 150px;
-}
-
-.pictures {
   box-sizing: border-box;
-  width: 100%;
-  overflow-x: hidden;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  grid-auto-rows: 160px;
-  grid-auto-flow: dense;
-  grid-gap: 0;
-  margin-top: 25px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  background: white;
 }
 
 .users {
@@ -650,13 +627,38 @@ export default {
   margin-left: 10px;
 }
 
+.pictures {
+  width: 100%;
+  height: 150px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  bottom: 82px;
+  scroll-snap-type: x mandatory;
+  margin-top: 25px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.thumb {
+  width: 145px;
+  height: 145px;
+}
+
 .comments {
   width: 100%;
   padding-bottom: 120px;
 }
 
 .comments > h2 {
+  font-family: "Fredoka One", cursive;
+  font-weight: 100;
+  color: #373737;
   text-align: left;
+  margin: 0;
+  margin-left: 31px;
+  margin-top: 20px;
 }
 
 .newComment {
@@ -711,13 +713,6 @@ export default {
 
 #img-canvas {
   display: none;
-}
-
-hr {
-  border: 0;
-  height: 1px;
-  background-image: linear-gradient(to right, #e4e4e410, #e4e4e4, #e4e4e410);
-  width: 95%;
 }
 
 .sendPicButton {

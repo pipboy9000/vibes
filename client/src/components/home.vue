@@ -46,7 +46,7 @@ export default {
   background: url("/static/ref.png");
   background-size: contain;
   background-repeat: no-repeat;
-  opacity: 0.5;
+  opacity: -0.5;
   pointer-events: none;
 }
 
