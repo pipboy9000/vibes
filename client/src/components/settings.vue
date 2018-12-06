@@ -29,18 +29,19 @@ export default {
 
 <style scoped="true">
 .open {
-  left: 0px;
+  transform: translateX(0px);
 }
 
 .closed {
-  left: -288px;
+  transform: translateX(-288px);
 }
 
 .main {
   width: 100%;
   height: 100%;
   max-width: 360px;
-  transition: left 0.25s;
+  transition: transform 0.25s;
+  will-change: transform;
 }
 
 .overlay {

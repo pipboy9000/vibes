@@ -49,7 +49,7 @@ export default {
   background: url("/static/ref.png");
   background-size: contain;
   background-repeat: no-repeat;
-  opacity: -0.3;
+  opacity: 0.3;
   pointer-events: none;
 }
 
