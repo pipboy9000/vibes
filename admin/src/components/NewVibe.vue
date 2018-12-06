@@ -1,7 +1,6 @@
 <template>
   <v-card class="elevation-3">
-    <v-card-title primary-title>
-      Create New Vibe
+    <v-card-title primary-title>Create New Vibe
       <v-spacer></v-spacer>
       <v-btn raised icon @click="closeCard()">
         <v-icon>close</v-icon>
@@ -14,7 +13,6 @@
           label="Vibe Title"
           required
           :rules="[v => !!v || 'Required']"
-          :disabled="sending"
         ></v-text-field>
         <v-layout row wrap>
           <v-text-field
@@ -22,7 +20,6 @@
             label="Lat"
             required
             :rules="[v => !!v || 'Required']"
-            :disabled="sending"
             prepend-icon="place"
           ></v-text-field>
         </v-layout>
@@ -32,7 +29,6 @@
             label="Lng"
             required
             :rules="[v => !!v || 'Required']"
-            :disabled="sending"
             prepend-icon="place"
           ></v-text-field>
         </v-layout>
@@ -113,8 +109,6 @@
 
         <v-btn @click="validate()">Save vibe</v-btn>
         <v-btn @click="clearForm">clear</v-btn>
-        <v-progress-linear v-if="sending" color="primary" indeterminate></v-progress-linear>
-        <v-snackbar v-model="operationReturned" left>{{response}}</v-snackbar>
       </v-form>
     </v-card-text>
   </v-card>
@@ -170,11 +164,7 @@ export default {
           }
         ]
       },
-      operationReturned: false,
-      sending: false,
-      lastUser: null,
-      operationStatus: null,
-      response: null
+      lastUser: null
     };
   },
   mounted() {
@@ -218,48 +208,18 @@ export default {
       this.form.daysRecurring.forEach(day => (day.recurring = false));
     },
     saveVibe() {
-      this.sending = true;
-      this.response = null;
-      this.operationStatus = null;
       let mappedDays = this.form.isRecurring
         ? this.form.daysRecurring.map(day => (day.recurring ? 1 : 0))
         : null;
-      const serverUrl =
-        process.env.NODE_ENV === "production"
-          ? "/save-vibe"
-          : "http://localhost:3030/save-vibe";
-      axios
-        .get(serverUrl, {
-          params: {
-            title: this.form.vibeName,
-            lng: this.form.lng,
-            lat: this.form.lat,
-            date: this.form.date,
-            isRecurring: this.form.isRecurring,
-            daysRecurring: this.form.isRecurring ? mappedDays : []
-          }
-        })
-        .then(
-          response => {
-            this.sending = false;
-            this.operationReturned = true;
-            if (response.status == 200) {
-              this.operationStatus = "success";
-              this.clearForm();
-              this.response = `Vibe saved. Vibe ID: ${response.data.vibeId}`;
-              EventBus.$emit("refreshVibeList");
-            } else {
-              this.operationStatus = "failure";
-              this.response = response;
-            }
-          },
-          err => {
-            this.sending = false;
-            this.operationReturned = true;
-            this.operationStatus = "failure";
-            this.response = `Error. Did you run admin/server.js? ${err.toString()}`;
-          }
-        );
+
+      EventBus.$emit("saveVibe", {
+        title: this.form.vibeName,
+        lng: this.form.lng,
+        lat: this.form.lat,
+        date: this.form.date,
+        isRecurring: this.form.isRecurring,
+        daysRecurring: this.form.isRecurring ? mappedDays : []
+      });
     }
   }
 };

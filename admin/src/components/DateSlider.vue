@@ -7,7 +7,9 @@
         thumb-label 
         thumb-size="100" 
         :max="timeStepsBack"
-        :disabled="isFuture">
+        :disabled="isFuture"
+        @end="changeEnd"
+        >
           <template slot="thumb-label" slot-scope="props">
             <v-container>
             <v-layout class="text-xs-center">
@@ -28,6 +30,7 @@
 
 <script>
 import { EventBus } from "../../../client/src/event-bus.js";
+const axios = require("axios");
 const TIME_STEPS_BACK = 1000;
 
 export default {
@@ -56,6 +59,10 @@ export default {
       if (this.ticksLabels.length == 0) return '';
       let time = this.ticksLabels[val].toLocaleTimeString("he-IL");
       return time;
+    },
+    changeEnd(val) {
+      let selectedDate = this.ticksLabels[val];
+      EventBus.$emit('getPastVibes', selectedDate);
     }
   }
 };
