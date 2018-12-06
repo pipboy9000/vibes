@@ -8,7 +8,7 @@
           <div class="cover">
             <div class="colorOverlay"></div>
           </div>
-          <div class="closeBtn">X</div>
+          <div class="closeBtn" @click="close">X</div>
           <div class="users">
             <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
             <img v-for="(uid, idx) in usersToDisplay" :src="'https://graph.facebook.com/' + uid + '/picture?type=large'" :key="idx">

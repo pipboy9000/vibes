@@ -11,6 +11,7 @@
         <mapUI></mapUI>
         <vibe-details></vibe-details>
         <NewVibeForm></NewVibeForm>
+        <settings></settings>
         <div class="preview"></div>
   </div>
 </template>
@@ -22,6 +23,7 @@ import Logo from "./logo";
 import MapUI from "./mapUI";
 import NewVibeForm from "./newVibeForm";
 import VibeDetails from "./vibeDetails";
+import Settings from "./settings";
 
 import { EventBus } from "../event-bus";
 
@@ -33,7 +35,8 @@ export default {
     Logo,
     NewVibeForm,
     VibeDetails,
-    MapUI
+    MapUI,
+    Settings
   }
 };
 </script>
@@ -46,7 +49,7 @@ export default {
   background: url("/static/ref.png");
   background-size: contain;
   background-repeat: no-repeat;
-  opacity: -0.5;
+  opacity: -0.3;
   pointer-events: none;
 }
 
