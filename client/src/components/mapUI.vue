@@ -1,33 +1,34 @@
 <template>
   <div class="wrapper">
+    <div class="gradient"></div>
+    <list></list>
+    <div class="newVibeBtn" @click="openNewVibeForm">
+      New Vibe
+    </div>
     <div class="sideBtns">
-      <div class="focusBtn" @click="focus">
-        <img src="../assets/focus_icon.png">
-      </div>
       <div class="zoom">
         <div class="zoomIn" @click="zoomIn">
-          <plus-icon :size="15" :thickness="5" :color="'white'"></plus-icon>
+          <i class="fas fa-plus"></i>
         </div>
         <hr>
         <div class="zoomOut" @click="zoomOut">
-          <minus-icon :size="15" :thickness="5" :color="'white'"></minus-icon>
+          <i class="fas fa-minus"></i>
         </div>
       </div>
-    </div>
-    <div class="newVibeBtn" @click="openNewVibeForm">
-      <plus-icon :size="25" :thickness="8" :color="'white'"></plus-icon>
+      <div class="focusBtn" @click="focus">
+        <i class="fas fa-crosshairs"></i>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { EventBus } from "../event-bus";
-import plusIcon from "./plusIcon";
-import minusIcon from "./minusIcon";
+import list from "./list";
 
 export default {
   name: "MapUI",
-  components: { plusIcon, minusIcon },
+  components: { list },
   methods: {
     zoomIn() {
       EventBus.$emit("zoomIn");
@@ -48,56 +49,94 @@ export default {
 </script>
 
 <style scoped="true">
+.gradient {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(0deg, #0000003d, transparent);
+}
+
+.plusIcon {
+  margin-top: 6px;
+}
+
+.newVibeBtn {
+  cursor: pointer;
+  user-select: none;
+  position: absolute;
+  width: 90%;
+  max-width: 318px;
+  height: 46px;
+  background-color: #8be0ff;
+  left: 50%;
+  -webkit-transform: translateX (-50%);
+  transform: translateX(-50%);
+  bottom: 24px;
+  border-radius: 5px;
+  font-family: "Fredoka One", cursive;
+  font-size: 23px;
+  line-height: 70px;
+  color: white;
+  -webkit-box-shadow: 0px 0px 0px 6px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0px 0px 0px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 0px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .sideBtns {
   cursor: pointer;
   width: min-content;
   height: min-content;
   position: absolute;
-  right: 0;
-  bottom: 0;
-  margin: 20px;
+  right: 13px;
+  bottom: 243px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   user-select: none;
+  font-size: 25px;
+  color: rgb(139, 224, 255);
 }
 
 .focusBtn {
-  width: 50px;
-  height: 50px;
-  background: #5dc8ff;
-  border: 3px solid white;
+  width: 52px;
+  height: 52px;
   border-radius: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0px 5px 3px -2px #0004;
-}
-
-.focusBtn > img {
-  width: 28px;
-  height: 28px;
+  -webkit-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
+  background: #fff;
 }
 
 hr {
+  border: 0;
   margin: 0;
+  width: 100%;
+  height: 4px;
+  background-color: #e8e8e8;
 }
 
 .zoom {
-  width: 50px;
-  height: 100px;
-  margin-top: 5px;
-  background: #5dc8ff;
-  border: 3px solid white;
+  margin-bottom: 12px;
+  width: 52px;
+  height: 90px;
   border-radius: 60px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   line-height: 48px;
-  font-size: 39px;
   font-family: cursive;
-  color: white;
-  box-shadow: 0px 5px 3px -2px #0004;
+  -webkit-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05);
+  background: #fff;
+  font-size: 20px;
 }
 
 .zoomIn {
@@ -112,47 +151,5 @@ hr {
   align-items: center;
   justify-content: center;
   height: 50%;
-}
-
-.newVibeBtn {
-  cursor: pointer;
-  user-select: none;
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  background-color: #5dc8ff;
-  border: 3px solid white;
-  left: 50%;
-  -webkit-transform: translateX (-50%);
-  transform: translateX(-50%);
-  bottom: 50px;
-  border-radius: 80px;
-  font-family: cursive;
-  font-size: 70px;
-  line-height: 70px;
-  color: white;
-  box-shadow: 0px 8px 10px -1px #0004;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (max-width: 620px) {
-  .sideBtns {
-    margin: 15px;
-  }
-
-  .newVibeBtn {
-    bottom: 35px;
-  }
-}
-
-@media (max-width: 316px) {
-  .newVibeBtn {
-    left: 20px;
-    bottom: 30px;
-    -webkit-transform: translateX (0);
-    transform: translateX(0);
-  }
 }
 </style>

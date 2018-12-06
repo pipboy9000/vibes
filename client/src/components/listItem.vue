@@ -1,29 +1,28 @@
 <template>
     <div class="bg" @click="clicked">
+      <div class="top">
         <div class="left">
-            <div class="title"> {{vibe.title}} </div>
-            <div class="details">
-                <div class="users">
-                    <img src="../assets/users_icon.png">
-                    <p>{{vibe.users.length}} - {{time}} - {{distance}}
-                    </p>
-                </div>
-                <div class="time"></div>
-            </div>
+          <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
         </div>
         <div class="right">
-            <div class="emojis">
-                <div class="emoji">{{vibe.emojis[0]}}</div>
-                <div class="emoji">{{vibe.emojis[1]}}</div>
-                <div class="emoji">{{vibe.emojis[2]}}</div>
-            </div>
+          <div class="title">{{ vibe.title }}</div>
         </div>
+      </div>
+      <div class="bottom">
+        <p>Created by {{ vibe.createdBy.name }}</p>
+        <p> - {{ time }}</p>
+        <div class="icons">
+          <i class="fas fa-map-marker-alt"></i><p>{{  this.distance }}</p>
+          <i class="fas fa-user-circle"></i>  <p>{{ vibe.users.length }}</p>
+          <i class="fas fa-camera"></i>  <p>{{  vibe.pictures.length }}</p>
+        </div>
+      </div>
     </div>
 </template>
 
 
 <script>
-import { timeAgo } from "../services/timeAgo";
+import { timeAgo } from "../services/timeAgo.js";
 import { EventBus } from "../event-bus";
 import { getDistance, formatDistance } from "../services/maps.js";
 
@@ -54,141 +53,117 @@ export default {
 <style scoped="true">
 .bg {
   cursor: pointer;
-  width: 520px;
-  height: 80px;
-  margin-bottom: 10px;
-  padding-right: 10px;
+  width: 226px;
+  height: 132px;
   background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px 1px #00000025;
+  display: inline-block;
+  margin-left: 4px;
+  margin-right: 4px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0px 5px 25px -12px;
+  scroll-snap-align: center;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+}
+
+.top {
+  height: 46%;
+  width: 100%;
+  float: left;
+}
+
+.bottom {
+  width: 100%;
+  height: 54%;
+  float: left;
+}
+
+.left,
+.right {
+  height: 100%;
+  float: left;
 }
 
 .left {
-  /* width: 336px; */
-  height: 80px;
-  float: left;
-  max-width: 70%;
-  box-sizing: border-box;
+  width: 28%;
 }
 
 .right {
-  box-sizing: border-box;
-  padding-right: 10px;
-  max-width: 30%;
-  height: 80px;
-  float: right;
+  width: 72%;
+  display: flex;
+  align-items: center;
+}
+
+.left > img {
+  float: left;
+  width: 46px;
+  margin-left: 9px;
+  margin-top: 10px;
+  border-radius: 61px;
 }
 
 .title {
-  width: 98%;
-  height: 62px;
+  max-width: 100%;
   text-align: left;
-  transform: translateY(-2px);
-  color: #8fd9ff;
-  font-size: 28px;
-  margin-left: 10px;
-  font-family: "Pacifico", cursive, sans-serif;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 20px;
+  white-space: pre-wrap;
+  line-height: 19px;
+  margin-top: 6px;
+  margin-left: 1px;
+  font-family: "Fredoka One", cursive;
+  padding-right: 10px;
 }
 
-.title::first-letter {
-  text-transform: capitalize;
-}
-
-.users {
-  float: left;
-  transform: translateY(-8px);
-  display: flex;
-  align-items: center;
-  margin-left: 12px;
-  font-family: "ABeeZee", sans-serif;
-  color: #8d8d8d;
-  font-size: 12px;
-  opacity: 0.9;
-}
-
-.users > p {
+.bottom > p:nth-child(1) {
+  font-family: "Roboto", sans-serif;
+  text-align: left;
   margin: 0;
-  display: inline-block;
-  margin-left: 8px;
-  font-size: 13px;
-  min-width: 200px;
+  margin-left: 13px;
+  font-size: 15px;
+  margin-top: 4px;
+  letter-spacing: -0.2px;
 }
 
-.emojis {
-  font-family: "Segoe UI Emoji";
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  font-size: 36px;
-  height: 90%;
-  opacity: 0.9;
-}
-
-.details {
-  font-style: italic;
+.bottom > p:nth-child(2) {
+  font-family: "Roboto", sans-serif;
   text-align: left;
+  margin: 0;
+  margin-left: 17px;
+  font-size: 12px;
+  margin-top: 3px;
 }
 
-@media (max-width: 650px) {
-  .bg {
-    width: 100%;
-    height: 80px;
-    margin: 0;
-    border-radius: 0;
-  }
-  .left {
-    max-width: 65%;
-  }
-
-  .title {
-    margin-top: 6px;
-    height: 55px;
-    font-size: 25px;
-    margin-left: 15px;
-  }
-
-  .right {
-    max-width: 35%;
-  }
-
-  .users {
-    margin-left: 20px;
-  }
-
-  .users > p {
-    font-size: 12px;
-  }
-
-  .emojis {
-    width: 100%;
-    font-size: 32px;
-  }
-
-  .emoji {
-    min-width: max-content;
-    width: 33.33333%;
-  }
+.icons {
+  text-align: left;
+  margin: 0;
+  margin-left: 16px;
+  margin-top: 7px;
+  font-size: 15px;
+  color: #9f9f9f;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  font-family: "Roboto", sans-serif;
 }
 
-@media (max-width: 480px) {
-  .bg {
-    padding-right: 5px;
-  }
+.icons > p {
+  margin: 0;
+  font-size: 14px;
+  margin-left: 5px;
+}
 
-  .emoji {
-    font-size: 23px;
-  }
+.icons > svg {
+  /* icons */
+  margin: 0;
+  font-size: 16px;
+}
 
-  .right {
-    margin-top: 10px;
-    height: 48px;
-  }
+.icons > svg:nth-child(3) {
+  margin-left: 20px;
+}
 
-  .left {
-    height: 50px;
-  }
+.icons > svg:nth-child(5) {
+  margin-left: 24px;
 }
 </style>

@@ -3,6 +3,15 @@ import store from "../store";
 
 /* DONT HARDCODE LOCALHOST HERE!! WERE LIVE##$!@#!! */
 var socketAddress = process.env.SOCKET_ADDRESS;
+var socketAddress = "localhost:8080";
+
+//  var socketAddress = "https://vibes-web.herokuapp.com";
+//var socketAddress = "http://172.16.0.95:8080";
+// var port = 80;
+//socketAdress = socketAdress.replace(port, "8080");
+// var io = socketio.connect(socketAdress);
+// var io = socketio.connect("10.0.0.16:8080");
+
 console.log("env: " + process.env.NODE_ENV)
 console.log("process.env.SOCKET_ADDRESS: " + process.env.SOCKET_ADDRESS)
 if (process.env.NODE_ENV == 'production') {
@@ -13,7 +22,9 @@ if (process.env.NODE_ENV == 'production') {
 
 //from server
 io.on("login", data => store.dispatch("login", data));
-io.on("setData", data => {store.dispatch("setData", data)});
+io.on("setData", data => {
+  store.dispatch("setData", data)
+});
 io.on("setServerLocation", user => store.dispatch("setServerLocation", user));
 io.on("newVibe", vibe => store.dispatch("newVibe", vibe));
 io.on("setComments", comments => store.dispatch("setComments", comments));
