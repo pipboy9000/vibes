@@ -26,10 +26,10 @@
             <p class="join" v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
             <p class="tooFar" v-else>too far</p>
           </div>
-          <div class="pictures" v-if="newPictures.length > 0">
+          <div ref="pictures" class="pictures" v-if="newPictures.length > 0" @mousewheel="wheel">
             <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
-              <img v-for="(pic,idx) in newPictures" :key="idx" class="thumb" href="#" @click="index = idx" 
-              :src="pic.thumbSrc"/>
+              <div v-for="(pic,idx) in newPictures" :key="idx" class="thumb" href="#" @click="index = idx" 
+              :style="{'background-image': 'url(' + pic.thumbSrc + ')'}"/>
               <!-- :src="'https://picsum.photos/200/300/?random/&r=' + Math.round(Math.random() * 1000)"/> -->
         </div>
         <!-- </div> -->
@@ -83,7 +83,9 @@ export default {
       loaderColor: "#d5effd",
       uploadingPictures: [],
       slide: false, //check if link change was from a slide,
-      demoPics: null
+      demoPics: null,
+      scrollM: 0, //picture scroller
+      isMoving: false
     };
   },
   mounted() {
@@ -96,6 +98,22 @@ export default {
     }, 10000);
   },
   methods: {
+    wheel(e) {
+      this.scrollM += e.wheelDelta / 7;
+      if (!this.isMoving) {
+        this.move();
+      }
+    },
+    move() {
+      if (this.scrollM > 1 || this.scrollM < -1) {
+        this.isMoving = true;
+        this.$refs.pictures.scrollBy(this.scrollM, 0);
+        this.scrollM *= 0.95;
+        requestAnimationFrame(this.move);
+      } else {
+        this.isMoving = false;
+      }
+    },
     openImg(idx) {
       var q = this.$route.query;
       this.$router.push({ query: { ...q, img: idx } });
@@ -641,8 +659,11 @@ export default {
 }
 
 .thumb {
+  display: inline-block;
   width: 145px;
   height: 145px;
+  background-size: cover;
+  background-position: center;
 }
 
 .comments {
