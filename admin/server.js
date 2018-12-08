@@ -61,6 +61,19 @@ app.get('/get-vibes', function (req, res) {
     });
 });
 
+app.get('/get-past-vibes', function (req, res) {
+    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+        return res.status(500).send('user authentication failed.');
+    }
+
+    db.getPastVibes(req.query.date)
+    .then(cursor => cursor.toArray().then(vibes => res.send({vibes})))
+    .catch(err => {
+        console.error(err);
+        res.status(500).send(err.toString())
+    });
+});
+
 app.get('/delete-vibe', function (req, res) {
     if (!checkUserPasswordInCacheLoadedFromDb(req)) {
         return res.status(500).send('user authentication failed.');
