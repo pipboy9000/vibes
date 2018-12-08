@@ -41,8 +41,11 @@ export default {
   methods: {
     clicked() {
       {
-        //we only replace because we assume url already has list=true
-        this.$router.replace({ path: "", query: { v: this.vibe.id } });
+        if (this.$router.currentRoute.query.v) {
+          this.$router.replace({ path: "", query: { v: this.vibe.id } });
+        } else {
+          this.$router.push({ path: "", query: { v: this.vibe.id } });
+        }
         EventBus.$emit("listItemClicked", this.vibe);
       }
     }

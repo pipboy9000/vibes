@@ -40,6 +40,9 @@ export default {
   methods: {
     open() {
       this.show = true;
+      this.$nextTick(function() {
+        this.$refs.titleInput.focus();
+      });
     },
     close() {
       this.$router.go(-1);
@@ -49,6 +52,7 @@ export default {
     },
     startVibe() {
       this.$store.dispatch("startVibe", this.title);
+      this.title = "";
       this.close();
     }
   },

@@ -1,5 +1,5 @@
 <template>
-  <div class="list" ref="list">
+  <div class="list" ref="list" @mousewheel="wheel">
     <div class="items">
       <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
     </div>
@@ -16,16 +16,32 @@ export default {
     return {
       isOpen: false,
       ready: false, //used to fix animations
-      isMobile: false
+      scrollM: 0,
+      isMoving: false
     };
   },
-  mounted() {
-    this.$refs.list.addEventListener("mousedown", function(e) {
-      console.log("list - mousedown");
-    });
-  },
+  mounted() {},
   components: { ListItem },
-  methods: {},
+  methods: {
+    wheel(e) {
+      this.scrollM += e.wheelDelta / 7;
+      if (!this.isMoving) {
+        this.move();
+      }
+    },
+    move() {
+      this.isMoving = true;
+      if (this.scrollM > 1 || this.scrollM < -1) {
+        console.log(this.scrollM);
+        this.$refs.list.scrollBy(this.scrollM, 0);
+        this.scrollM *= 0.95;
+        requestAnimationFrame(this.move);
+      } else {
+        this.$refs.list.scrollBy(this.scrollM, 0);
+        this.isMoving = false;
+      }
+    }
+  },
   computed: {
     hasVibes() {
       return this.$store.state.vibes.length > 0;
@@ -47,7 +63,7 @@ export default {
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
   bottom: 82px;
-  scroll-snap-type: x mandatory;
+  /* scroll-snap-type: x mandatory; */
 }
 
 .list::-webkit-scrollbar {

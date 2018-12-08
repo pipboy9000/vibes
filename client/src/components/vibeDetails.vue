@@ -1,7 +1,7 @@
 <template>
 <transition name="fade">
-  <div>
-    <div class="scrollBarDiv" v-if="vibe">
+  <div v-if="vibe">
+    <div class="scrollBarDiv">
       <canvas id="img-canvas" width="200" height="150"></canvas>
       <div class="bg">
         <div class="top">
@@ -17,7 +17,7 @@
           <div class="editCover">
             <i class="fas fa-pen-alt"></i>
           </div>
-          <div class="title">!!Fun Party!!</div>
+          <div class="title">{{vibe.title}}</div>
           <div class="details">Created by {{vibe.createdBy.name}}<br>{{time}} | {{distance}}</div>
         </div>
         <div class="bottom">
@@ -26,11 +26,13 @@
             <p class="join" v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
             <p class="tooFar" v-else>too far</p>
           </div>
-          <div class="pictures">
+          <div class="pictures" v-if="newPictures.length > 0">
             <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
-              <img v-for="i in 15" :key="i" class="thumb" href="#" @click="index = i" 
-              :src="'https://picsum.photos/200/300/?random/&r=' + Math.round(Math.random() * 1000)"/>
+              <img v-for="(pic,idx) in newPictures" :key="idx" class="thumb" href="#" @click="index = idx" 
+              :src="pic.thumbSrc"/>
+              <!-- :src="'https://picsum.photos/200/300/?random/&r=' + Math.round(Math.random() * 1000)"/> -->
         </div>
+        <!-- </div> -->
         <div class="comments">
           <h2>Comments:</h2>
           <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
@@ -286,6 +288,9 @@ export default {
     },
     leaveVibe() {
       socket.leaveVibe(this.$store.getters.token);
+    },
+    clearSelectedVibe() {
+      this.$store.commit("setSelectedVibe", null);
     }
   },
   computed: {
@@ -382,7 +387,11 @@ export default {
           } else {
             this.index = null;
           }
+        } else {
+          this.clearSelectedVibe();
         }
+      } else {
+        this.clearSelectedVibe();
       }
     },
     vibe(newVibe) {
@@ -619,6 +628,7 @@ export default {
 .pictures {
   width: 100%;
   height: 160px;
+  text-align: left;
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
