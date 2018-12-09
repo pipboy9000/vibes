@@ -70,7 +70,6 @@ export default {
     comment,
     gallery: VueGallery,
     PulseLoader,
-    Logo,
     PhotoGallery
   },
   data() {
