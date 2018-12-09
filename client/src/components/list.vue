@@ -34,7 +34,7 @@ export default {
       if (this.scrollM > 1 || this.scrollM < -1) {
         console.log(this.scrollM);
         this.$refs.list.scrollBy(this.scrollM, 0);
-        this.scrollM *= 0.95;
+        this.scrollM *= 0.9;
         requestAnimationFrame(this.move);
       } else {
         this.$refs.list.scrollBy(this.scrollM, 0);

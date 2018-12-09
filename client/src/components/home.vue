@@ -1,17 +1,17 @@
 <template>
   <div class="main">
       <Map></Map>
-        <div class="loginDiv" v-if="$store.state.loginDetails === null"> 
-          <div class="overlay"></div>
-          <div class="elements-wrapper">
-            <Logo class="logo"></Logo>
-            <FacebookLogin></FacebookLogin>
-          </div>
-        </div>
         <mapUI></mapUI>
         <vibe-details></vibe-details>
         <NewVibeForm></NewVibeForm>
         <settings></settings>
+        <div class="loginDiv" v-show="$store.state.loginDetails === null"> 
+          <div class="overlay"></div>
+          <div class="elements-wrapper">
+            <div class="logo"></div>
+            <FacebookLogin></FacebookLogin>
+          </div>
+        </div>
         <div class="preview"></div>
   </div>
 </template>
@@ -19,7 +19,6 @@
 <script>
 import Map from "./map";
 import FacebookLogin from "./facebook-login/facebookLogin";
-import Logo from "./logo";
 import MapUI from "./mapUI";
 import NewVibeForm from "./newVibeForm";
 import VibeDetails from "./vibeDetails";
@@ -32,7 +31,6 @@ export default {
   components: {
     Map,
     FacebookLogin,
-    Logo,
     NewVibeForm,
     VibeDetails,
     MapUI,
@@ -65,10 +63,19 @@ export default {
   align-items: center;
   padding-bottom: 100px;
   width: 100%;
+  position: absolute;
 }
 
 .logo {
+  background: url("/static/logo.png");
+  width: 90%;
+  min-height: 120px;
+  max-height: 150px;
   padding-bottom: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: 30px;
 }
 
 .map {
@@ -88,12 +95,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.35);
-}
-
-.logo-small {
-  float: left;
-  margin-left: 15px;
+  background-color: rgba(0, 0, 0, 0.25);
 }
 
 .fade-enter-active,

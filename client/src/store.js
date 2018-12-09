@@ -243,7 +243,7 @@ export default new Vuex.Store({
       context.commit("setComments", comments);
     },
     setPictures: (context, pictures) => {
-      context.commit("setComments", pictures);
+      context.commit("setPictures", pictures);
     },
     setLoginDetails: (context, loginDetails) => {
       // console.log("in store.js setLoginDetails. printing loginDetails and context:")

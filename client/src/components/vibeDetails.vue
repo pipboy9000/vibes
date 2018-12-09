@@ -26,7 +26,7 @@
             <p class="join" v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
             <p class="tooFar" v-else>too far</p>
           </div>
-          <div ref="pictures" class="pictures" v-if="newPictures.length > 0" @mousewheel="wheel">
+          <div ref="pictures" class="pictures" v-if="newPictures.length > 0" @mousewheel.stop.prevent="wheel">
             <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
               <div v-for="(pic,idx) in newPictures" :key="idx" class="thumb" href="#" @click="index = idx" 
               :style="{'background-image': 'url(' + pic.thumbSrc + ')'}"/>
@@ -110,7 +110,7 @@ export default {
       }
     },
     move() {
-      if (this.scrollM > 1 || this.scrollM < -1) {
+      if (this.$refs.pictures && (this.scrollM > 1 || this.scrollM < -1)) {
         this.isMoving = true;
         this.$refs.pictures.scrollBy(this.scrollM, 0);
         this.scrollM *= 0.95;
@@ -369,12 +369,9 @@ export default {
     usersToDisplay() {
       //in the top part
       var me = this;
-      var arr = [4, 4, 4, 4];
-      for (var i = 0; i < 4; i++) {
-        if (
-          this.vibe.users[i] &&
-          this.vibe.users[i] != this.vibe.createdBy.fbid
-        ) {
+      var arr = [];
+      for (var i = 0; i < 4 && i < this.vibe.users.length; i++) {
+        if (this.vibe.users[i] != this.vibe.createdBy.fbid) {
           arr.push(this.vibe.users[i]);
         }
       }
@@ -382,7 +379,19 @@ export default {
     },
     plusUsers() {
       //how many more users are in the vibe
-      return this.vibe.users.length - this.usersToDisplay.length;
+      var self = this;
+      var plus = 0;
+
+      this.vibe.users.length - this.usersToDisplay.length;
+
+      var creatorInVibe = this.vibe.users.findIndex(function(uid) {
+        return uid === self.vibe.createdBy.fbid;
+      });
+
+      if (creatorInVibe !== -1) {
+        plus -= 1;
+      }
+      return plus;
     },
     vibePictures() {
       return this.vibe.pictures;
@@ -423,7 +432,7 @@ export default {
     commentsCount() {
       if (this.commentSent) {
         this.commentSent = false;
-        this.scrollToBottom();
+        this.$nextTick(this.scrollToBottom);
       }
     },
     $route(to, from) {
@@ -674,6 +683,14 @@ export default {
   border-radius: 65px;
   border: 1px solid #ffffffbd;
   margin-left: 4px;
+}
+
+.users > p {
+  margin: 0;
+  color: white;
+  font-family: "Roboto", cursive;
+  margin-left: 6px;
+  font-size: 18px;
 }
 
 .users > :first-child {

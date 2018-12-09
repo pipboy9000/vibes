@@ -79,7 +79,7 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: #0000001f;
+  background-color: #0000008a;
   display: flex;
   flex-direction: column;
   align-items: center;
