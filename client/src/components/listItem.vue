@@ -10,7 +10,7 @@
       </div>
       <div class="bottom">
         <p>Created by {{ vibe.createdBy.name }}</p>
-        <p> - {{ time }}</p>
+        <p>{{ time }}</p>
         <div class="icons">
           <i class="fas fa-map-marker-alt"></i><p>{{  this.distance }}</p>
           <i class="fas fa-user-circle"></i>  <p>{{ vibe.users.length }}</p>
