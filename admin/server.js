@@ -37,6 +37,7 @@ app.get('/save-vibe', function (req, res) {
             lat: q.lat,
         },
         date: q.date,
+        time: q.time,
         isRecurring: q.isRecurring === 'true',
         daysRecurring: q.daysRecurring,
         lastActivated: null 

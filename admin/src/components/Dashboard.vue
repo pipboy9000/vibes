@@ -109,6 +109,7 @@ export default {
             lng: vibe.lng,
             lat: vibe.lat,
             date: vibe.date,
+            time: vibe.time,
             isRecurring: vibe.isRecurring,
             daysRecurring: vibe.daysRecurring
           }

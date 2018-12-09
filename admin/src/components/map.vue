@@ -29,6 +29,7 @@ export default {
     EventBus.$on("zoomIn", this.zoomIn);
     EventBus.$on("zoomOut", this.zoomOut);
     EventBus.$on("focus", this.focusSelf);
+    EventBus.$on("focusVibe", this.focusVibe);
 
     var mockX = 32.090042199999996;
     var mockY = 34.779544399999996;

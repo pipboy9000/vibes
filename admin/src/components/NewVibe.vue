@@ -217,6 +217,7 @@ export default {
         lng: this.form.lng,
         lat: this.form.lat,
         date: this.form.date,
+        time: this.form.time,
         isRecurring: this.form.isRecurring,
         daysRecurring: this.form.isRecurring ? mappedDays : []
       });
