@@ -152,7 +152,7 @@ export default {
     uploadPicture(cordovaImageData) {
       var size = (cordovaImageData.length * 3) / 4;
       console.log("Picture Size: " + size);
-      alert("Picture Size: " + size / 1024 + "KB");
+      // alert("Picture Size: " + size / 1024 + "KB");
 
       var self = this;
       const base64JpegPrefix = "data:image/jpeg;base64,";
