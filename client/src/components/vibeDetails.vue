@@ -62,7 +62,6 @@ import VueGallery from "vue-gallery";
 import Pica from "pica";
 const pica = Pica();
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
-import Logo from "./logo";
 import { PhotoGallery } from "vue-photo-gallery";
 
 export default {
