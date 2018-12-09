@@ -65,7 +65,6 @@ export default {
   border-radius: 8px;
   position: relative;
   box-shadow: 0px 5px 25px -12px;
-  scroll-snap-align: center;
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
@@ -116,6 +115,11 @@ export default {
   margin-left: 1px;
   font-family: "Fredoka One", cursive;
   padding-right: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 
 .bottom > p:nth-child(1) {

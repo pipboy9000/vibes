@@ -1,7 +1,7 @@
 <template>
 <transition name="fade">
   <div v-if="vibe">
-    <div class="scrollBarDiv">
+    <div ref="scrollBarDiv" class="scrollBarDiv">
       <canvas id="img-canvas" width="200" height="150"></canvas>
       <div class="bg">
         <div class="top">
@@ -40,11 +40,12 @@
       </div>
     </div>    
     </div>
-      <div v-if="inVibe" class="newComment">
-          <input type="text" @keyup.enter="sendNewComment" v-model="commentTxt" placeholder="Type message">
+      <div v-if="inVibe" class="newComment" @click="focusNewComment">
+          <input ref="newCommentInput" type="text" @keyup.enter="sendNewComment" v-model="commentTxt" placeholder="Type message">
           <div class="newCommentButtons">
             <div @click="sendNewComment">></div>
-            <div @click="sendPic"><i class="fas fa-camera"></i></div>
+            <div v-if="uploadingPictures.length === 0" @click="sendPic"><i class="fas fa-camera"></i></div>
+            <div v-else><i class="fas fa-spinner"></i></div>
           </div>
       </div>
     </div>
@@ -85,7 +86,8 @@ export default {
       slide: false, //check if link change was from a slide,
       demoPics: null,
       scrollM: 0, //picture scroller
-      isMoving: false
+      isMoving: false,
+      commentSent: false //did we just a new comment?
     };
   },
   mounted() {
@@ -98,6 +100,9 @@ export default {
     }, 10000);
   },
   methods: {
+    focusNewComment() {
+      this.$refs.newCommentInput.focus();
+    },
     wheel(e) {
       this.scrollM += e.wheelDelta / 7;
       if (!this.isMoving) {
@@ -292,11 +297,27 @@ export default {
       this.$router.go(-1);
     },
     sendNewComment() {
+      this.commentSent = true;
       var comment = {
         vibeId: this.$store.state.selectedVibe.id,
         text: this.commentTxt
       };
       socket.newComment({ token: this.$store.getters.token, comment });
+      this.commentTxt = "";
+      this.hideKeyboard();
+    },
+    hideKeyboard() {
+      var field = document.createElement("input");
+      field.setAttribute("type", "text");
+      document.body.appendChild(field);
+
+      setTimeout(function() {
+        field.focus();
+        setTimeout(function() {
+          // field.setAttribute("style", "display:none;");
+          document.body.removeChild(field);
+        }, 50);
+      }, 50);
     },
     joinVibe() {
       socket.joinVibe({
@@ -309,6 +330,13 @@ export default {
     },
     clearSelectedVibe() {
       this.$store.commit("setSelectedVibe", null);
+    },
+    scrollToBottom() {
+      this.$refs.scrollBarDiv.scrollTo({
+        top: this.$refs.scrollBarDiv.scrollHeight,
+        left: 0,
+        behavior: "smooth"
+      });
     }
   },
   computed: {
@@ -386,9 +414,18 @@ export default {
     },
     isTooFar() {
       return this.vibe.distance < 25;
+    },
+    commentsCount() {
+      if (this.vibe) return this.vibe.comments.length;
     }
   },
   watch: {
+    commentsCount() {
+      if (this.commentSent) {
+        this.commentSent = false;
+        this.scrollToBottom();
+      }
+    },
     $route(to, from) {
       if (this.slide) {
         this.slide = false;
@@ -444,7 +481,7 @@ export default {
   width: 100%;
   height: 100%;
   max-width: 485px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .pictures::-webkit-scrollbar,
@@ -493,8 +530,8 @@ export default {
 
 .top {
   display: inline-block;
-  height: 285px;
   width: 100%;
+  padding-bottom: 22px;
 }
 
 .cover {
@@ -555,23 +592,30 @@ export default {
   line-height: 1.1;
   font-family: "Fredoka One", cursive;
   color: #2d2d2d;
-  position: absolute;
   max-width: 100%;
   font-size: 36px;
   text-align: left;
-  padding: 0;
-  top: 175px;
-  left: 31px;
+  position: relative;
+  margin-top: 15px;
+  padding-left: 30px;
+  padding-right: 30px;
+  float: left;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .details {
-  position: absolute;
   font-family: "Roboto", sans-serif;
   color: #000000b3;
   font-size: 16px;
   text-align: left;
-  top: 223px;
-  left: 32px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 30px;
+  padding-right: 30px;
+  margin-top: 10px;
+  float: left;
 }
 
 .joinLeave {
@@ -617,10 +661,11 @@ export default {
 }
 
 .users {
-  position: absolute;
+  position: relative;
   display: flex;
-  top: 102px;
-  left: 22px;
+  float: left;
+  margin-top: 102px;
+  margin-left: 20px;
 }
 
 .users > img {
@@ -736,8 +781,8 @@ export default {
   padding-right: 20px;
 }
 
-.spinner {
-  /* position: absolute; */
+.fa-spinner {
+  animation: rotate 2s infinite linear;
 }
 
 #img-canvas {
@@ -777,5 +822,17 @@ label.cameraButton input {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
 }
 </style>

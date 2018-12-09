@@ -6,8 +6,8 @@ var io = require('socket.io')(server);
 var cache = require('./helpers/cache');
 var piggyBack = require('./helpers/piggyback');
 
-var futureVibesPoller = require('./helpers/future-poller');
-futureVibesPoller.startPolling();
+// var futureVibesPoller = require('./helpers/future-poller');
+// futureVibesPoller.startPolling();
 
 var {
   validate
