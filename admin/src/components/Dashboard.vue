@@ -164,10 +164,12 @@ export default {
               this.vibes = response.data.vibes;
               this.vibes.forEach(
                 x =>
-                  (x.location = new google.maps.LatLng(
-                    x.location.lat,
-                    x.location.lng
-                  ))
+                  (
+                    x.location = {
+                      lat: parseFloat(x.location.lat),
+                      lng: parseFloat(x.location.lng)
+                    }
+                  )
               );
               this.$store.dispatch("setData", { vibes: response.data.vibes });
               this.response = `Got ${this.vibes.length} vibes from db`;

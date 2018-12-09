@@ -1,12 +1,38 @@
 <template>
-    <div ref="map" class="map">
-      
+    <div class="map">
+      <gmap-map
+      ref="mapRef"
+      style="height: 100%"
+      :center="location"
+      :zoom="14"
+    >
+      <gmap-marker
+        v-for="(event, index) in vibes"
+        :key="'marker'+index"
+        :position="event.location"
+        :icon="require('../../static/vibe_marker.png')"
+        @click="panTo(event.location)"
+      ></gmap-marker>
+      <gmap-circle
+        v-for="(event, index) in vibes"
+        :key="'circle'+index"
+        :center="event.location"
+        :options="{
+            strokeColor: '#000',
+            strokeOpacity: 0,
+            strokeWeight: 0,
+            fillColor: '#ff6ada',
+            fillOpacity: 0.25,
+            radius: 500
+            }"
+        @click="panTo(event.location)"
+      ></gmap-circle>
+    </gmap-map>
     </div>
 </template>
 
 <script>
 import { EventBus } from "../../../client/src/event-bus.js";
-import { CustomUserInfoWindow } from "../../../client/src/services/maps.js";
 
 export default {
   name: "Map",
@@ -19,7 +45,6 @@ export default {
       circles: [],
       vibeMarkers: [],
       userMarkers: [],
-      userInfoWindow: null,
       mockLocation: {}
     };
   },
@@ -37,34 +62,34 @@ export default {
         lat: mockX, 
         lng: mockY 
       };
-    this.map = new google.maps.Map(this.$refs.map, {
-      zoom: 15,
-      center: { 
-        lat: mockX, 
-        lng: mockY 
-      },
-      disableDefaultUI: true
+    // this.map = new google.maps.Map(this.$refs.map, {
+    //   zoom: 15,
+    //   center: { 
+    //     lat: mockX, 
+    //     lng: mockY 
+    //   },
+    //   disableDefaultUI: true
+    // });
+
+    // var service = new google.maps.places.PlacesService(this.map);
+
+    this.$refs.mapRef.$mapPromise.then(map => {
+      this.map = map;
+
+      // this.map.addListener("click", function(e) {
+      //   service.getDetails({
+      //       placeId: e.placeId
+      //     }, function(place, status) {
+      //       if (status === google.maps.places.PlacesServiceStatus.OK) {
+      //         EventBus.$emit("mapClicked", {
+      //           placeName: place.name,
+      //           lat: e.latLng.lat(), 
+      //           lng: e.latLng.lng()
+      //           });
+      //       }
+      //     });
+      // });
     });
-
-    var service = new google.maps.places.PlacesService(this.map);
-
-    this.map.addListener("click", function(e) {
-      self.userInfoWindow.close();
-      service.getDetails({
-          placeId: e.placeId
-        }, function(place, status) {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            EventBus.$emit("mapClicked", {
-              placeName: place.name,
-              lat: e.latLng.lat(), 
-              lng: e.latLng.lng()
-              });
-          }
-        });
-    });
-
-    //init the custom overlay object to use as an infowindow
-    this.userInfoWindow = new CustomUserInfoWindow(this.map);
   },
 
   methods: {
@@ -116,71 +141,6 @@ export default {
         radius: this.getVibeSize(vibe.users ? vibe.users.length + 2 : 2)
       });
     },
-    
-    renderCircles(vibes) {
-      var i = 0;
-      for (var vibeId in vibes) {
-        var vibe = vibes[vibeId];
-        if (i < this.circles.length) {
-          this.circles[i].setCenter(vibe.location);
-          this.circles[i].setRadius(this.getVibeSize(vibe.users ? vibe.users.length : 0));
-        } else {
-          var circle = this.getNewCircle(vibe);
-          this.circles.push(circle);
-        }
-        i++;
-      }
-      //clear unused circles
-      for (i = i; i < this.circles.length; i++) {
-        if (this.circles[i]) {
-          this.circles[i].setMap(null);
-          this.circles[i] = null;
-          this.circles.pop();
-        }
-      }
-    },
-    renderVibeMarkers(vibes) {
-      var self = this;
-      var i = 0;
-      for (var vibeId in vibes) {
-        let vibe = vibes[vibeId];
-        if (i < this.vibeMarkers.length) {
-          this.vibeMarkers[i].setPosition(vibe.location);
-        } else {
-          var marker = this.getNewVibeMarker(vibe);
-          this.vibeMarkers.push(marker);
-        }
-
-        //clear previous click listeners
-        google.maps.event.clearInstanceListeners(this.vibeMarkers[i]);
-        //set click listeners
-        this.vibeMarkers[i].addListener("click", function() {
-          // self.$store.commit("setSelectedVibe", vibe);
-          // EventBus.$emit("vibeMarkerClicked", vibe);
-          var vibeId = self.$route.query.v;
-          if (vibeId) {
-            self.$router.replace({ path: "", query: { v: vibeId } });
-            EventBus.$emit("vibeMarkerClicked", vibe);
-          } else {
-            vibeId = vibe.id;
-            self.$router.push({ path: "", query: { v: vibeId } });
-          }
-          self.focusVibe(vibe);
-        });
-
-        i++;
-      }
-
-      //remove unused markers
-      var len = Object.keys(vibes).length;
-      if (this.vibeMarkers.length > len) {
-        for (var i = len; i < this.vibeMarkers.length; i++) {
-          this.vibeMarkers[i].setMap(null);
-          this.vibeMarkers[i] = null;
-        }
-        this.vibeMarkers = this.vibeMarkers.slice(0, len);
-      }
-    }
   },
   computed: {
     location() {
@@ -196,17 +156,6 @@ export default {
       return this.location;
     }
   },
-  watch: {
-    location(newLoc, oldLoc) {
-      if (!oldLoc) {
-        this.focus(newLoc, 15);
-      }
-    },
-    vibes(newVibes) {
-      this.renderCircles(newVibes);
-      this.renderVibeMarkers(newVibes);
-    }
-  }
 };
 </script>
 
