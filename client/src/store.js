@@ -9,13 +9,14 @@ export default new Vuex.Store({
     inVibe: null,
     loginDetails: null,
     userDetails: null,
-    selectedVibe: null,
+    openVibe: null,
     location: null,
     serverLocation: undefined, //user location on server
     vibes: [],
     users: [],
     loggedIn: false,
-    album: null
+    album: null,
+    selectedVibe: null //when user click a vibe on map or list, it first selects it and if clicked again it opens
   },
   getters: {
     getVibeById: (state) => (id) => {
@@ -59,9 +60,12 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setOpenVibe: (state, vibe) => {
+      state.openVibe = vibe;
+    },
+
     setSelectedVibe: (state, vibe) => {
       state.selectedVibe = vibe;
-
     },
     setLocation: (state, location) => {
       state.location = location;
@@ -98,10 +102,11 @@ export default new Vuex.Store({
       state.serverLocation = user.location;
     },
     setVibes(state, vibes) {
+      debugger;
       state.vibes = vibes;
-      if (state.selectedVibe) {
-        state.selectedVibe = vibes.find(function (vibe) {
-          return vibe.id === state.selectedVibe.id;
+      if (state.openVibe) {
+        state.openVibe = vibes.find(function (vibe) {
+          return vibe.id === state.openVibe.id;
         });
       }
     },
@@ -142,8 +147,8 @@ export default new Vuex.Store({
         v.comments = comments;
       }
 
-      if (state.selectedVibe.id === vibeId)
-        state.selectedVibe.comments = comments;
+      if (state.openVibe.id === vibeId)
+        state.openVibe.comments = comments;
     },
     setPictures(state, {
       vibeId,
@@ -156,8 +161,8 @@ export default new Vuex.Store({
       if (v)
         v.pictures = pictures;
 
-      if (state.selectedVibe.id === vibeId)
-        state.selectedVibe.pictures = pictures;
+      if (state.openVibe.id === vibeId)
+        state.openVibe.pictures = pictures;
     },
     addUser(state, {
       vibeId,

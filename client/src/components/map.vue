@@ -17,7 +17,8 @@ export default {
       circles: [],
       vibeMarkers: [],
       userMarkers: [],
-      userInfoWindow: null
+      userInfoWindow: null,
+      proj: null //map projection
     };
   },
   mounted() {
@@ -62,7 +63,18 @@ export default {
     getVibeSize(numUsers) {
       return Math.round(numUsers * 150 * 0.8) + 25;
     },
-    focus(location, zoom) {
+    focus(location, zoom, offsetX, offsetY) {
+      if (offsetX || offsetY) {
+        var proj = this.userInfoWindow.getProjection();
+        var p = proj.fromLatLngToContainerPixel(
+          new google.maps.LatLng(location)
+        );
+        p.x += offsetX;
+        p.y += offsetY;
+        location = proj.fromContainerPixelToLatLng(p);
+        zoom = false; //we cant zoom after offset
+      }
+
       if (location) {
         if (zoom) {
           this.map.panTo(location);
@@ -73,7 +85,7 @@ export default {
       }
     },
     focusVibe(vibe) {
-      this.focus(vibe.location);
+      this.focus(vibe.location, false, 0, 80);
     },
     focusSelf(zoom) {
       this.focus(this.location, zoom);
@@ -190,21 +202,29 @@ export default {
 
         //clear previous click listeners
         google.maps.event.clearInstanceListeners(this.vibeMarkers[i]);
+
         //set click listeners
         this.vibeMarkers[i].addListener("click", function() {
-          // self.$store.commit("setSelectedVibe", vibe);
-          // EventBus.$emit("vibeMarkerClicked", vibe);
-          var vibeId = self.$route.query.v;
-          if (vibeId) {
-            self.$router.replace({ path: "", query: { v: vibeId } });
-            EventBus.$emit("vibeMarkerClicked", vibe);
-          } else {
-            vibeId = vibe.id;
-            self.$router.push({ path: "", query: { v: vibeId } });
-          }
           self.focusVibe(vibe);
+          if (this.openVibe) {
+            this.$store.commit("setSelectedVibe", this.vibe);
+            this.$router.replace({ path: "", query: { v: this.vibe.id } });
+          } else {
+            if (self.selectedVibe !== vibe) {
+              self.$store.commit("setSelectedVibe", vibe);
+            } else {
+              var vibeId = self.$route.query.v;
+              if (vibeId) {
+                if (this.$store.state.selectedVibe.id === vibe.id) {
+                  self.$router.replace({ path: "", query: { v: vibeId } });
+                }
+              } else {
+                vibeId = vibe.id;
+                self.$router.push({ path: "", query: { v: vibeId } });
+              }
+            }
+          }
         });
-
         i++;
       }
 
@@ -234,9 +254,18 @@ export default {
     },
     serverLocation() {
       return this.$store.state.serverLocation;
+    },
+    selectedVibe() {
+      return this.$store.state.selectedVibe;
+    },
+    openVibe() {
+      return this.$store.state.openVibe;
     }
   },
   watch: {
+    selectedVibe(vibe) {
+      this.focusVibe(vibe);
+    },
     location(newLoc, oldLoc) {
       this.myGhost.setPosition(newLoc);
       if (!oldLoc) {

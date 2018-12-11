@@ -1,5 +1,5 @@
 <template>
-    <div class="bg" @click="clicked">
+    <div class="bg" :class="{selected:isSelected}" @click="clicked">
       <div class="top">
         <div class="left">
           <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
@@ -36,17 +36,34 @@ export default {
       if (this.vibe.distance || this.vibe.distance === 0) {
         return formatDistance(this.vibe.distance);
       }
+    },
+    selectedVibe() {
+      return this.$store.state.selectedVibe;
+    },
+    openVibe() {
+      return this.$store.state.openVibe;
+    },
+    isSelected() {
+      if (!this.selectedVibe) return;
+      return this.selectedVibe.id === this.vibe.id;
     }
   },
   methods: {
     clicked() {
-      {
-        if (this.$router.currentRoute.query.v) {
-          this.$router.replace({ path: "", query: { v: this.vibe.id } });
+      if (this.openVibe) {
+        this.$store.commit("setSelectedVibe", this.vibe);
+        this.$router.replace({ path: "", query: { v: this.vibe.id } });
+      } else {
+        if (!this.isSelected) {
+          this.$store.commit("setSelectedVibe", this.vibe);
         } else {
-          this.$router.push({ path: "", query: { v: this.vibe.id } });
+          if (this.$router.currentRoute.query.v) {
+            this.$router.replace({ path: "", query: { v: this.vibe.id } });
+          } else {
+            this.$router.push({ path: "", query: { v: this.vibe.id } });
+          }
+          EventBus.$emit("listItemClicked", this.vibe);
         }
-        EventBus.$emit("listItemClicked", this.vibe);
       }
     }
   }
@@ -67,6 +84,11 @@ export default {
   box-shadow: 0px 5px 25px -12px;
   text-overflow: ellipsis;
   overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.selected {
+  border: 3px solid gray;
 }
 
 .top {
@@ -136,7 +158,7 @@ export default {
   font-family: "Roboto", sans-serif;
   text-align: left;
   margin: 0;
-  margin-left: 17px;
+  margin-left: 10px;
   font-size: 12px;
   margin-top: 3px;
 }

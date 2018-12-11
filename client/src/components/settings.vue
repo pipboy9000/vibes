@@ -38,11 +38,12 @@ export default {
 }
 
 .main {
-  width: 100%;
+  width: 200vw;
   height: 100%;
   max-width: 360px;
   transition: transform 0.25s;
   will-change: transform;
+  /* overflow: hidden; */
 }
 
 .overlay {

@@ -45,6 +45,7 @@ export default {
   width: 100%;
   height: 100%;
   -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
 }
 
 /*fb login button style override*/

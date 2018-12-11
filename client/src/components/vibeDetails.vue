@@ -297,7 +297,7 @@ export default {
     sendNewComment() {
       this.commentSent = true;
       var comment = {
-        vibeId: this.$store.state.selectedVibe.id,
+        vibeId: this.$store.state.openVibe.id,
         text: this.commentTxt
       };
       socket.newComment({ token: this.$store.getters.token, comment });
@@ -326,8 +326,8 @@ export default {
     leaveVibe() {
       socket.leaveVibe(this.$store.getters.token);
     },
-    clearSelectedVibe() {
-      this.$store.commit("setSelectedVibe", null);
+    clearOpenVibe() {
+      this.$store.commit("setOpenVibe", null);
     },
     scrollToBottom() {
       this.$refs.scrollBarDiv.scrollTo({
@@ -398,14 +398,14 @@ export default {
       return this.$root.cordova.camera;
     },
     vibe() {
-      return this.$store.state.selectedVibe;
+      return this.$store.state.openVibe;
     },
     vibes() {
       return this.$store.state.vibes;
     },
     inVibe() {
-      if (!this.$store.state.selectedVibe) return;
-      return this.$store.state.selectedVibe.id === this.$store.state.inVibe;
+      if (!this.$store.state.openVibe) return;
+      return this.$store.state.openVibe.id === this.$store.state.inVibe;
     },
     profilePicSrc() {
       if (this.vibe) {
@@ -442,7 +442,7 @@ export default {
       if (vibeId) {
         var vibe = this.$store.getters.getVibeById(vibeId);
         if (vibe) {
-          this.$store.commit("setSelectedVibe", vibe);
+          this.$store.commit("setOpenVibe", vibe);
           var imgIdx = to.query.img;
           if (imgIdx >= 0) {
             this.index = +imgIdx;
@@ -450,10 +450,10 @@ export default {
             this.index = null;
           }
         } else {
-          this.clearSelectedVibe();
+          this.clearOpenVibe();
         }
       } else {
-        this.clearSelectedVibe();
+        this.clearOpenVibe();
       }
     },
     vibe(newVibe) {
@@ -467,6 +467,7 @@ export default {
         var vibe = this.$store.getters.getVibeById(vibeId);
         if (vibe) {
           this.$store.commit("setSelectedVibe", vibe);
+          this.$store.commit("setOpenVibe", vibe);
           let imgIdx = +this.$route.query.img;
           if (imgIdx >= 0) {
             this.index = null;

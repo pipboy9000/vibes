@@ -8,14 +8,14 @@ export default new Vuex.Store({
     vibes: [],
   },
   getters: {
-    
+
   },
   mutations: {
     setVibes(state, vibes) {
       state.vibes = vibes;
-      if (state.selectedVibe) {
-        state.selectedVibe = vibes.find(function (vibe) {
-          return vibe.id === state.selectedVibe.id;
+      if (state.openVibe) {
+        state.openVibe = vibes.find(function (vibe) {
+          return vibe.id === state.openVibe.id;
         });
       }
     },
