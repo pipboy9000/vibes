@@ -169,7 +169,7 @@ hr {
 
 .startBtn {
   cursor: pointer;
-  background: #3fb7f5;
+  background: #46ceff;
   height: 40px;
   border-radius: 5px;
   color: white;
@@ -180,6 +180,7 @@ hr {
   max-width: 150px;
   font-size: 20px;
   margin-top: 17px;
+  border-bottom: #00b4f4 5px solid;
 }
 
 .fade-enter-active,

@@ -643,7 +643,9 @@ export default {
 
 .join,
 .leave {
-  background: #8be0ff;
+  box-sizing: border-box;
+  /* border-bottom: 4px solid #21b5ec; */
+  background: #46ceff;
   display: inline-block;
   margin: 0;
   width: 100%;

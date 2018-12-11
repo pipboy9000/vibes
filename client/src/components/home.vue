@@ -1,18 +1,19 @@
 <template>
   <div class="main">
       <Map></Map>
+      <div class="loginDiv" v-show="!loggedIn"> 
+        <div class="elements-wrapper">
+          <div class="logo"></div>
+          <FacebookLogin></FacebookLogin>
+        </div>
+      </div>
+      <div v-if="loggedIn">
         <mapUI></mapUI>
         <vibe-details></vibe-details>
         <NewVibeForm></NewVibeForm>
         <settings></settings>
-        <div class="loginDiv" v-show="$store.state.loginDetails === null"> 
-          <div class="overlay"></div>
-          <div class="elements-wrapper">
-            <div class="logo"></div>
-            <FacebookLogin></FacebookLogin>
-          </div>
-        </div>
-        <div class="preview"></div>
+      </div>
+    <div class="preview"></div>
   </div>
 </template>
 
@@ -35,6 +36,11 @@ export default {
     VibeDetails,
     MapUI,
     Settings
+  },
+  computed: {
+    loggedIn() {
+      return this.$store.state.loggedIn;
+    }
   }
 };
 </script>
@@ -89,13 +95,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.25);
 }
 
 .fade-enter-active,

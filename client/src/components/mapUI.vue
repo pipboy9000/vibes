@@ -68,7 +68,7 @@ export default {
   width: 90%;
   max-width: 318px;
   height: 46px;
-  background-color: #8be0ff;
+  background-color: #46ceff;
   left: 50%;
   -webkit-transform: translateX (-50%);
   transform: translateX(-50%);
@@ -84,6 +84,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom: 5px solid #21b5ec;
 }
 
 .sideBtns {

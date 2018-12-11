@@ -1,9 +1,10 @@
 <template>
     <div class="main" :class="{open: isOpen, closed: !isOpen}">
         <div class="bg"></div>
+        <div class="overlay" :class="{overlayClosed: !isOpen}"></div>
         <div v-if="isOpen" class="closeBtn" @click="close">X</div>
         <div v-else class="openBtn" @click="open">
-            <font-awesome-icon icon="bars"></font-awesome-icon>
+            <font-awesome-icon icon="user-alt"></font-awesome-icon> 
         </div>
     </div>
 </template>
@@ -45,10 +46,18 @@ export default {
 }
 
 .overlay {
-  width: 100%;
+  pointer-events: none;
+  width: 200%;
   height: 100%;
   background: #0008;
   position: absolute;
+  transform: translateX(288px);
+  opacity: 1;
+  transition: opacity 0.25s;
+}
+
+.overlayClosed {
+  opacity: 0;
 }
 
 .openBtn,
