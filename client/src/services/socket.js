@@ -3,7 +3,7 @@ import store from "../store";
 
 /* DONT HARDCODE LOCALHOST HERE!! WERE LIVE##$!@#!! */
 var socketAddress = process.env.SOCKET_ADDRESS;
-var socketAddress = "192.168.14.97:8080";
+var socketAddress = "localhost:8080";
 
 //  var socketAddress = "https://vibes-web.herokuapp.com";
 //var socketAddress = "http://172.16.0.95:8080";
