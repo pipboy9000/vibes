@@ -40,7 +40,8 @@ export default {
     slider: TIME_STEPS_BACK,
     ticksLabels: [],
     timeStepsBack: TIME_STEPS_BACK,
-    isFuture: true
+    isFuture: true,
+    selectedDate: null
   }),
   mounted() {
     let dateNow = new Date().getTime();
@@ -61,8 +62,14 @@ export default {
       return time;
     },
     changeEnd(val) {
-      let selectedDate = this.ticksLabels[val];
-      EventBus.$emit('getPastVibes', selectedDate);
+      this.selectedDate = this.ticksLabels[val];
+      EventBus.$emit('getPastVibes', this.selectedDate);
+    }
+  },
+  watch: {
+    isFuture(newVal, oldVal) {
+      if (newVal === true) EventBus.$emit("getFutureVibes");
+      else if (this.selectedDate) EventBus.$emit('getPastVibes', this.selectedDate);
     }
   }
 };
