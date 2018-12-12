@@ -113,7 +113,10 @@ export default {
     },
     getNewVibeMarker(vibe) {
       return new google.maps.Marker({
-        icon: "./static/vibe_marker.png",
+        icon: {
+          url: "./static/vibe_marker.png",
+          anchor: { x: 42, y: 42 }
+        },
         map: this.map,
         position: vibe.location
       });
@@ -123,7 +126,7 @@ export default {
         strokeColor: "#000",
         strokeOpacity: 0,
         strokeWeight: 0,
-        fillColor: "#ff6ada",
+        fillColor: "#ff00ff",
         fillOpacity: 0.25,
         map: this.map,
         center: vibe.location,
@@ -197,6 +200,7 @@ export default {
           this.vibeMarkers[i].setPosition(vibe.location);
         } else {
           var marker = this.getNewVibeMarker(vibe);
+          debugger;
           this.vibeMarkers.push(marker);
         }
 

@@ -59,7 +59,7 @@ export default {
 }
 
 .overlay {
-  width: 200%;
+  width: 100vw;
   height: 100%;
   background: #0008;
   position: absolute;

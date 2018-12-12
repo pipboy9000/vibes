@@ -102,7 +102,6 @@ export default new Vuex.Store({
       state.serverLocation = user.location;
     },
     setVibes(state, vibes) {
-      debugger;
       state.vibes = vibes;
       if (state.openVibe) {
         state.openVibe = vibes.find(function (vibe) {
