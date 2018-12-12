@@ -85,10 +85,12 @@ export default {
   text-overflow: ellipsis;
   overflow-x: hidden;
   box-sizing: border-box;
+  transition: border;
+  transition-duration: 100ms;
 }
 
 .selected {
-  border: 3px solid gray;
+  border: 3px solid #46ceff;
 }
 
 .top {
@@ -132,7 +134,7 @@ export default {
   text-align: left;
   font-size: 20px;
   white-space: pre-wrap;
-  line-height: 19px;
+  line-height: 24px;
   margin-top: 6px;
   margin-left: 1px;
   font-family: "Fredoka One", cursive;

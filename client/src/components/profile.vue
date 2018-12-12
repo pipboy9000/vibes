@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  name: "settings",
+  name: "profile",
   data() {
     return {
       isOpen: false
@@ -19,10 +19,22 @@ export default {
   },
   methods: {
     close() {
-      this.isOpen = false;
+      this.$router.go(-1);
     },
     open() {
-      this.isOpen = true;
+      var q = this.$route.query;
+      if (!q.profile) {
+        this.$router.push({ query: { ...q, profile: true } });
+      }
+    }
+  },
+  watch: {
+    $route(to, from) {
+      if (to.query.profile) {
+        this.isOpen = true;
+      } else {
+        this.isOpen = false;
+      }
     }
   }
 };
@@ -47,7 +59,6 @@ export default {
 }
 
 .overlay {
-  pointer-events: none;
   width: 200%;
   height: 100%;
   background: #0008;
@@ -59,6 +70,7 @@ export default {
 
 .overlayClosed {
   opacity: 0;
+  pointer-events: none;
 }
 
 .openBtn,

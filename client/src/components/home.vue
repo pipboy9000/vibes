@@ -11,7 +11,7 @@
         <mapUI></mapUI>
         <vibe-details></vibe-details>
         <NewVibeForm></NewVibeForm>
-        <settings></settings>
+        <Profile></Profile>
       </div>
     <div class="preview"></div>
   </div>
@@ -23,7 +23,7 @@ import FacebookLogin from "./facebook-login/facebookLogin";
 import MapUI from "./mapUI";
 import NewVibeForm from "./newVibeForm";
 import VibeDetails from "./vibeDetails";
-import Settings from "./settings";
+import Profile from "./profile";
 
 import { EventBus } from "../event-bus";
 
@@ -35,7 +35,7 @@ export default {
     NewVibeForm,
     VibeDetails,
     MapUI,
-    Settings
+    Profile
   },
   computed: {
     loggedIn() {
