@@ -159,36 +159,45 @@ export default {
             : "http://localhost:3030/get-past-vibes";
         params = { date };
       }
-      axios.get(serverUrl, { params }).then(
-        response => {
-          this.sending = false;
-          this.operationReturned = true;
-          if (response.status == 200) {
-            this.operationStatus = "success";
-            this.vibes = response.data.vibes;
-            this.vibes.forEach(
-              x =>
-                (x.location = {
-                  lat: parseFloat(x.location.lat),
-                  lng: parseFloat(x.location.lng)
-                })
-            );
-            this.$store.dispatch("setData", { vibes: response.data.vibes });
-            //this.response = `Got ${this.vibes.length} vibes from db`;
-          } else {
-            this.operationStatus = "failure";
-            this.showResponse = true;
-            this.response = response;
+      
+      axios
+        .get(serverUrl, {
+          params: {
+            date: params.date,
+            user: this.$store.state.user,
+            password: this.$store.state.password
           }
-        },
-        err => {
-          this.sending = false;
-          this.operationReturned = true;
-          this.showResponse = true;
-          this.operationStatus = "failure";
-          this.response = `Error. Did you run admin/server.js? ${err.toString()}`;
-        }
-      );
+        })
+        .then(
+          response => {
+            this.sending = false;
+            this.operationReturned = true;
+            if (response.status == 200) {
+              this.operationStatus = "success";
+              this.vibes = response.data.vibes;
+              this.vibes.forEach(
+                x =>
+                  (x.location = {
+                    lat: parseFloat(x.location.lat),
+                    lng: parseFloat(x.location.lng)
+                  })
+              );
+              this.$store.dispatch("setData", { vibes: response.data.vibes });
+              //this.response = `Got ${this.vibes.length} vibes from db`;
+            } else {
+              this.operationStatus = "failure";
+              this.showResponse = true;
+              this.response = response;
+            }
+          },
+          err => {
+            this.sending = false;
+            this.operationReturned = true;
+            this.showResponse = true;
+            this.operationStatus = "failure";
+            this.response = `Error. Did you run admin/server.js? ${err.toString()}`;
+          }
+        );
     },
     getFutureVibes() {
       this.getVibes();

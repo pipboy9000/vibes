@@ -7,13 +7,17 @@ app.use(cors())
 var port = process.env.PORT || 3030;
 let adminUsers = {}; 
 
-db.getAdminCredentials(users => 
+db.getAdminCredentials().then(users => 
     {
-        adminUsers = users
+        let usersArr = [];
+        users.forEach(x => {
+            usersArr[x.user] = {pass: x.password}
+        });
+        adminUsers = usersArr;
     });
 
 function authenticateUser(req) {
-    return adminUsers[req.params.user] && adminUsers[req.params.user].password === req.params.password;
+    return adminUsers[req.query.user] && adminUsers[req.query.user].pass === req.query.password;
 }
 
 app.use(express.static('public'));

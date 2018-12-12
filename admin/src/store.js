@@ -6,6 +6,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     vibes: [],
+    user: null,
+    password: null
   },
   getters: {
 
@@ -19,6 +21,10 @@ export default new Vuex.Store({
         });
       }
     },
+    setCredentials(state, {user, pass}) {
+      state.user = user;
+      state.password = pass;
+    }
   },
   actions: {
     calculateDistances(context, vibesArray) {
@@ -63,5 +69,8 @@ export default new Vuex.Store({
     setUsers(context, users) {
       context.commit("setUsers", users);
     },
+    setCredentials(context, {user, pass}) {
+      context.commit("setCredentials", {user, pass});
+    }
   }
 });

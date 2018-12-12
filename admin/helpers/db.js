@@ -116,8 +116,7 @@ async function getAdminCredentials() {
     try {
         const db = await getDb();
         let res = await db.collection("admin-users").find();
-        let creds = await res.toArray();
-        return creds;
+        return res.toArray();
     } catch (err) {
         console.error(err.stack);
     }
