@@ -19,7 +19,7 @@
       mobile-break-point="1"
       class="scroll-width"
     >
-      <v-container>
+      <v-container pa-2>
         <v-layout row wrap>
           <v-flex xs12>
             <component v-bind:is="currentCard"></component>
@@ -44,7 +44,7 @@
       <DateSlider></DateSlider>
     </v-footer>
     <v-progress-linear v-if="sending" color="primary" indeterminate></v-progress-linear>
-    <v-snackbar v-model="operationReturned" left>{{response}}</v-snackbar>
+    <v-snackbar v-model="showResponse" left>{{response}}</v-snackbar>
   </v-app>
 </template>
 
@@ -53,6 +53,7 @@ import Map from "@/components/map";
 import DateSlider from "@/components/DateSlider";
 import NewVibe from "@/components/NewVibe";
 import FutureVibeList from "@/components/FutureVibeList";
+import PastVibeList from "@/components/PastVibeList";
 import { EventBus } from "../../../client/src/event-bus.js";
 const axios = require("axios");
 
@@ -62,6 +63,7 @@ export default {
     Map,
     NewVibe,
     FutureVibeList,
+    PastVibeList,
     DateSlider
   },
   data: () => ({
@@ -71,7 +73,8 @@ export default {
     response: null,
     operationReturned: false,
     deleteConfirmActive: false,
-    vibeToDelete: null
+    vibeToDelete: null,
+    showResponse: false
   }),
   mounted() {
     EventBus.$on("mapClicked", () => {
@@ -84,7 +87,7 @@ export default {
 
     EventBus.$on("getFutureVibes", this.getFutureVibes);
     EventBus.$on("getPastVibes", this.getPastVibes);
-    EventBus.$on("deleteFutureVibe", (vibeToDelete) => {
+    EventBus.$on("deleteFutureVibe", vibeToDelete => {
       this.deleteConfirmActive = true;
       this.vibeToDelete = vibeToDelete;
     });
@@ -97,7 +100,7 @@ export default {
       this.sending = true;
       this.response = null;
       this.operationStatus = null;
-      
+
       const serverUrl =
         process.env.NODE_ENV === "production"
           ? "/save-vibe"
@@ -121,14 +124,17 @@ export default {
             if (response.status == 200) {
               this.operationStatus = "success";
               this.response = `Vibe saved. Vibe ID: ${response.data.vibeId}`;
+              this.showResponse = true;
               EventBus.$emit("getFutureVibes");
             } else {
+              this.showResponse = true;
               this.operationStatus = "failure";
               this.response = response;
             }
           },
           err => {
             this.sending = false;
+            this.showResponse = true;
             this.operationReturned = true;
             this.operationStatus = "failure";
             this.response = `Error. Did you run admin/server.js? ${err.toString()}`;
@@ -153,8 +159,15 @@ export default {
             : "http://localhost:3030/get-past-vibes";
         params = { date };
       }
+      
       axios
-        .get(serverUrl, { params })
+        .get(serverUrl, {
+          params: {
+            date: params.date,
+            user: this.$store.state.user,
+            password: this.$store.state.password
+          }
+        })
         .then(
           response => {
             this.sending = false;
@@ -164,23 +177,23 @@ export default {
               this.vibes = response.data.vibes;
               this.vibes.forEach(
                 x =>
-                  (
-                    x.location = {
-                      lat: parseFloat(x.location.lat),
-                      lng: parseFloat(x.location.lng)
-                    }
-                  )
+                  (x.location = {
+                    lat: parseFloat(x.location.lat),
+                    lng: parseFloat(x.location.lng)
+                  })
               );
               this.$store.dispatch("setData", { vibes: response.data.vibes });
-              this.response = `Got ${this.vibes.length} vibes from db`;
+              //this.response = `Got ${this.vibes.length} vibes from db`;
             } else {
               this.operationStatus = "failure";
+              this.showResponse = true;
               this.response = response;
             }
           },
           err => {
             this.sending = false;
             this.operationReturned = true;
+            this.showResponse = true;
             this.operationStatus = "failure";
             this.response = `Error. Did you run admin/server.js? ${err.toString()}`;
           }
@@ -190,6 +203,7 @@ export default {
       this.getVibes();
     },
     getPastVibes(date) {
+      this.currentCard = "PastVibeList";
       this.getVibes(date);
     },
     deleteFutureVibe() {
@@ -216,13 +230,16 @@ export default {
             if (response.status == 200) {
               this.operationStatus = "success";
               this.response = "Vibe deleted";
+              this.showResponse = true;
               this.getFutureVibes();
             } else {
+              this.showResponse = true;
               this.operationStatus = "failure";
               this.response = response;
             }
           },
           err => {
+            this.showResponse = true;
             this.sending = false;
             this.operationReturned = true;
             this.operationStatus = "failure";

@@ -92,6 +92,7 @@ export default {
             this.operationReturned = true;
             this.loading = false;
             if (response.status == 200) {
+              this.$store.dispatch('setCredentials', {user: this.login.email, pass: this.login.password})
               this.$router.push("/dashboard");
             } else {
               this.operationStatus = "failure";
@@ -102,12 +103,13 @@ export default {
             this.loading = false;
             this.operationReturned = true;
             this.operationStatus = "failure";
-            this.response = `Error. Did you run admin/server.js? ${err.toString()}`;
+            if (err.response && err.response.status === 403) {
+              this.response = 'Wrong credentials';
+            } else {
+              this.response = `Error. Did you run admin/server.js? ${err.toString()}`;
+            }
           }
         );
-
-        
-
     }
   }
 };

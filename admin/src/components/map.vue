@@ -1,23 +1,19 @@
 <template>
-    <div class="map">
-      <gmap-map
-      ref="mapRef"
-      style="height: 100%"
-      :center="location"
-      :zoom="14"
-    >
-      <gmap-marker
-        v-for="(event, index) in vibes"
-        :key="'marker'+index"
-        :position="event.location"
-        :icon="require('../../static/vibe_marker.png')"
-        @click="panTo(event.location)"
-      ></gmap-marker>
-      <gmap-circle
-        v-for="(event, index) in vibes"
-        :key="'circle'+index"
-        :center="event.location"
-        :options="{
+  <div class="map">
+    <gmap-map ref="mapRef" style="height: 100%" :center="location" :zoom="14">
+        <gmap-marker
+          v-for="(event, index) in vibes"
+          :key="'marker'+index"
+          :position="event.location"
+          :icon="require('../../static/vibe_marker.png')"
+          @click="panTo(event.location)"
+        ></gmap-marker>
+
+        <gmap-circle
+          v-for="(event, index) in vibes"
+          :key="'circle'+index"
+          :center="event.location"
+          :options="{
             strokeColor: '#000',
             strokeOpacity: 0,
             strokeWeight: 0,
@@ -25,10 +21,11 @@
             fillOpacity: 0.25,
             radius: 500
             }"
-        @click="panTo(event.location)"
-      ></gmap-circle>
+          @click="panTo(event.location)"
+        ></gmap-circle>
+      
     </gmap-map>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -58,21 +55,11 @@ export default {
 
     var mockX = 32.090042199999996;
     var mockY = 34.779544399999996;
-    this.mockLocation = { 
-        lat: mockX, 
-        lng: mockY 
-      };
-    // this.map = new google.maps.Map(this.$refs.map, {
-    //   zoom: 15,
-    //   center: { 
-    //     lat: mockX, 
-    //     lng: mockY 
-    //   },
-    //   disableDefaultUI: true
-    // });
-
-    // var service = new google.maps.places.PlacesService(this.map);
-
+    this.mockLocation = {
+      lat: mockX,
+      lng: mockY
+    };
+    
     this.$refs.mapRef.$mapPromise.then(map => {
       this.map = map;
 
@@ -83,7 +70,7 @@ export default {
       //       if (status === google.maps.places.PlacesServiceStatus.OK) {
       //         EventBus.$emit("mapClicked", {
       //           placeName: place.name,
-      //           lat: e.latLng.lat(), 
+      //           lat: e.latLng.lat(),
       //           lng: e.latLng.lng()
       //           });
       //       }
@@ -140,7 +127,7 @@ export default {
         center: vibe.location,
         radius: this.getVibeSize(vibe.users ? vibe.users.length + 2 : 2)
       });
-    },
+    }
   },
   computed: {
     location() {
@@ -150,16 +137,15 @@ export default {
       return this.$store.state.vibes;
     },
     users() {
-      return {}
+      return {};
     },
     serverLocation() {
       return this.location;
     }
-  },
+  }
 };
 </script>
 
 
 <style scoped="true">
-
 </style>
