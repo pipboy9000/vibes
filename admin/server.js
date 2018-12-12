@@ -5,9 +5,15 @@ var app = express();
 var cors = require('cors')
 app.use(cors())
 var port = process.env.PORT || 3030;
+let adminUsers = {}; 
 
-function checkUserPasswordInCacheLoadedFromDb() {
-    return true;
+db.getAdminCredentials(users => 
+    {
+        adminUsers = users
+    });
+
+function authenticateUser(req) {
+    return adminUsers[req.params.user] && adminUsers[req.params.user].password === req.params.password;
 }
 
 app.use(express.static('public'));
@@ -17,7 +23,7 @@ app.get('/', function (req, res) {
   });
 
 app.get('/auth', function (req, res) {
-    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+    if (!authenticateUser(req)) {
         return res.status(403).send('user authentication failed.');
     } else {
         return res.status(200).send();
@@ -25,7 +31,7 @@ app.get('/auth', function (req, res) {
 });
 
 app.get('/save-vibe', function (req, res) {
-    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+    if (!authenticateUser(req)) {
         return res.status(500).send('user authentication failed.');
     }
 
@@ -50,7 +56,7 @@ app.get('/save-vibe', function (req, res) {
 });
 
 app.get('/get-vibes', function (req, res) {
-    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+    if (!authenticateUser(req)) {
         return res.status(500).send('user authentication failed.');
     }
 
@@ -63,7 +69,7 @@ app.get('/get-vibes', function (req, res) {
 });
 
 app.get('/get-past-vibes', function (req, res) {
-    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+    if (!authenticateUser(req)) {
         return res.status(500).send('user authentication failed.');
     }
 
@@ -76,7 +82,7 @@ app.get('/get-past-vibes', function (req, res) {
 });
 
 app.get('/delete-vibe', function (req, res) {
-    if (!checkUserPasswordInCacheLoadedFromDb(req)) {
+    if (!authenticateUser(req)) {
         return res.status(500).send('user authentication failed.');
     }
 

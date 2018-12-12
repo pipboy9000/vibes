@@ -112,6 +112,16 @@ async function getAlbum(fbid) {
         console.error(err);
     }
 }
+async function getAdminCredentials() {
+    try {
+        const db = await getDb();
+        let res = await db.collection("admin-users").find();
+        let creds = await res.toArray();
+        return creds;
+    } catch (err) {
+        console.error(err.stack);
+    }
+}
 
 // async function newVibe(vibe, user) {
 //     var now = Date.now();
@@ -314,5 +324,6 @@ module.exports = {
     getAlbum,
     saveCacheState,
     loadCacheState,
-    getPastVibes
+    getPastVibes,
+    getAdminCredentials
 };

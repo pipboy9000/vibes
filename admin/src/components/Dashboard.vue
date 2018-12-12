@@ -19,7 +19,7 @@
       mobile-break-point="1"
       class="scroll-width"
     >
-      <v-container>
+      <v-container pa-2>
         <v-layout row wrap>
           <v-flex xs12>
             <component v-bind:is="currentCard"></component>

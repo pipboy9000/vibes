@@ -59,17 +59,7 @@ export default {
       lat: mockX,
       lng: mockY
     };
-    // this.map = new google.maps.Map(this.$refs.map, {
-    //   zoom: 15,
-    //   center: {
-    //     lat: mockX,
-    //     lng: mockY
-    //   },
-    //   disableDefaultUI: true
-    // });
-
-    // var service = new google.maps.places.PlacesService(this.map);
-
+    
     this.$refs.mapRef.$mapPromise.then(map => {
       this.map = map;
 

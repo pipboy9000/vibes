@@ -102,7 +102,11 @@ export default {
             this.loading = false;
             this.operationReturned = true;
             this.operationStatus = "failure";
-            this.response = `Error. Did you run admin/server.js? ${err.toString()}`;
+            if (err.response.status === 403) {
+              this.response = 'Wrong credentials';
+            } else {
+              this.response = `Error. Did you run admin/server.js? ${err.toString()}`;
+            }
           }
         );
 
