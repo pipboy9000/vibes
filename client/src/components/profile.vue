@@ -1,12 +1,12 @@
 <template>
-    <div class="main" :class="{open: isOpen, closed: !isOpen}">
-        <div class="bg"></div>
-        <div class="overlay" :class="{overlayClosed: !isOpen}"></div>
-        <div v-if="isOpen" class="closeBtn" @click="close">X</div>
-        <div v-else class="openBtn" @click="open">
-            <font-awesome-icon icon="user-alt"></font-awesome-icon> 
-        </div>
+  <div class="main" :class="{open: isOpen, closed: !isOpen}">
+    <div class="bg"></div>
+    <div class="overlay" :class="{overlayClosed: !isOpen}"></div>
+    <div v-if="isOpen" class="closeBtn" @click="close">X</div>
+    <div v-else class="openBtn" @click="open">
+      <font-awesome-icon icon="user-alt"></font-awesome-icon>
     </div>
+  </div>
 </template>
 
 <script>
@@ -50,6 +50,7 @@ export default {
 }
 
 .main {
+  pointer-events: none;
   width: 200vw;
   height: 100%;
   max-width: 360px;
@@ -59,6 +60,7 @@ export default {
 }
 
 .overlay {
+  pointer-events: all;
   width: 100vw;
   height: 100%;
   background: #0008;
@@ -75,6 +77,7 @@ export default {
 
 .openBtn,
 .closeBtn {
+  pointer-events: all;
   cursor: pointer;
   border-radius: 50px;
   width: 54px;
@@ -95,6 +98,7 @@ export default {
 }
 
 .bg {
+  pointer-events: all;
   width: 100%;
   height: 100%;
   background: white;

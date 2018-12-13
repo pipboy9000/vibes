@@ -2,9 +2,7 @@
   <div class="wrapper">
     <div class="gradient"></div>
     <list></list>
-    <div class="newVibeBtn" @click="openNewVibeForm">
-      New Vibe
-    </div>
+    <div class="newVibeBtn" @click="openNewVibeForm">New Vibe</div>
     <div class="sideBtns">
       <div class="zoom">
         <div class="zoomIn" @click="zoomIn">
@@ -50,11 +48,18 @@ export default {
 
 <style scoped="true">
 .gradient {
+  pointer-events: none;
   position: absolute;
   bottom: 0;
   width: 100%;
   height: 100px;
   background: linear-gradient(0deg, #0000003d, transparent);
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .plusIcon {

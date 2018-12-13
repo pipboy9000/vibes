@@ -8,11 +8,14 @@
         </div>
 
         <div class="bottom">
-          <input ref="titleInput" 
-              class="title input" 
-              placeholder="What's your vibe?" 
-              v-model="title"
-              maxlength="35">
+          <input
+            ref="titleInput"
+            class="title input"
+            placeholder="What's your vibe?"
+            v-model="title"
+            maxlength="35"
+            @keyup.enter="startVibe"
+          >
           <hr>
           <div class="startBtn" @click="startVibe">Start</div>
         </div>

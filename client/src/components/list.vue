@@ -1,7 +1,7 @@
 <template>
-  <div class="list" ref="list" @mousewheel="wheel">
+  <div class="list" ref="list" @mousewheel="wheel" @scroll="listScroll">
     <div class="items">
-      <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe"></listItem>
+      <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe" ref="items"></listItem>
     </div>
   </div>
 </template>
@@ -15,8 +15,7 @@ export default {
   data() {
     return {
       isOpen: false,
-      ready: false, //used to fix animations
-      scrollM: 0,
+      scrollM: 0, //scroll momentum, used when user uses mousewheel on the list
       isMoving: false
     };
   },
@@ -32,7 +31,6 @@ export default {
     move() {
       this.isMoving = true;
       if (this.scrollM > 1 || this.scrollM < -1) {
-        console.log(this.scrollM);
         this.$refs.list.scrollBy(this.scrollM, 0);
         this.scrollM *= 0.9;
         requestAnimationFrame(this.move);
@@ -40,22 +38,50 @@ export default {
         this.$refs.list.scrollBy(this.scrollM, 0);
         this.isMoving = false;
       }
+    },
+    scrollToItem(idx) {
+      var to = 0;
+      for (var i = 0; i < idx; i++) {
+        var el = this.$refs.items[i].$el;
+        to += el.scrollWidth + 8; //margin = 8, 4 on each side
+      }
+      to += this.$refs.items[idx].$el.scrollWidth / 2;
+      to -= this.$refs.list.clientWidth / 2;
+
+      this.$refs.list.scrollTo({
+        top: 0,
+        left: to,
+        behavior: "smooth"
+      });
+    },
+    listScroll() {
+      console.log(this.$refs.list.scrollLeft);
     }
   },
   computed: {
     hasVibes() {
       return this.$store.state.vibes.length > 0;
+    },
+    selectedVibe() {
+      return this.$store.state.selectedVibe;
+    },
+    vibes() {
+      return this.$store.state.vibes;
     }
   },
   watch: {
-    hasVibes(newVibesCount, oldVibesCount) {}
+    selectedVibe() {
+      var self = this;
+      var idx = this.vibes.indexOf(this.selectedVibe);
+      this.scrollToItem(idx);
+    }
   }
 };
 </script>
 
 <style scoped="true">
 .list {
-  width: 100%;
+  max-width: 100%;
   height: 145px;
   position: absolute;
   overflow-x: scroll;

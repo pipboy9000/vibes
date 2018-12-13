@@ -1,23 +1,26 @@
 <template>
-    <div class="bg" :class="{selected:isSelected}" @click="clicked">
-      <div class="top">
-        <div class="left">
-          <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
-        </div>
-        <div class="right">
-          <div class="title">{{ vibe.title }}</div>
-        </div>
+  <div ref="bg" class="bg" :class="{selected:isSelected}" @click="clicked">
+    <div class="top">
+      <div class="left">
+        <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
       </div>
-      <div class="bottom">
-        <p>Created by {{ vibe.createdBy.name }}</p>
-        <p>{{ time }}</p>
-        <div class="icons">
-          <i class="fas fa-map-marker-alt"></i><p>{{  this.distance }}</p>
-          <i class="fas fa-user-circle"></i>  <p>{{ vibe.users.length }}</p>
-          <i class="fas fa-camera"></i>  <p>{{  vibe.pictures.length }}</p>
-        </div>
+      <div class="right">
+        <div class="title">{{ vibe.title }}</div>
       </div>
     </div>
+    <div class="bottom">
+      <p>Created by {{ vibe.createdBy.name }}</p>
+      <p>{{ time }}</p>
+      <div class="icons">
+        <i class="fas fa-map-marker-alt"></i>
+        <p>{{ this.distance }}</p>
+        <i class="fas fa-user-circle"></i>
+        <p>{{ vibe.users.length }}</p>
+        <i class="fas fa-camera"></i>
+        <p>{{ vibe.pictures.length }}</p>
+      </div>
+    </div>
+  </div>
 </template>
 
 
@@ -44,7 +47,7 @@ export default {
       return this.$store.state.openVibe;
     },
     isSelected() {
-      if (!this.selectedVibe) return;
+      if (!this.selectedVibe) return false;
       return this.selectedVibe.id === this.vibe.id;
     }
   },

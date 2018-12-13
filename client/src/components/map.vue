@@ -200,7 +200,6 @@ export default {
           this.vibeMarkers[i].setPosition(vibe.location);
         } else {
           var marker = this.getNewVibeMarker(vibe);
-          debugger;
           this.vibeMarkers.push(marker);
         }
 
