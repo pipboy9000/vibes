@@ -42,11 +42,25 @@
     </div>
       <div v-if="inVibe" class="newComment" @click="focusNewComment">
           <input ref="newCommentInput" type="text" @keyup.enter="sendNewComment" v-model="commentTxt" placeholder="Type message">
-          <div class="newCommentButtons">
+          <!-- <div class="newCommentButtons">
             <div @click="sendNewComment">></div>
             <div v-if="uploadingPictures.length === 0" @click="sendPic"><i class="fas fa-camera"></i></div>
             <div v-else><i class="fas fa-spinner"></i></div>
+          </div> -->
+
+          <div class="newCommentButtons">
+          <div @click="sendNewComment">></div>
+          <div v-if="useHtmlCamera">
+            <div v-if="uploadingPictures.length === 0">
+              <i class="fas fa-camera"><input type="file" accept="image/*" capture @change="fileLoaded"></i>
+            </div>
+            <div v-else><i class="fas fa-spinner"></i></div>
           </div>
+          <div v-else>
+            <div v-if="uploadingPictures.length === 0" @click="sendPic"><i class="fas fa-camera"></i></div>
+            <div v-else><i class="fas fa-spinner"></i></div>
+          </div>
+        </div>
       </div>
     </div>
   </transition>
