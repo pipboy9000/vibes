@@ -43,28 +43,6 @@ const fbConfig = {
 const firebaseApp = firebase.initializeApp(fbConfig)
 const firebaseDb = firebaseApp.database()
 const firebaseStorage = firebaseApp.storage().ref('/pics')
-// const firestoreDb = firebase.firestore()
-// firestoreDb.settings({timestampsInSnapshots: true});
-
-// firebaseDb.ref('chatrooms/-LIRUd7IHbVUZ1aT0uhc/chats').on('value', resp => {
-//   chatsArr = [];
-//   chatsArr = snapshotToArray(resp);
-// });
-
-// var snapshotToArray = snapshot => {
-//   let returnArr = [];
-
-//   snapshot.forEach(childSnapshot => {
-//       let item = childSnapshot.val();
-//       if (item == '') {
-//         console.log("empty item");
-//       }
-//       item.key = childSnapshot.key;
-//       returnArr.push(item);
-//   });
-
-//   return returnArr;
-// };
 
 new Vue({
   el: '#app',
@@ -78,13 +56,7 @@ new Vue({
     return {
       cordova: Vue.cordova,
       firebaseStorage: firebaseStorage,
-      firebase: firebase,
-      // },
-      // firestore: {
-      //   pics: firestoreDb.collection('pics'),
-      //   db: firestoreDb
-      //   //currentTodo: firestoreDb.collection('todos').doc('1')
-      // }
+      firebase: firebase
     }
   }
 })
