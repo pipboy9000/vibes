@@ -77,7 +77,7 @@ export default {
 .bg {
   cursor: pointer;
   width: 226px;
-  height: 132px;
+  height: 128px;
   background-color: white;
   display: inline-block;
   margin-left: 4px;
@@ -97,14 +97,14 @@ export default {
 }
 
 .top {
-  height: 46%;
+  height: 50%;
   width: 100%;
   float: left;
 }
 
 .bottom {
   width: 100%;
-  height: 54%;
+  height: 50%;
   float: left;
 }
 
@@ -133,6 +133,7 @@ export default {
 }
 
 .title {
+  user-select: none;
   max-width: 100%;
   text-align: left;
   font-size: 19px;
@@ -147,6 +148,7 @@ export default {
   -webkit-line-clamp: 3;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  padding-bottom: 8px;
 }
 
 .bottom > p:nth-child(1) {
@@ -155,8 +157,8 @@ export default {
   margin: 0;
   margin-left: 10px;
   font-size: 15px;
-  margin-top: 8px;
   letter-spacing: -0.2px;
+  margin-top: 2px;
 }
 
 .bottom > p:nth-child(2) {

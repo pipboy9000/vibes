@@ -1,5 +1,5 @@
 <template>
-  <div class="list" ref="list" @mousewheel="wheel" @scroll="listScroll">
+  <div class="list" ref="list" @mousewheel="wheel">
     <div class="items">
       <listItem v-for="(vibe, key) in $store.state.vibes" :key="key" :vibe="vibe" ref="items"></listItem>
     </div>
@@ -53,9 +53,6 @@ export default {
         left: to,
         behavior: "smooth"
       });
-    },
-    listScroll() {
-      console.log(this.$refs.list.scrollLeft);
     }
   },
   computed: {
@@ -82,13 +79,13 @@ export default {
 <style scoped="true">
 .list {
   max-width: 100%;
-  height: 145px;
+  height: 140px;
   position: absolute;
   overflow-x: scroll;
   overflow-y: hidden;
   white-space: nowrap;
   -webkit-overflow-scrolling: touch;
-  bottom: 82px;
+  bottom: 92px;
   /* scroll-snap-type: x mandatory; */
 }
 
