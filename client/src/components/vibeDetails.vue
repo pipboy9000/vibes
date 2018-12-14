@@ -51,8 +51,10 @@
           <div class="newCommentButtons">
           <div @click="sendNewComment">></div>
           <div v-if="useHtmlCamera">
-            <div v-if="uploadingPictures.length === 0">
-              <i class="fas fa-camera"><input type="file" accept="image/*" capture @change="fileLoaded"></i>
+            <div v-if="uploadingPictures.length === 0" @click="$refs.fileInput.click()">
+                <input ref="fileInput" type="file" accept="image/*" capture @change="fileLoaded" style="display:none">
+              <i class="fas fa-camera">
+              </i>
             </div>
             <div v-else><i class="fas fa-spinner"></i></div>
           </div>
