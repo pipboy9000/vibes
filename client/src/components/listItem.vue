@@ -135,13 +135,13 @@ export default {
 .title {
   max-width: 100%;
   text-align: left;
-  font-size: 20px;
+  font-size: 19px;
   white-space: pre-wrap;
-  line-height: 24px;
-  margin-top: 6px;
+  line-height: 19px;
   margin-left: 1px;
+  padding-right: 8px;
+  padding-top: 8px;
   font-family: "Fredoka One", cursive;
-  padding-right: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: 3;
@@ -153,9 +153,9 @@ export default {
   font-family: "Roboto", sans-serif;
   text-align: left;
   margin: 0;
-  margin-left: 13px;
+  margin-left: 10px;
   font-size: 15px;
-  margin-top: 4px;
+  margin-top: 8px;
   letter-spacing: -0.2px;
 }
 
@@ -163,16 +163,16 @@ export default {
   font-family: "Roboto", sans-serif;
   text-align: left;
   margin: 0;
-  margin-left: 10px;
+  margin-left: 13px;
   font-size: 12px;
-  margin-top: 3px;
+  margin-top: 2px;
 }
 
 .icons {
   text-align: left;
   margin: 0;
-  margin-left: 16px;
-  margin-top: 7px;
+  margin-left: 13px;
+  margin-top: 5px;
   font-size: 15px;
   color: #9f9f9f;
   display: flex;

@@ -289,6 +289,7 @@ export default {
       this.renderUsers(this.$store.state.users);
     },
     vibes(newVibes) {
+      debugger;
       this.renderCircles(newVibes);
       this.renderVibeMarkers(newVibes);
     },
