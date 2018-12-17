@@ -1,7 +1,7 @@
 var chalk = require("chalk");
 var distance = require("fast-haversine");
-var fs = require("fs")
 var db = require("./db");
+var config = require("./config.js");
 
 var users = [];
 var usersMap = {};
@@ -9,7 +9,7 @@ var vibes = [];
 var vibesMap = {};
 
 //dev
-var vibeTimout = 1000 * 15;
+var vibeTimout = config.cache.vibeTimeout || 1000 * 10;
 
 function save() {
     db.saveCacheState(users, vibes).then(res => {
