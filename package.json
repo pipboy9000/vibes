@@ -1,0 +1,5 @@
+{
+    "scripts":{
+        "db": "mongod --dbpath=C:/mongodb/data"
+    }
+}
