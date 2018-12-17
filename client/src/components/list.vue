@@ -67,10 +67,12 @@ export default {
     }
   },
   watch: {
-    selectedVibe() {
-      var self = this;
-      var idx = this.vibes.indexOf(this.selectedVibe);
-      this.scrollToItem(idx);
+    selectedVibe(vibe) {
+      if (vibe) {
+        var self = this;
+        var idx = this.vibes.indexOf(this.selectedVibe);
+        this.scrollToItem(idx);
+      }
     }
   }
 };

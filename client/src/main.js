@@ -7,6 +7,15 @@ import store from './store';
 import VueCordova from 'vue-cordova'
 import VueFire from 'vuefire'
 import firebase from 'firebase'
+// import * as VueGoogleMaps from 'vue2-google-maps'
+
+// Vue.use(VueGoogleMaps, {
+//   load: {
+//     key: 'AIzaSyABHtsig9fZgft0GylpF4Pt3BywI0R_J-c',
+//     libraries: 'places',
+//     disableDefaultUI: true
+//   }
+// });
 
 //fontawesome
 import {

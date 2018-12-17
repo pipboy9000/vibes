@@ -320,6 +320,16 @@ export default new Vuex.Store({
       })
     },
     setVibes(context, vibesArray) {
+      if (context.state.inVibe) {
+        var myVibe = vibesArray.find(function (v) {
+          return v.id === context.state.inVibe;
+        });
+        if (!myVibe) {
+          context.commit("setInVibe", null);
+          context.commit("setSelectedVibe", null);
+        }
+      }
+
       context.dispatch("calculateDistances", vibesArray).then(sorted => {
         context.commit("setVibes", sorted);
       });

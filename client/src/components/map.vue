@@ -10,15 +10,13 @@ export default {
   name: "Map",
   data() {
     return {
-      google: null,
       map: null,
       myGhost: null, //represents local location
       myMarker: null, //represents server location
       circles: [],
       vibeMarkers: [],
       userMarkers: [],
-      userInfoWindow: null,
-      proj: null //map projection
+      userInfoWindow: null
     };
   },
   mounted() {
@@ -63,18 +61,7 @@ export default {
     getVibeSize(numUsers) {
       return Math.round(numUsers * 150 * 0.8) + 25;
     },
-    focus(location, zoom, offsetX, offsetY) {
-      if (offsetX || offsetY) {
-        var proj = this.userInfoWindow.getProjection();
-        var p = proj.fromLatLngToContainerPixel(
-          new google.maps.LatLng(location)
-        );
-        p.x += offsetX;
-        p.y += offsetY;
-        location = proj.fromContainerPixelToLatLng(p);
-        zoom = false; //we cant zoom after offset
-      }
-
+    focus(location, zoom) {
       if (location) {
         if (zoom) {
           this.map.panTo(location);
@@ -85,7 +72,7 @@ export default {
       }
     },
     focusVibe(vibe) {
-      this.focus(vibe.location, false, 0, 80);
+      this.focus(vibe.location, false);
     },
     focusSelf(zoom) {
       this.focus(this.location, zoom);
@@ -183,13 +170,11 @@ export default {
         i++;
       }
       //clear unused circles
-      for (i = i; i < this.circles.length; i++) {
-        if (this.circles[i]) {
-          this.circles[i].setMap(null);
-          this.circles[i] = null;
-          this.circles.pop();
-        }
+      for (; i < this.circles.length; i++) {
+        this.circles[i].setMap(null);
+        this.circles[i] = null;
       }
+      this.circles.length = vibes.length;
     },
     renderVibeMarkers(vibes) {
       var self = this;
@@ -267,7 +252,9 @@ export default {
   },
   watch: {
     selectedVibe(vibe) {
-      this.focusVibe(vibe);
+      if (vibe) {
+        this.focusVibe(vibe);
+      }
     },
     location(newLoc, oldLoc) {
       this.myGhost.setPosition(newLoc);
@@ -289,7 +276,6 @@ export default {
       this.renderUsers(this.$store.state.users);
     },
     vibes(newVibes) {
-      debugger;
       this.renderCircles(newVibes);
       this.renderVibeMarkers(newVibes);
     },
@@ -314,6 +300,7 @@ export default {
 .map {
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: 125%;
+  bottom: 0;
 }
 </style>

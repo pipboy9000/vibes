@@ -75,6 +75,7 @@ export default {
 
 <style scoped="true">
 .bg {
+  user-select: none;
   cursor: pointer;
   width: 226px;
   height: 128px;
@@ -133,7 +134,6 @@ export default {
 }
 
 .title {
-  user-select: none;
   max-width: 100%;
   text-align: left;
   font-size: 19px;

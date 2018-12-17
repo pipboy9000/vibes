@@ -1,66 +1,104 @@
 <template>
-<transition name="fade">
-  <div v-if="vibe">
-    <div ref="scrollBarDiv" class="scrollBarDiv">
-      <canvas id="img-canvas" width="200" height="150"></canvas>
-      <div class="bg">
-        <div class="top">
-          <div class="cover">
-            <div class="colorOverlay"></div>
+  <transition name="fade">
+    <div v-if="vibe">
+      <div ref="scrollBarDiv" class="scrollBarDiv">
+        <canvas id="img-canvas" width="200" height="150"></canvas>
+        <div class="bg">
+          <div class="top">
+            <div class="cover">
+              <div class="colorOverlay"></div>
+            </div>
+            <div class="closeBtn" @click="close">X</div>
+            <div class="users">
+              <img
+                :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'"
+              >
+              <img
+                v-for="(uid, idx) in usersToDisplay"
+                :src="'https://graph.facebook.com/' + uid + '/picture?type=large'"
+                :key="idx"
+              >
+              <p v-if="plusUsers > 0">+{{plusUsers}}</p>
+            </div>
+            <div class="editCover">
+              <i class="fas fa-pen-alt"></i>
+            </div>
+            <div class="title">{{vibe.title}}</div>
+            <div class="details">
+              Created by {{vibe.createdBy.name}}
+              <br>
+              {{time}} | {{distance}}
+            </div>
           </div>
-          <div class="closeBtn" @click="close">X</div>
-          <div class="users">
-            <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
-            <img v-for="(uid, idx) in usersToDisplay" :src="'https://graph.facebook.com/' + uid + '/picture?type=large'" :key="idx">
-            <p v-if="plusUsers > 0">+{{plusUsers}}</p>
-          </div>
-          <div class="editCover">
-            <i class="fas fa-pen-alt"></i>
-          </div>
-          <div class="title">{{vibe.title}}</div>
-          <div class="details">Created by {{vibe.createdBy.name}}<br>{{time}} | {{distance}}</div>
-        </div>
-        <div class="bottom">
-          <div class="joinLeave">
-            <p class="leave" v-if="inVibe" @click="leaveVibe">i want out</p>
-            <p class="join" v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
-            <p class="tooFar" v-else>too far</p>
-          </div>
-          <div ref="pictures" class="pictures" v-if="newPictures.length > 0" @mousewheel.stop.prevent="wheel">
-            <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
-              <div v-for="(pic,idx) in newPictures" :key="idx" class="thumb" href="#" @click="index = idx" 
-              :style="{'background-image': 'url(' + pic.thumbSrc + ')'}"/>
+          <div class="bottom">
+            <div class="joinLeave">
+              <p class="leave" v-if="inVibe" @click="leaveVibe">i want out</p>
+              <p class="join" v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
+              <p class="tooFar" v-else>too far</p>
+            </div>
+            <div
+              ref="pictures"
+              class="pictures"
+              v-if="newPictures.length > 0"
+              @mousewheel.stop.prevent="wheel"
+            >
+              <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
+              <div
+                v-for="(pic,idx) in newPictures"
+                :key="idx"
+                class="thumb"
+                href="#"
+                @click="index = idx"
+                :style="{'background-image': 'url(' + pic.thumbSrc + ')'}"
+              />
               <!-- :src="'https://picsum.photos/200/300/?random/&r=' + Math.round(Math.random() * 1000)"/> -->
-        </div>
-        <!-- </div> -->
-        <div class="comments">
-          <h2>Comments:</h2>
-          <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
+            </div>
+            <!-- </div> -->
+            <div class="comments">
+              <h2>Comments:</h2>
+              <comment v-for="(comment, idx) in vibe.comments" :comment="comment" :key="idx"></comment>
+            </div>
+          </div>
         </div>
       </div>
-    </div>    
-    </div>
       <div v-if="inVibe" class="newComment" @click="focusNewComment">
-          <input ref="newCommentInput" type="text" @keyup.enter="sendNewComment" v-model="commentTxt" placeholder="Type message">
-          <!-- <div class="newCommentButtons">
+        <input
+          ref="newCommentInput"
+          type="text"
+          @keyup.enter="sendNewComment"
+          v-model="commentTxt"
+          placeholder="Type message"
+        >
+        <!-- <div class="newCommentButtons">
             <div @click="sendNewComment">></div>
             <div v-if="uploadingPictures.length === 0" @click="sendPic"><i class="fas fa-camera"></i></div>
             <div v-else><i class="fas fa-spinner"></i></div>
-          </div> -->
-
-          <div class="newCommentButtons">
+        </div>-->
+        <div class="newCommentButtons">
           <div @click="sendNewComment">></div>
           <div v-if="useHtmlCamera">
             <div v-if="uploadingPictures.length === 0" @click="$refs.fileInput.click()">
-                <input ref="fileInput" type="file" accept="image/*" capture @change="fileLoaded" style="display:none">
-              <i class="fas fa-camera">
-              </i>
+              <input
+                ref="fileInput"
+                type="file"
+                accept="image/*"
+                capture
+                @change="fileLoaded"
+                style="display:none"
+              >
+              <i class="fas fa-camera"></i>
             </div>
-            <div v-else><i class="fas fa-spinner"></i></div>
+            <div v-else>
+              <i class="fas fa-spinner"></i>
+            </div>
           </div>
           <div v-else>
-            <div v-if="uploadingPictures.length === 0" @click="sendPic"><i class="fas fa-camera"></i></div>
-            <div v-else><i class="fas fa-spinner"></i></div>
+            <div v-if="uploadingPictures.length === 0" @click="sendPic">
+              <i class="fas fa-camera"></i>
+            </div>
+            <div v-else>
+              <i class="fas fa-spinner"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -492,6 +530,11 @@ export default {
               self.index = imgIdx;
             });
           }
+        } else {
+          //vibes were updated and currently open vibe no longer exists
+          var q = this.$route.query;
+          delete q.v;
+          this.$router.replace({ path: "", query: { "": null, ...q } });
         }
       }
     }
@@ -614,7 +657,7 @@ export default {
 
 .title {
   line-height: 1.1;
-  font-family: "Fredoka One", cursive;
+  font-family: "Fredoka One", cursive, sans-serif;
   color: #2d2d2d;
   max-width: 100%;
   font-size: 36px;
