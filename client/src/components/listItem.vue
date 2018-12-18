@@ -142,7 +142,7 @@ export default {
   margin-left: 1px;
   padding-right: 8px;
   padding-top: 8px;
-  font-family: "Fredoka One", cursive;
+  font-family: "Fredoka One", cursive, sans-serif;
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: 3;

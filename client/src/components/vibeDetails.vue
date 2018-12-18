@@ -20,8 +20,8 @@
               >
               <p v-if="plusUsers > 0">+{{plusUsers}}</p>
             </div>
-            <div class="editCover">
-              <i class="fas fa-pen-alt"></i>
+            <div class="shareBtn" @click="openShare">
+              <i class="fas fa-share"></i>
             </div>
             <div class="title">{{vibe.title}}</div>
             <div class="details">
@@ -69,11 +69,6 @@
           v-model="commentTxt"
           placeholder="Type message"
         >
-        <!-- <div class="newCommentButtons">
-            <div @click="sendNewComment">></div>
-            <div v-if="uploadingPictures.length === 0" @click="sendPic"><i class="fas fa-camera"></i></div>
-            <div v-else><i class="fas fa-spinner"></i></div>
-        </div>-->
         <div class="newCommentButtons">
           <div @click="sendNewComment">></div>
           <div v-if="useHtmlCamera">
@@ -102,6 +97,7 @@
           </div>
         </div>
       </div>
+      <share :link="link"></share>
     </div>
   </transition>
 </template>
@@ -117,6 +113,7 @@ import Pica from "pica";
 const pica = Pica();
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
 import { PhotoGallery } from "vue-photo-gallery";
+import share from "./share";
 
 export default {
   name: "VibeDetails",
@@ -124,7 +121,8 @@ export default {
     comment,
     gallery: VueGallery,
     PulseLoader,
-    PhotoGallery
+    PhotoGallery,
+    share
   },
   data() {
     return {
@@ -152,6 +150,10 @@ export default {
     }, 10000);
   },
   methods: {
+    openShare() {
+      var q = this.$route.query;
+      this.$router.push({ query: { ...q, share: true } });
+    },
     focusNewComment() {
       this.$refs.newCommentInput.focus();
     },
@@ -392,6 +394,9 @@ export default {
     }
   },
   computed: {
+    link() {
+      return "https://vibes-web.herokuapp.com/#/?v=" + this.vibe.id;
+    },
     isNative() {
       return this.$root.cordova.device.platform !== "browser";
     },
@@ -637,7 +642,7 @@ export default {
   right: 0;
 }
 
-.editCover {
+.shareBtn {
   cursor: pointer;
   border-radius: 50px;
   width: 40px;

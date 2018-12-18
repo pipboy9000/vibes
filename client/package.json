@@ -40,6 +40,7 @@
     "google-maps": "^3.3.0",
     "javascript-time-ago": "^1.0.31",
     "pica": "^4.1.1",
+    "qrcode.vue": "^1.6.1",
     "vue": "^2.5.17",
     "vue-cordova": "^0.1.2",
     "vue-gallery": "^1.4.0",
