@@ -54,7 +54,7 @@ export default {
 .overlay {
   width: 100%;
   height: 100%;
-  background: #0008;
+  background: #000000cc;
   position: absolute;
   display: flex;
   align-items: center;
@@ -95,6 +95,12 @@ input {
 .copyLink {
   margin-top: 15px;
   font-size: 30px;
+}
+
+.qrcode {
+  overflow: hidden;
+  border: 6px solid white;
+  border-radius: 5px;
 }
 
 .fade-enter-active,

@@ -22,29 +22,13 @@ export default {
     var vibeId = this.$route.query.v;
     var imgIdx = this.$route.query.img;
     if (vibeId) {
-      var vibe = this.$store.getters.getVibeById(vibeId);
-      if (vibe) {
-        this.$router.replace({ path: "", query: {} });
-        this.$router.push({ path: "", query: { v: vibeId } });
-        if (imgIdx != undefined && +imgIdx >= 0) {
-          this.$router.push({ path: "", query: { v: vibeId, img: imgIdx } });
-        }
-      } else {
-        this.$router.replace({ path: "", query: {} }); //remove all other queries if exist
+      this.$router.replace({ path: "", query: {} });
+      this.$router.push({ path: "", query: { v: vibeId } });
+      if (imgIdx != undefined && +imgIdx >= 0) {
+        this.$router.push({ path: "", query: { v: vibeId, img: imgIdx } });
       }
     } else {
       this.$router.replace({ path: "", query: {} }); //remove all other queries if exist
-    }
-  },
-  watch: {
-    $route(to, from) {
-      var vibeId = this.$route.query.v;
-      if (vibeId) {
-        var vibe = this.$store.getters.getVibeById(vibeId);
-        if (!vibe) {
-          this.$router.replace({ path: "", query: {} });
-        }
-      }
     }
   }
 };
