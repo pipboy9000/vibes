@@ -84,7 +84,7 @@ input {
   border: 2px solid #46ceff;
   border-radius: 13px;
   background: transparent;
-  padding: 14px;
+  padding: 8px;
   height: 20px;
   color: #25b2e5;
   font-family: "Fredoka One";

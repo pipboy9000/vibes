@@ -539,6 +539,7 @@ export default {
           //vibes were updated and currently open vibe no longer exists
           var q = this.$route.query;
           delete q.v;
+          delete q.img;
           this.$router.replace({ path: "", query: { "": null, ...q } });
         }
       }
