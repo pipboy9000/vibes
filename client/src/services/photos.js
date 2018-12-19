@@ -1,15 +1,14 @@
 
 import Pica from "pica";
 const pica = Pica();
+const base64JpegPrefix = "data:image/jpeg;base64,";
 
 let firebase = null;
 let firebaseStorage = null;
 let camera = null;
 
-function removePictureFromUploading(id) {
-  self.uploadingPictures = self.uploadingPictures.filter(
-    pic => pic.id !== id
-  );
+function removeBase64Prefix(base64Str) {
+  return base64Str.substr(base64Str.indexOf(",") + 1);
 }
 
 function uploadBase64(imageData, firebaseChild) {
@@ -23,7 +22,7 @@ function uploadBase64(imageData, firebaseChild) {
         function(snapshot) {
           var progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          var firebase = self.firebase;
+
           console.log("Upload is " + progress + "% done");
           switch (snapshot.state) {
             case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -44,7 +43,6 @@ function uploadBase64(imageData, firebaseChild) {
             .then(function(downloadURL) {
               console.log("Uploaded a blob or file!");
               console.log("got downloadURL: ", downloadURL);
-
               resolve(downloadURL);
             });
         }
@@ -73,7 +71,7 @@ function generateThumbnail(cordovaImageData) {
           var reader = new FileReader();
           reader.readAsDataURL(blob);
           reader.onloadend = function() {
-            var imageData = self.removeBase64Prefix(reader.result);
+            var imageData = removeBase64Prefix(reader.result);
             resolve(imageData);
           };
         });
@@ -82,54 +80,41 @@ function generateThumbnail(cordovaImageData) {
 }
 
 
-function uploadPicture(cordovaImageData) {
+async function uploadPicture(cordovaImageData) {
   var size = (cordovaImageData.length * 3) / 4;
   console.log("Picture Size: " + size);
   // alert("Picture Size: " + size / 1024 + "KB");
-
-  var self = this;
-  const base64JpegPrefix = "data:image/jpeg;base64,";
   
   // imageData is either a base64 encoded string or a file URI
   // If it's base64 (DATA_URL):
   //let base64Image = 'data:image/jpeg;base64,' + imageData;
   console.log("getPicture success callback");
 
-  generateThumbnail(cordovaImageData).then(thumbnailImageData => {
-    var dateStr = new Date().getTime().toString();
-    var fullUploadPromise = uploadBase64(
-      cordovaImageData,
-      self.firebaseStorage.child(dateStr).child("full")
-    );
+  let thumbnailImageData = await generateThumbnail(cordovaImageData);
 
-    var thumbnailUploadPromise = uploadBase64(
-      thumbnailImageData,
-      self.firebaseStorage.child(dateStr).child("thumb")
-    );
+  var dateStr = new Date().getTime().toString();
+  var fullUploadPromise = uploadBase64(
+    cordovaImageData,
+    firebaseStorage.child(dateStr).child("full")
+  );
 
-    var localPicture = {
-      id: dateStr,
-      vibeId: self.vibe.id,
-      imgUrl: base64JpegPrefix + cordovaImageData,
-      thumbnailUrl: base64JpegPrefix + thumbnailImageData
-    };
-    self.uploadingPictures.unshift(localPicture);
-    Promise.all([fullUploadPromise, thumbnailUploadPromise]).then(urls => {
-      var picture = {
-        vibeId: self.vibe.id,
-        imgUrl: urls[0],
-        thumbnailUrl: urls[1]
-      };
-      socket.newPicture({
-        token: self.$store.getters.token,
-        picture
-      });
-      removePictureFromUploading(dateStr);
-    });
-  });
+  var thumbnailUploadPromise = uploadBase64(
+    thumbnailImageData,
+    firebaseStorage.child(dateStr).child("thumb")
+  );
+
+  // var localPicture = {
+  //   id: dateStr,
+  //   vibeId: self.vibe.id,
+  //   imgUrl: base64JpegPrefix + cordovaImageData,
+  //   thumbnailUrl: base64JpegPrefix + thumbnailImageData
+  // };
+  // self.uploadingPictures.unshift(localPicture);
+  let results = await Promise.all([fullUploadPromise, thumbnailUploadPromise]);
+  return results;
 }
 
-function sendPic() {
+async function sendPic(localPictureAvailableCB) {
   console.log("setting camera options");
   const options = {
     quality: 80,
@@ -141,31 +126,49 @@ function sendPic() {
     // targetHeight: 200
   };
 
-  camera.getPicture(
-    cordovaImageData => uploadPicture(cordovaImageData),
-    err => {
-      // Handle error
-      console.error("error in camera callback:");
-      console.error(err);
-    },
-    options
-  );
+  return new Promise((resolve, reject) => {
+    camera.getPicture(
+      cordovaImageData => {
+        localPictureAvailableCB(cordovaImageData);
+        uploadPicture(cordovaImageData).then(results => {
+          console.log(results)
+          resolve(results)
+        }).catch(err => {
+          console.error(err);
+          reject(err);
+        });
+      },
+      err => {
+        // Handle error
+        console.error("error in camera callback:");
+        console.error(err);
+        reject(err);
+      },
+      options
+    );
+  });
 }
 
-function removeBase64Prefix(base64Str) {
-  return base64Str.substr(base64Str.indexOf(",") + 1);
-}
-
-function fileLoaded(e) {
-  var files = e.target.files || e.dataTransfer.files;
-  if (!files.length) return;
-  if (files && files[0]) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      uploadPicture(removeBase64Prefix(e.target.result));
-    };
-    reader.readAsDataURL(files[0]);
-  }
+async function fileLoaded(e, localPictureAvailableCB) {
+  return new Promise((resolve, reject) => {
+    var files = e.target.files || e.dataTransfer.files;
+    if (!files.length) return;
+    if (files && files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        let imageData = removeBase64Prefix(e.target.result);
+        localPictureAvailableCB(imageData);
+        uploadPicture(imageData).then(results => {
+          console.log(results)
+          resolve(results)
+        }).catch(err => {
+          console.error(err);
+          reject(err);
+        });
+      };
+      reader.readAsDataURL(files[0]);
+    }
+  });
 }
 
 function init(_camera, _firebase, _firebaseStorage) {

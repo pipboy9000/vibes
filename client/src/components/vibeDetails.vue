@@ -190,14 +190,38 @@ export default {
         this.$router.replace({ query: { ...q, img: e.index } });
       }
     },
-    fileLoaded(e) {
-      photos.fileLoaded(e)
-    },
     close() {
       this.$router.go(-1);
     },
+    removePictureFromUploading(id) {
+      self.uploadingPictures = self.uploadingPictures.filter(
+        pic => pic.id !== id
+      );
+    },
+    photoUploadComplete(urls) {
+      var picture = {
+        vibeId: this.vibe.id,
+        imgUrl: urls[0],
+        thumbnailUrl: urls[1]
+      };
+      socket.newPicture({
+        token: this.$store.getters.token,
+        picture
+      });
+      // this.removePictureFromUploading(dateStr);
+      this.uploadingPictures = [];
+    },
+    fileLoaded(e) {
+      photos.fileLoaded(
+        e, 
+        () => this.uploadingPictures.push({placeholder: true})
+      ).then(this.photoUploadComplete);
+    },
     sendPic() {
-      photos.sendPic();
+      let self = this;
+      photos.sendPic(
+          () => this.uploadingPictures.push({placeholder: true}))
+          .then(this.photoUploadComplete);
     },
     sendNewComment() {
       this.commentSent = true;
