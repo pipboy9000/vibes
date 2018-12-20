@@ -108,7 +108,7 @@ export default {
   background: #8be0ff;
   width: 100%;
   height: 47px;
-  font-family: "Fredoka One", cursive;
+  font-family: "Fredoka One", cursive, sans-serif;
   text-align: center;
   display: flex;
   align-items: center;
