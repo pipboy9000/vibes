@@ -36,12 +36,7 @@
               <p class="join" v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
               <p class="tooFar" v-else>too far</p>
             </div>
-            <div
-              ref="pictures"
-              class="pictures"
-              v-if="newPictures.length > 0"
-              @mousewheel.stop.prevent="wheel"
-            >
+            <div ref="pictures" class="pictures" v-if="newPictures.length > 0" @mousewheel="wheel">
               <photo-gallery :images="newPictures" v-model="index"></photo-gallery>
               <div
                 v-for="(pic,idx) in newPictures"
@@ -160,9 +155,28 @@ export default {
       this.$refs.newCommentInput.focus();
     },
     wheel(e) {
-      this.scrollM += e.wheelDelta / 7;
-      if (!this.isMoving) {
-        this.move();
+      //is it even scrollable?
+      if (
+        this.$refs.pictures.scrollWidth >
+        this.$refs.pictures.parentElement.clientWidth
+      ) {
+        var leftToScrollLeft = this.$refs.pictures.scrollLeft;
+        var leftToScrollRight =
+          this.$refs.pictures.scrollWidth -
+          (this.$refs.pictures.scrollLeft + this.$refs.pictures.offsetWidth);
+
+        this.scrollM += e.wheelDelta / 10;
+
+        if (
+          (this.scrollM > 0 && leftToScrollRight > 0) ||
+          (this.scrollM < 0 && leftToScrollLeft > 0)
+        ) {
+          if (!this.isMoving) {
+            this.move();
+          }
+          e.preventDefault();
+          e.stopPropagation();
+        }
       }
     },
     move() {
@@ -562,6 +576,7 @@ export default {
 }
 
 .joinLeave {
+  user-select: none;
   width: 92%;
   max-width: 324px;
   height: 53px;
@@ -642,7 +657,8 @@ export default {
 }
 
 .pictures {
-  width: 100%;
+  width: min-content;
+  max-width: 100%;
   height: 160px;
   text-align: left;
   overflow-x: scroll;
