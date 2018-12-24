@@ -24,10 +24,10 @@
     "@fortawesome/free-solid-svg-icons": "^5.5.0",
     "@fortawesome/vue-fontawesome": "^0.1.3",
     "com-sarriaroman-photoviewer": "^1.1.18",
-    "cordova-android": "^7.1.1",
+    "cordova-android": "^7.1.4",
     "cordova-browser": "^5.0.4",
     "cordova-ios": "^4.5.5",
-    "cordova-plugin-camera": "^4.0.3",
+    "cordova-plugin-camera": "git+https://github.com/apache/cordova-plugin-camera.git",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-facebook4": "^2.5.0",
     "cordova-plugin-geolocation": "^4.0.1",
@@ -119,9 +119,9 @@
         "APP_NAME": "Vibes - Dev",
         "FACEBOOK_ANDROID_SDK_VERSION": "4.+"
       },
-      "cordova-plugin-camera": {},
       "cordova-plugin-device": {},
-      "com-sarriaroman-photoviewer": {}
+      "com-sarriaroman-photoviewer": {},
+      "cordova-plugin-camera": {}
     },
     "platforms": [
       "ios",

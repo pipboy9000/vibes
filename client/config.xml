@@ -40,10 +40,10 @@
         <variable name="APP_NAME" value="Vibes - Dev" />
         <variable name="FACEBOOK_ANDROID_SDK_VERSION" value="4.+" />
     </plugin>
-    <plugin name="cordova-plugin-camera" spec="^4.0.3" />
     <plugin name="cordova-plugin-device" spec="^2.0.2" />
     <plugin name="com-sarriaroman-photoviewer" spec="^1.1.18" />
     <engine name="ios" spec="^4.5.5" />
-    <engine name="browser" spec="^5.0.4" />
-    <engine name="android" spec="^7.1.1" />
+    <plugin name="cordova-plugin-camera" spec="https://github.com/apache/cordova-plugin-camera.git" />
+    <engine name="browser" spec="~5.0.4" />
+    <engine name="android" spec="~7.1.4" />
 </widget>
