@@ -2,7 +2,6 @@
   <transition name="fade">
     <div v-if="vibe">
       <div ref="scrollBarDiv" class="scrollBarDiv">
-        <canvas id="img-canvas" width="200" height="150"></canvas>
         <div class="bg">
           <div class="top">
             <div class="cover">
