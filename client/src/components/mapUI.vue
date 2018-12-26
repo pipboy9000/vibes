@@ -193,7 +193,7 @@ hr {
 
 .inVibe > svg {
   margin-right: 5px;
-  margin-left: 10px;
+  margin-left: 15px;
 }
 
 .inVibe > p {
