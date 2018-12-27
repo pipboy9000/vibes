@@ -13,7 +13,7 @@
         <h2 @click="toggleVisibility">Visible</h2>
       </div>
       <div class="bottom">
-        <div class="album">
+        <div class="album" @click="openAlbum">
           <i class="fas fa-book-open"></i>
           <p>My Vibes Album</p>
         </div>
@@ -50,8 +50,10 @@ export default {
       }
     },
     toggleVisibility() {
-      debugger;
       this.$store.commit("setVisible", !this.visible);
+    },
+    openAlbum() {
+      this.$router.replace({ query: { album: true } });
     }
   },
   computed: {

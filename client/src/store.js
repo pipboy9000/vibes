@@ -61,6 +61,9 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setAlbum: (state, album) => {
+      state.album = album;
+    },
     setVisible: (state, visible) => {
       state.visible = visible;
     },
@@ -388,6 +391,9 @@ export default new Vuex.Store({
 
     leaveVibe(context) {
       context.commit("leaveVibe");
+    },
+    setAlbum(context, album) {
+      context.commit("setAlbum", album);
     }
   }
 });
