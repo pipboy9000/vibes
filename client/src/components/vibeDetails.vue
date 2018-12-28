@@ -211,11 +211,13 @@ export default {
         pic => pic.id !== id
       );
     },
-    photoUploadComplete(urls) {
+    photoUploadComplete(pic) {
       var picture = {
         vibeId: this.vibe.id,
-        imgUrl: urls[0],
-        thumbnailUrl: urls[1]
+        imgUrl: pic.urls[0],
+        thumbnailUrl: pic.urls[1],
+        width: pic.width,
+        height: pic.height
       };
       socket.newPicture({
         token: this.$store.getters.token,
@@ -303,14 +305,13 @@ export default {
         return {
           src: x.imgUrl,
           thumbSrc: x.thumbnailUrl,
-          w: 1600,
-          h: 1600
+          w: x.width,
+          h: x.height
         };
       });
     },
     usersToDisplay() {
       //in the top part
-      debugger;
       var me = this;
       var arr = [];
       for (var i = 0; i < 4 && i < this.vibe.users.length; i++) {

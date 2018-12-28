@@ -170,6 +170,8 @@ function newPicture(picture, user) {
     var c = {
         imgUrl: picture.imgUrl,
         thumbnailUrl: picture.thumbnailUrl,
+        width: picture.width,
+        height: picture.height,
         name: user.name,
         fbid: user.fbid,
         createdAt: Date.now(),
