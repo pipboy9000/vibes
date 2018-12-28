@@ -3,3 +3,4 @@ server/cache.json
 server/tokens.json
 prod/
 .DS_Store
+client/src/services/localConfig.js

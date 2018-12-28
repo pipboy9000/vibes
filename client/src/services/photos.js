@@ -1,6 +1,4 @@
 
-import Pica from "pica";
-const pica = Pica();
 const base64JpegPrefix = "data:image/jpeg;base64,";
 const config = require('./config').default;
 
@@ -14,6 +12,7 @@ function removeBase64Prefix(base64Str) {
 
 function uploadBase64(imageData, firebaseChild) {
   return new Promise(resolve => {
+    debugger
     //console.log("uploading imageData:" + imageData);
     try {
       var uploadTask = firebaseChild.putString(imageData, "base64");
@@ -54,39 +53,19 @@ function uploadBase64(imageData, firebaseChild) {
   });
 }
 
-async function generateThumbnail(cordovaImageData, width, height) {
+async function generateThumbnail(imageData, maxWidth) {
   return new Promise(resolve => {
-    var canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    var ctx = canvas.getContext("2d");
-
-    var image = new Image();
-    image.src = base64JpegPrefix + cordovaImageData;
-    image.onload = function () {
-      ctx.drawImage(image, 0, 0);
-      resizeImage(image, canvas).then(resolve); // TODO: catch
-    }
-  });
-}
-
-function resizeImage(image, canvas) {
-  return new Promise(resolve => {
-    //TODO: add catches
-    pica
-      .resize(image, canvas)
-      .then(result => pica.toBlob(result, "image/jpeg", 0.9))
-      .then(blob => {
-        console.log("resized to canvas & created blob!");
-        console.log(blob);
-        var reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = function () {
-          var imageData = removeBase64Prefix(reader.result);
-          //var imageData = reader.result;
-          resolve(imageData);
-        };
-      });
+      let blob = window.dataURLtoBlob(base64JpegPrefix + imageData);
+      let loadingImage = loadImage(
+        blob,
+        (canvas, data) => {
+          let dataURL = canvas.toDataURL('image/jpeg');
+          resolve(removeBase64Prefix(dataURL));
+        }, {
+          maxWidth: maxWidth,
+          canvas: true
+        }
+      );
   });
 }
 
@@ -98,8 +77,8 @@ async function uploadPicture(cordovaImageData) {
 
   let imageData = removeBase64Prefix(cordovaImageData);
   // TODO: change sizes to come from image with aspect ratio or some better method
-  let thumbnailImageData = await generateThumbnail(imageData, 150, 200);
-
+  let thumbnailImageData = await generateThumbnail(imageData, config.photos.thumbnailMaxWidth);
+debugger
   var dateStr = new Date().getTime().toString();
   var fullUploadPromise = uploadBase64(
     imageData,
@@ -137,7 +116,7 @@ async function sendPic(localPictureAvailableCB) {
     mediaType: camera.MediaType.PICTURE,
     saveToPhotoAlbum: true,
     correctOrientation: true,
-    //targetWidth: 200,
+    targetWidth: config.photos.maxWidth,
     // targetHeight: 200
   };
 
@@ -185,7 +164,7 @@ async function fileLoaded(e, localPictureAvailableCB) {
             reject(err);
           });
         }, {
-          maxWidth: config.photos.maxSize,
+          maxWidth: config.photos.maxWidth,
           orientation: true,
           canvas: true
         }

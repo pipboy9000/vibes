@@ -1,14 +1,16 @@
 import socketio from "socket.io-client";
 import store from "../store";
+const localConfig = require('./localConfig').default;
 
 /* DONT HARDCODE LOCALHOST HERE!! WERE LIVE##$!@#!! */
 var socketAddress = process.env.SOCKET_ADDRESS;
+if (localConfig.socketAddress) socketAddress = localConfig.socketAddress;
 
 //  var socketAddress = "https://vibes-web.herokuapp.com";
 // var socketAddress = "http://172.16.0.95:8080";
 // var socketAddress = "http://192.168.43.3:8080";
 // var socketAddress = "http://192.168.14.97:8080";
-//var socketAddress = "http://192.168.1.194:8080"; //java
+// var socketAddress = "http://192.168.1.194:8080"; //java
 // var port = 80;
 //socketAdress = socketAdress.replace(port, "8080");
 // var io = socketio.connect(socketAdress);

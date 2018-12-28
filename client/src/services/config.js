@@ -1,12 +1,14 @@
 const devConfig = {
     photos: {
-        maxSize: 1000
+        maxWidth: 1000,
+        thumbnailMaxWidth: 150
     }
 }
 
 const prodConfig = {
     photos: {
-        maxSize: 1000
+        maxWidth: 1000,
+        thumbnailMaxWidth: 150
     }
 }
 
