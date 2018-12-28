@@ -9,11 +9,11 @@
           <div class="closeBtn" @click="close">X</div>
         </div>
         <div class="bottom">
-          <div v-if="!vibes">
+          <div v-if="!album">
             <font-awesome-icon icon="spinner"></font-awesome-icon>
           </div>
           <div v-else>
-            <album-list-item v-for="(vibe, idx) in vibesSliced" :key="idx" :title="vibe.title"></album-list-item>
+            <album-list-item v-for="(vibe, idx) in albumSliced" :key="idx" :vibe="vibe"></album-list-item>
           </div>
         </div>
       </div>
@@ -31,13 +31,13 @@ export default {
   data() {
     return {
       show: false,
-      vibesToShow: 5
+      vibesToShow: 10
     };
   },
   methods: {
     open() {
       this.show = true;
-      if (this.vibes === null) {
+      if (this.album === null) {
         socket.getAlbum(this.$store.getters.token);
       }
     },
@@ -49,12 +49,12 @@ export default {
     }
   },
   computed: {
-    vibes() {
+    album() {
       return this.$store.state.album;
     },
-    vibesSliced() {
-      if (this.vibes) return this.vibes.slice(-this.vibesToShow);
-      return;
+    albumSliced() {
+      debugger;
+      if (this.album) return this.album.slice(-this.vibesToShow);
     }
   },
   watch: {
@@ -88,7 +88,6 @@ export default {
   width: 100%;
   max-width: 360px;
   min-height: 300px;
-
   background: white;
 }
 
@@ -136,6 +135,11 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.bottom {
+  max-height: 560px;
+  overflow-y: auto;
 }
 
 .coverOverlay {
