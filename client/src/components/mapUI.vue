@@ -2,23 +2,23 @@
   <div class="wrapper">
     <div class="gradient"></div>
     <list></list>
-    <div v-if="!inVibe" class="newVibeBtn" @click="openNewVibeForm">New Vibe</div>
+    <div v-if="!inVibe || inVibe === ''" class="newVibeBtn" @click="openNewVibeForm">New Vibe</div>
     <div v-else class="newVibeBtn inVibe" @click="clickedInVibe">
-      <i class="fas fa-map-marker-alt"></i>
+      <font-awesome-icon icon="map-marker-alt"></font-awesome-icon>
       <p>: {{inVibe.title}}</p>
     </div>
     <div class="sideBtns">
       <div class="zoom">
         <div class="zoomIn" @click="zoomIn">
-          <i class="fas fa-plus"></i>
+          <font-awesome-icon icon="plus"></font-awesome-icon>
         </div>
         <hr>
         <div class="zoomOut" @click="zoomOut">
-          <i class="fas fa-minus"></i>
+          <font-awesome-icon icon="minus"></font-awesome-icon>
         </div>
       </div>
       <div class="focusBtn" @click="focus">
-        <i class="fas fa-crosshairs"></i>
+        <font-awesome-icon icon="crosshairs"></font-awesome-icon>
       </div>
     </div>
   </div>

@@ -7,18 +7,18 @@
         <h2>{{me.name}}</h2>
         <div type="checkbox" class="checkbox" @click="toggleVisibility">
           <div v-show="visible">
-            <i class="fas fa-check"></i>
+            <font-awesome-icon icon="check"></font-awesome-icon>
           </div>
         </div>
         <h2 @click="toggleVisibility">Visible</h2>
       </div>
       <div class="bottom">
         <div class="album" @click="openAlbum">
-          <i class="fas fa-book-open"></i>
+          <font-awesome-icon icon="book-open"></font-awesome-icon>
           <p>My Vibes Album</p>
         </div>
         <div class="logout">
-          <i class="fas fa-power-off"></i>
+          <font-awesome-icon icon="power-off"></font-awesome-icon>
           <p>Logout</p>
         </div>
       </div>

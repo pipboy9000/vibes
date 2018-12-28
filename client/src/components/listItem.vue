@@ -12,11 +12,11 @@
       <p>Created by {{ vibe.createdBy.name }}</p>
       <p>{{ time }}</p>
       <div class="icons">
-        <i class="fas fa-map-marker-alt"></i>
+        <font-awesome-icon icon="map-marker-alt"></font-awesome-icon>
         <p>{{ this.distance }}</p>
-        <i class="fas fa-user-circle"></i>
+        <font-awesome-icon icon="user-circle"></font-awesome-icon>
         <p>{{ vibe.users.length }}</p>
-        <i class="fas fa-camera"></i>
+        <font-awesome-icon icon="camera"></font-awesome-icon>
         <p>{{ vibe.pictures.length }}</p>
       </div>
     </div>

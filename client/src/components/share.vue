@@ -5,7 +5,7 @@
         <qrcode-vue class="qrcode" :value="link" :size="230" level="H"></qrcode-vue>
         <input ref="link" class="link" :v-model="link" :value="link" @click="copyLink">
         <div class="copyLink" @click="copyLink">
-          <i class="far fa-copy"></i>
+          <font-awesome-icon icon="copy"></font-awesome-icon>
         </div>
       </div>
     </div>

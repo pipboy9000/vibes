@@ -4,7 +4,7 @@
       <div class="bg" @click="bgClicked">
         <div class="top">
           <div class="coverOverlay"></div>
-          <i class="fas fa-book-open"></i>
+          <font-awesome-icon icon="book-open"></font-awesome-icon>
           <p>My Vibes Album</p>
           <div class="closeBtn" @click="close">X</div>
         </div>

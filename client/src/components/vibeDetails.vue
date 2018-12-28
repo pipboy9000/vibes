@@ -20,12 +20,11 @@
               <p v-if="plusUsers > 0">+{{plusUsers}}</p>
             </div>
             <div class="shareBtn" @click="openShare">
-              <i class="fas fa-share"></i>
+              <font-awesome-icon icon="share"></font-awesome-icon>
             </div>
             <div class="title">{{vibe.title}}</div>
             <div class="details">
               Created by {{vibe.createdBy.name}}
-              <br>
               {{time}} | {{distance}}
             </div>
           </div>
@@ -75,18 +74,18 @@
                 @change="fileLoaded"
                 style="display:none"
               >
-              <i class="fas fa-camera"></i>
+              <font-awesome-icon icon="camera"></font-awesome-icon>
             </div>
             <div v-else>
-              <i class="fas fa-spinner"></i>
+              <font-awesome-icon icon="spinner"></font-awesome-icon>
             </div>
           </div>
           <div v-else>
             <div v-if="uploadingPictures.length === 0" @click="sendPic">
-              <i class="fas fa-camera"></i>
+              <font-awesome-icon icon="camera"></font-awesome-icon>
             </div>
             <div v-else>
-              <i class="fas fa-spinner"></i>
+              <font-awesome-icon icon="spinner"></font-awesome-icon>
             </div>
           </div>
         </div>
@@ -311,6 +310,7 @@ export default {
     },
     usersToDisplay() {
       //in the top part
+      debugger;
       var me = this;
       var arr = [];
       for (var i = 0; i < 4 && i < this.vibe.users.length; i++) {
