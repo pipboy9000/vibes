@@ -2,7 +2,11 @@
   <div class="wrapper">
     <div class="gradient"></div>
     <list></list>
-    <div class="newVibeBtn" @click="openNewVibeForm">New Vibe</div>
+    <div v-if="!inVibe" class="newVibeBtn" @click="openNewVibeForm">New Vibe</div>
+    <div v-else class="newVibeBtn inVibe" @click="clickedInVibe">
+      <i class="fas fa-map-marker-alt"></i>
+      <p>: {{inVibe.title}}</p>
+    </div>
     <div class="sideBtns">
       <div class="zoom">
         <div class="zoomIn" @click="zoomIn">
@@ -40,7 +44,35 @@ export default {
     openNewVibeForm() {
       var q = this.$route.query;
       this.$router.push({ query: { ...q, new: true } });
-      // EventBus.$emit("openNewVibeForm");
+    },
+    clickedInVibe() {
+      if (this.openVibe) {
+        this.$store.commit("setSelectedVibe", this.inVibe);
+        this.$router.replace({ path: "", query: { v: this.inVibe.id } });
+      } else {
+        if (!this.selectedVibe || this.selectedVibe.id != this.inVibe.id) {
+          this.$store.commit("setSelectedVibe", this.inVibe);
+        } else {
+          if (this.$router.currentRoute.query.v) {
+            this.$router.replace({ path: "", query: { v: this.inVibe.id } });
+          } else {
+            this.$router.push({ path: "", query: { v: this.inVibe.id } });
+          }
+          EventBus.$emit("listItemClicked", this.inVibe);
+        }
+      }
+    }
+  },
+  computed: {
+    inVibe() {
+      var inVibeId = this.$store.state.inVibe;
+      return this.$store.getters.getVibeById(inVibeId);
+    },
+    selectedVibe() {
+      return this.$store.state.selectedVibe;
+    },
+    openVibe() {
+      return this.$store.state.openVibe;
     }
   }
 };
@@ -157,5 +189,17 @@ hr {
   align-items: center;
   justify-content: center;
   height: 50%;
+}
+
+.inVibe > svg {
+  margin-right: 5px;
+  margin-left: 15px;
+}
+
+.inVibe > p {
+  overflow: hidden;
+  white-space: nowrap;
+  padding-right: 10px;
+  text-overflow: ellipsis;
 }
 </style>

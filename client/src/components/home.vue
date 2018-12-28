@@ -1,19 +1,20 @@
 <template>
   <div class="main">
-      <Map></Map>
-      <div class="loginDiv" v-show="!loggedIn"> 
-        <div class="elements-wrapper">
-          <div class="logo"></div>
-          <FacebookLogin></FacebookLogin>
-        </div>
+    <Map></Map>
+    <div class="loginDiv" v-show="!loggedIn">
+      <div class="elements-wrapper">
+        <div class="logo"></div>
+        <FacebookLogin></FacebookLogin>
       </div>
-      <div v-if="loggedIn">
-        <mapUI></mapUI>
-        <vibe-details></vibe-details>
-        <NewVibeForm></NewVibeForm>
-        <Profile></Profile>
-      </div>
-    <div class="preview"></div>
+    </div>
+    <div v-if="loggedIn">
+      <mapUI></mapUI>
+      <vibe-details></vibe-details>
+      <NewVibeForm></NewVibeForm>
+      <Profile></Profile>
+      <album></album>
+    </div>
+    <!-- <div class="preview"></div> -->
   </div>
 </template>
 
@@ -24,6 +25,7 @@ import MapUI from "./mapUI";
 import NewVibeForm from "./newVibeForm";
 import VibeDetails from "./vibeDetails";
 import Profile from "./profile";
+import Album from "./album";
 
 import { EventBus } from "../event-bus";
 
@@ -35,7 +37,8 @@ export default {
     NewVibeForm,
     VibeDetails,
     MapUI,
-    Profile
+    Profile,
+    Album
   },
   computed: {
     loggedIn() {
@@ -49,11 +52,12 @@ export default {
 .preview {
   position: absolute;
   width: 100%;
+  max-width: 360px;
   height: -webkit-fill-available;
   background: url("/static/ref.png");
   background-size: contain;
   background-repeat: no-repeat;
-  opacity: -0.3;
+  opacity: 0.3;
   pointer-events: none;
 }
 

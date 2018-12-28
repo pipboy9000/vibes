@@ -135,9 +135,10 @@ export default {
   mounted() {
     var self = this;
     photos.init(
-      this.$root.cordova.camera, 
-      this.$root.firebase, 
-      this.$root.firebaseStorage);
+      this.$root.cordova.camera,
+      this.$root.firebase,
+      this.$root.firebaseStorage
+    );
     //keep timeago updated
     setInterval(function() {
       if (self.vibe) {
@@ -225,16 +226,15 @@ export default {
       this.uploadingPictures = [];
     },
     fileLoaded(e) {
-      photos.fileLoaded(
-        e, 
-        () => this.uploadingPictures.push({placeholder: true})
-      ).then(this.photoUploadComplete);
+      photos
+        .fileLoaded(e, () => this.uploadingPictures.push({ placeholder: true }))
+        .then(this.photoUploadComplete);
     },
     sendPic() {
       let self = this;
-      photos.sendPic(
-          () => this.uploadingPictures.push({placeholder: true}))
-          .then(this.photoUploadComplete);
+      photos
+        .sendPic(() => this.uploadingPictures.push({ placeholder: true }))
+        .then(this.photoUploadComplete);
     },
     sendNewComment() {
       this.commentSent = true;

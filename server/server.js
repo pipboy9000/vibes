@@ -4,6 +4,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
 var cache = require('./helpers/cache');
+var db = require('./helpers/db');
 var piggyBack = require('./helpers/piggyback');
 
 // var futureVibesPoller = require('./helpers/future-poller');
@@ -139,11 +140,11 @@ io.on('connection', function (socket) {
 
   socket.on("getAlbum", function (token) {
     validate(token).then(user => {
-      var album = db.getAlbum(user.fbid);
-      if (album) {
-        piggyBack.leaveVibe();
-        socket.emit("setAlbum", album);
-      }
+      db.getAlbum(user.fbid).then(album => {
+        if (album) {
+          socket.emit("setAlbum", album);
+        }
+      })
     });
   })
 });

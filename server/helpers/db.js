@@ -26,16 +26,17 @@ async function saveVibe(vibe) {
             db.collection("album").update({
                 _id: fbid
             }, {
-                    $push: {
-                        vibes: {
-                            id: vibeId,
-                            title: vibe.title,
-                            createdAt: vibe.createdAt
-                        }
+                $push: {
+                    vibes: {
+                        id: vibeId,
+                        createdBy: vibe.createdBy,
+                        title: vibe.title,
+                        createdAt: vibe.createdAt
                     }
-                }, {
-                    upsert: true
-                });
+                }
+            }, {
+                upsert: true
+            });
         });
     } catch (err) {
         console.error(err.stack);
@@ -55,9 +56,17 @@ async function saveFutureVibe(vibe) {
 
 async function saveCacheState(users, vibes) {
     try {
-        let cacheObj = { id: 1, users, vibes };
+        let cacheObj = {
+            id: 1,
+            users,
+            vibes
+        };
         const db = await getDb();
-        let res = await db.collection("cache").update({ id: 1 }, cacheObj, { upsert: true });
+        let res = await db.collection("cache").update({
+            id: 1
+        }, cacheObj, {
+            upsert: true
+        });
         return res;
     } catch (err) {
         console.error(err.stack);
@@ -67,7 +76,9 @@ async function saveCacheState(users, vibes) {
 async function loadCacheState() {
     try {
         const db = await getDb();
-        let res = await db.collection("cache").findOne({ id: 1 });
+        let res = await db.collection("cache").findOne({
+            id: 1
+        });
         return res;
     } catch (err) {
         console.error(err.stack);
@@ -87,7 +98,9 @@ async function getFutureVibes() {
 async function removeFutureVibe(_id) {
     try {
         const db = await getDb();
-        let res = await db.collection("future-vibes").deleteOne({ _id });
+        let res = await db.collection("future-vibes").deleteOne({
+            _id
+        });
         return res;
     } catch (err) {
         console.error(err.stack);
@@ -97,11 +110,13 @@ async function removeFutureVibe(_id) {
 async function updateFutureVibeActivated(_id, lastActivated) {
     try {
         const db = await getDb();
-        let res = await db.collection("future-vibes").update(
-            { _id },
-            {
-                $set:{ lastActivated }
-            });
+        let res = await db.collection("future-vibes").update({
+            _id
+        }, {
+            $set: {
+                lastActivated
+            }
+        });
         return res;
     } catch (err) {
         console.error(err.stack);
@@ -114,7 +129,7 @@ async function getAlbum(fbid) {
         let res = await db.collection("album").findOne({
             _id: fbid
         });
-        return res;
+        return res.vibes;
     } catch (err) {
         console.error(err);
     }

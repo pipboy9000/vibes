@@ -34,8 +34,8 @@ io.on("setPictures", pictures => store.dispatch("setPictures", pictures));
 io.on("setAlbum", album => store.dispatch("setAlbum", album));
 
 //to server
-function getAlbum(me) {
-  io.emit("getAlbum", me);
+function getAlbum(token) {
+  io.emit("getAlbum", token);
 }
 
 function newVibe(vibe) {
@@ -73,5 +73,6 @@ export default {
   newComment,
   newPicture,
   joinVibe,
-  leaveVibe
+  leaveVibe,
+  getAlbum
 };
