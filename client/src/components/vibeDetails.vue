@@ -77,7 +77,7 @@
               <font-awesome-icon icon="camera"></font-awesome-icon>
             </div>
             <div v-else>
-              <font-awesome-icon icon="spinner"></font-awesome-icon>
+              <font-awesome-icon icon="spinner" class="spinner"></font-awesome-icon>
             </div>
           </div>
           <div v-else>
@@ -85,7 +85,7 @@
               <font-awesome-icon icon="camera"></font-awesome-icon>
             </div>
             <div v-else>
-              <font-awesome-icon icon="spinner"></font-awesome-icon>
+              <font-awesome-icon icon="spinner" class="spinner"></font-awesome-icon>
             </div>
           </div>
         </div>
@@ -750,7 +750,7 @@ export default {
   padding-right: 20px;
 }
 
-.fa-spinner {
+.spinner {
   animation: rotate 2s infinite linear;
 }
 

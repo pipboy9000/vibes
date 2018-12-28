@@ -9,12 +9,9 @@
           <div class="closeBtn" @click="close">X</div>
         </div>
         <div class="bottom">
-          <div v-if="!album">
-            <font-awesome-icon icon="spinner"></font-awesome-icon>
-          </div>
-          <div v-else>
-            <album-list-item v-for="(vibe, idx) in albumSliced" :key="idx" :vibe="vibe"></album-list-item>
-          </div>
+          <font-awesome-icon v-if="!album" icon="spinner"></font-awesome-icon>
+          <album-list-item v-else v-for="(vibe, idx) in albumSliced" :key="idx" :vibe="vibe"></album-list-item>
+          <p v-if="album && vibesToShow < album.length" class="more" @click="showMore">More...</p>
         </div>
       </div>
     </div>
@@ -46,6 +43,9 @@ export default {
     },
     bgClicked(e) {
       e.stopPropagation();
+    },
+    showMore() {
+      this.vibesToShow += 10;
     }
   },
   computed: {
@@ -53,7 +53,26 @@ export default {
       return this.$store.state.album;
     },
     albumSliced() {
-      debugger;
+      // return [
+      //   {
+      //     id: "5be7422531246035e03a04fe",
+      //     title: "Work sesh@dov hoz",
+      //     createdAt: 1541882390276,
+      //     createdBy: { fbid: "10156492526329808", name: "Dan Levin" }
+      //   },
+      //   {
+      //     id: "5be7422531246035e03a04fe",
+      //     title: "Work sesh@dov hoz",
+      //     createdAt: 1541882390276,
+      //     createdBy: { fbid: "10156492526329808", name: "Dan Levin" }
+      //   },
+      //   {
+      //     id: "5be7422531246035e03a04fe",
+      //     title: "Work sesh@dov hoz",
+      //     createdAt: 1541882390276,
+      //     createdBy: { fbid: "10156492526329808", name: "Dan Levin" }
+      //   }
+      // ];
       if (this.album) return this.album.slice(-this.vibesToShow);
     }
   },
@@ -138,6 +157,7 @@ export default {
 }
 
 .bottom {
+  padding-top: 10px;
   max-height: 560px;
   overflow-y: auto;
 }
@@ -147,6 +167,22 @@ export default {
   height: 100%;
   position: absolute;
   background: #3d3d3dd4;
+}
+
+.spinner {
+  animation: rotate 2s infinite linear;
+}
+
+@-webkit-keyframes rotate {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 .fade-enter-active,

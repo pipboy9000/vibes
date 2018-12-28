@@ -25,21 +25,30 @@ export default {
 <style scoped>
 .item {
   width: 100%;
-  height: 80px;
+  height: 70px;
+  display: flex;
+  align-items: center;
 }
 
 img {
   border-radius: 50%;
-  width: 60px;
+  width: 40px;
   float: left;
+  margin-left: 20px;
 }
 
 .details {
+  margin-left: 15px;
 }
 
 .title {
+  text-align: left;
+  font-family: "Fredoka One", sans-serif;
 }
 
 .time {
+  font-size: 12px;
+  text-align: left;
+  font-family: "Roboto", sans-serif;
 }
 </style>

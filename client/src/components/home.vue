@@ -14,7 +14,7 @@
       <Profile></Profile>
       <album></album>
     </div>
-    <!-- <div class="preview"></div> -->
+    <div class="preview"></div>
   </div>
 </template>
 
