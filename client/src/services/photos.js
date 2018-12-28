@@ -54,50 +54,51 @@ function uploadBase64(imageData, firebaseChild) {
   });
 }
 
-function generateThumbnail(cordovaImageData) {
+async function generateThumbnail(cordovaImageData, width, height) {
   return new Promise(resolve => {
-
     var canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 150;
+    canvas.width = width;
+    canvas.height = height;
     var ctx = canvas.getContext("2d");
 
     var image = new Image();
     image.src = base64JpegPrefix + cordovaImageData;
-    image.onload = function() {
+    image.onload = function () {
       ctx.drawImage(image, 0, 0);
-      pica
-        .resize(image, canvas)
-        .then(result => pica.toBlob(result, "image/jpeg", 0.9))
-        .then(blob => {
-          console.log("resized to canvas & created blob!");
-          console.log(blob);
-          var reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = function() {
-            var imageData = removeBase64Prefix(reader.result);
-            //var imageData = reader.result;
-            resolve(imageData);
-          };
-        });
-    };
+      resizeImage(image, canvas).then(resolve); // TODO: catch
+    }
+  });
+}
 
+function resizeImage(image, canvas) {
+  return new Promise(resolve => {
+    //TODO: add catches
+    pica
+      .resize(image, canvas)
+      .then(result => pica.toBlob(result, "image/jpeg", 0.9))
+      .then(blob => {
+        console.log("resized to canvas & created blob!");
+        console.log(blob);
+        var reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = function () {
+          var imageData = removeBase64Prefix(reader.result);
+          //var imageData = reader.result;
+          resolve(imageData);
+        };
+      });
   });
 }
 
 
 async function uploadPicture(cordovaImageData) {
   var size = (cordovaImageData.length * 3) / 4;
-  console.log("Picture Size: " + size);
-  // alert("Picture Size: " + size / 1024 + "KB");
-  
-  // imageData is either a base64 encoded string or a file URI
-  // If it's base64 (DATA_URL):
-  //let base64Image = 'data:image/jpeg;base64,' + imageData;
-  console.log("getPicture success callback");
-  
+  console.log(`Picture Size: ${size / 1024} KB`);
+
+
   let imageData = removeBase64Prefix(cordovaImageData);
-  let thumbnailImageData = await generateThumbnail(imageData);
+  // TODO: change sizes to come from image with aspect ratio or some better method
+  let thumbnailImageData = await generateThumbnail(imageData, 150, 200);
 
   var dateStr = new Date().getTime().toString();
   var fullUploadPromise = uploadBase64(
@@ -163,59 +164,19 @@ async function sendPic(localPictureAvailableCB) {
   });
 }
 
+
 async function fileLoaded(e, localPictureAvailableCB) {
   return new Promise((resolve, reject) => {
     var files = e.target.files || e.dataTransfer.files;
     if (!files.length) return;
     if (files && files[0]) {
-      // var reader = new FileReader();
-      // reader.onload = function (e) {
-      //   var exif = EXIF.readFromBinaryFile(this.result);
-      //   // https://stackoverflow.com/questions/19463126/how-to-draw-photo-with-correct-orientation-in-canvas-after-capture-photo-by-usin/37750456
-      //   //let imageData = removeBase64Prefix(e.target.result);
-      //   //localPictureAvailableCB(imageData);
-      //   uploadPicture(this.result, exif).then(results => {
-      //     console.log(results)
-      //     resolve(results)
-      //   }).catch(err => {
-      //     console.error(err);
-      //     reject(err);
-      //   });
-      // };
-      // reader.readAsArrayBuffer(files[0]);
       let file = files[0];
-      EXIF.getData(file,function() {
-        var orientation = EXIF.getTag(this,"Orientation");
-        var can = document.createElement("canvas");
-        var ctx = can.getContext('2d');
-        var thisImage = new Image;
-        thisImage.onload = function() {
-          can.width  = thisImage.width;
-          can.height = thisImage.height;
-          ctx.save();
-          var width  = can.width;  var styleWidth  = can.style.width;
-          var height = can.height; var styleHeight = can.style.height;
-          if (orientation) {
-            if (orientation > 4) {
-              can.width  = height; can.style.width  = styleHeight;
-              can.height = width;  can.style.height = styleWidth;
-            }
-            switch (orientation) {
-            case 2: ctx.translate(width, 0);     ctx.scale(-1,1); break;
-            case 3: ctx.translate(width,height); ctx.rotate(Math.PI); break;
-            case 4: ctx.translate(0,height);     ctx.scale(1,-1); break;
-            case 5: ctx.rotate(0.5 * Math.PI);   ctx.scale(1,-1); break;
-            case 6: ctx.rotate(0.5 * Math.PI);   ctx.translate(0,-height); break;
-            case 7: ctx.rotate(0.5 * Math.PI);   ctx.translate(width,-height); ctx.scale(-1,1); break;
-            case 8: ctx.rotate(-0.5 * Math.PI);  ctx.translate(-width,0); break;
-            }
-          }
-      
-          ctx.drawImage(thisImage,0,0);
-          
-          ctx.restore();
-          var dataURL = can.toDataURL('image/jpeg');
-          localPictureAvailableCB(dataURL);
+      loadImage(
+        file,
+        (canvas, data) => {
+          var dataURL;
+          localPictureAvailableCB(null);
+          dataURL = canvas.toDataURL('image/jpeg');
           uploadPicture(dataURL).then(results => {
             console.log(results)
             resolve(results)
@@ -223,13 +184,12 @@ async function fileLoaded(e, localPictureAvailableCB) {
             console.error(err);
             reject(err);
           });
-          // at this point you can save the image away to your back-end using 'dataURL'
+        }, {
+          maxWidth: 1000,
+          orientation: true,
+          canvas: true
         }
-      
-        // now trigger the onload function by setting the src to your HTML5 file object (called 'file' here)
-        thisImage.src = URL.createObjectURL(file);
-      
-      });
+      );
     }
   });
 }

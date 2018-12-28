@@ -1,5 +1,7 @@
 {
     "scripts":{
-        "db": "mongod --dbpath=C:/mongodb/data"
+        "db": "mongod --dbpath=C:/mongodb/data",
+        "server": "cd server && node server.js",
+        "adb-wifi": "adb tcpip 5555 && adb connect 192.168.43.10:5555"
     }
 }
