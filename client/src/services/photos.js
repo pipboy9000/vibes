@@ -2,7 +2,7 @@
 import Pica from "pica";
 const pica = Pica();
 const base64JpegPrefix = "data:image/jpeg;base64,";
-const EXIF = require('exif-js')
+const config = require('./config').default;
 
 let firebase = null;
 let firebaseStorage = null;
@@ -185,7 +185,7 @@ async function fileLoaded(e, localPictureAvailableCB) {
             reject(err);
           });
         }, {
-          maxWidth: 1000,
+          maxWidth: config.photos.maxSize,
           orientation: true,
           canvas: true
         }
