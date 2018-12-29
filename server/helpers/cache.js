@@ -9,7 +9,7 @@ var vibes = [];
 var vibesMap = {};
 
 //dev
-var vibeTimout = config.cache.vibeTimeout || 1000 * 60 * 60;
+var vibeTimout = config.cache.vibeTimeout || 1000 * 10;
 
 function save() {
     db.saveCacheState(users, vibes).then(res => {

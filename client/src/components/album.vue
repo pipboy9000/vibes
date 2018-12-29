@@ -9,9 +9,15 @@
           <div class="closeBtn" @click="close">X</div>
         </div>
         <div class="bottom">
-          <font-awesome-icon v-if="!album" icon="spinner"></font-awesome-icon>
-          <album-list-item v-else v-for="(vibe, idx) in albumSliced" :key="idx" :vibe="vibe"></album-list-item>
-          <p v-if="album && vibesToShow < album.length" class="more" @click="showMore">More...</p>
+          <font-awesome-icon icon="sync-alt" class="reload" @click="reload"></font-awesome-icon>
+          <font-awesome-icon v-if="!album" icon="spinner" class="spinner"></font-awesome-icon>
+          <div v-else-if="album.length === 0">
+            <p class="empty">Your album is empty</p>
+          </div>
+          <div v-else class="list">
+            <album-list-item v-for="(vibe, idx) in albumSliced" :key="idx" :vibe="vibe"></album-list-item>
+            <p v-if="album && vibesToShow < album.length" class="more" @click="showMore">More...</p>
+          </div>
         </div>
       </div>
     </div>
@@ -28,15 +34,19 @@ export default {
   data() {
     return {
       show: false,
-      vibesToShow: 10
+      vibesToShow: 5
     };
   },
   methods: {
     open() {
       this.show = true;
-      if (this.album === null) {
-        socket.getAlbum(this.$store.getters.token);
-      }
+      // if (this.album === null) {
+      //   socket.getAlbum(this.$store.getters.token);
+      // }
+    },
+    reload() {
+      this.$store.commit("setAlbum", null);
+      socket.getAlbum(this.$store.getters.token);
     },
     close() {
       this.$router.go(-1);
@@ -45,7 +55,7 @@ export default {
       e.stopPropagation();
     },
     showMore() {
-      this.vibesToShow += 10;
+      this.vibesToShow += 5;
     }
   },
   computed: {
@@ -73,7 +83,7 @@ export default {
       //     createdBy: { fbid: "10156492526329808", name: "Dan Levin" }
       //   }
       // ];
-      if (this.album) return this.album.slice(-this.vibesToShow);
+      if (this.album) return this.album.slice(-this.vibesToShow).reverse();
     }
   },
   watch: {
@@ -108,6 +118,8 @@ export default {
   max-width: 360px;
   min-height: 300px;
   background: white;
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .top {
@@ -123,10 +135,17 @@ export default {
   color: white;
 }
 
+.coverOverlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background: #3d3d3dd4;
+}
+
 .top > :nth-child(2) {
   position: relative;
   margin-left: 22px;
-  font-size: 28px;
+  font-size: 25px;
   margin-top: 2px;
 }
 
@@ -135,6 +154,19 @@ export default {
   margin-left: 16px;
   margin-top: 18px;
   font-size: 18px;
+}
+
+.reload {
+  margin-right: 20px;
+  margin-top: 10px;
+  font-size: 25px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.empty {
+  font-family: "Fredoka One", cursive, sans-serif;
 }
 
 .closeBtn {
@@ -157,20 +189,54 @@ export default {
 }
 
 .bottom {
-  padding-top: 10px;
+  position: relative;
   max-height: 560px;
+  min-height: 280px;
+}
+
+.list {
+  position: absolute;
+  width: 100%;
+  height: 100%;
   overflow-y: auto;
 }
 
-.coverOverlay {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  background: #3d3d3dd4;
+.more {
+  font-family: "Fredoka One", cursive, sans-serif;
+  color: #46ceff;
 }
 
 .spinner {
+  position: absolute;
+  font-size: 30px;
+  margin-top: 60px;
   animation: rotate 2s infinite linear;
+}
+
+.list::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.list::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+.list::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+
+.list::-webkit-scrollbar-track {
+  background: #0000;
+  border: 0px none #ffffff;
+}
+.list::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.list::-webkit-scrollbar-thumb {
+  background: #8be0ff;
 }
 
 @-webkit-keyframes rotate {

@@ -129,7 +129,10 @@ async function getAlbum(fbid) {
         let res = await db.collection("album").findOne({
             _id: fbid
         });
-        return res.vibes;
+        if (res && res.vibes)
+            return res.vibes;
+        else
+            return [];
     } catch (err) {
         console.error(err);
     }

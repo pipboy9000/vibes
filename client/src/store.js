@@ -393,7 +393,9 @@ export default new Vuex.Store({
       context.commit("leaveVibe");
     },
     setAlbum(context, album) {
-      context.commit("setAlbum", album);
+      setTimeout(function () {
+        context.commit("setAlbum", album);
+      }, 1500)
     }
   }
 });
