@@ -63,6 +63,16 @@ export default new Vuex.Store({
   },
   mutations: {
     setVibeFromAlbum: (state, vibe) => {
+      var myLocation = new google.maps.LatLng(state.location.lat, state.location.lng);
+      var vibeLocation = new google.maps.LatLng(
+        vibe.location.lat,
+        vibe.location.lng
+      );
+      var distance = google.maps.geometry.spherical.computeDistanceBetween(
+        myLocation,
+        vibeLocation
+      );
+      vibe.distance = distance;
       state.vibeFromAlbum = vibe;
     },
     setAlbum: (state, album) => {

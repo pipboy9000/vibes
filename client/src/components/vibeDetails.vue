@@ -377,7 +377,6 @@ export default {
       }
     },
     $route(to, from) {
-      debugger;
       if (this.slide) {
         this.slide = false;
         return;

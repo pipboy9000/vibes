@@ -17,7 +17,6 @@ export default {
   props: ["vibe"],
   methods: {
     getVibeFromAlbum() {
-      debugger;
       socket.getVibeFromAlbum({
         token: this.$store.getters.token,
         vibeId: this.vibe.id
