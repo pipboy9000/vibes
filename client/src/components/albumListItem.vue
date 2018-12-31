@@ -38,6 +38,7 @@ export default {
   height: 70px;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 img {

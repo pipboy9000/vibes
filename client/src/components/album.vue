@@ -136,6 +136,7 @@ export default {
 }
 
 .reload {
+  cursor: pointer;
   margin-right: 20px;
   margin-top: 10px;
   font-size: 25px;
@@ -183,6 +184,7 @@ export default {
 .more {
   font-family: "Fredoka One", cursive, sans-serif;
   color: #46ceff;
+  cursor: pointer;
 }
 
 .spinner {

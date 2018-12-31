@@ -200,6 +200,7 @@ export default {
 }
 
 .top > :nth-child(5) {
+  cursor: pointer;
   margin: 0;
   position: absolute;
   color: white;
@@ -212,6 +213,7 @@ export default {
 }
 
 .checkbox {
+  cursor: pointer;
   position: absolute;
   border: 1.5px solid white;
   width: 13px;
@@ -232,6 +234,7 @@ export default {
 }
 
 .album {
+  cursor: pointer;
   width: 100%;
   background: white;
   height: 68px;
@@ -254,6 +257,7 @@ export default {
 }
 
 .logout {
+  cursor: pointer;
   width: 100%;
   background: white;
   height: 68px;
