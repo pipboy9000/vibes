@@ -377,6 +377,7 @@ export default {
       }
     },
     $route(to, from) {
+      debugger;
       if (this.slide) {
         this.slide = false;
         return;
@@ -384,6 +385,9 @@ export default {
       var vibeId = to.query.v;
       if (vibeId) {
         var vibe = this.$store.getters.getVibeById(vibeId);
+        if (!vibe && vibeId === this.$store.state.vibeFromAlbum._id) {
+          vibe = this.$store.state.vibeFromAlbum;
+        }
         if (vibe) {
           this.$store.commit("setOpenVibe", vibe);
           var imgIdx = to.query.img;

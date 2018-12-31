@@ -13,6 +13,8 @@ export default {
       map: null,
       myGhost: null, //represents local location
       myMarker: null, //represents server location
+      vibeFromAlbumMarker: null,
+      vibeFromAlbumCircle: null,
       circles: [],
       vibeMarkers: [],
       userMarkers: [],
@@ -225,6 +227,36 @@ export default {
         }
         this.vibeMarkers = this.vibeMarkers.slice(0, len);
       }
+    },
+    renderVibeFromAlbum(vibe) {
+      if (this.vibeFromAlbumMarker === null) {
+        this.vibeFromAlbumMarker = this.getNewVibeMarker(vibe);
+        this.vibeFromAlbumCircle = this.getNewCircle(vibe);
+      }
+
+      this.vibeFromAlbumMarker.setPosition(vibe.location);
+      this.vibeFromAlbumCircle.setCenter(vibe.location);
+      this.vibeFromAlbumCircle.setRadius(this.getVibeSize(vibe.users.length));
+
+      this.focusVibe(vibe);
+      if (this.openVibe) {
+        this.$router.replace({ path: "", query: { v: vibe._id } });
+      } else {
+        this.$router.push({ path: "", query: { v: vibe._id } });
+      }
+
+      //clear previous click listeners
+      google.maps.event.clearInstanceListeners(this.vibeFromAlbumMarker);
+
+      var self = this;
+      this.vibeFromAlbumMarker.addListener("click", function() {
+        self.focusVibe(vibe);
+        if (this.openVibe) {
+          self.$router.replace({ path: "", query: { v: vibe._id } });
+        } else {
+          self.$router.push({ path: "", query: { v: vibe._id } });
+        }
+      });
     }
   },
   computed: {
@@ -248,9 +280,15 @@ export default {
     },
     openVibe() {
       return this.$store.state.openVibe;
+    },
+    vibeFromAlbum() {
+      return this.$store.state.vibeFromAlbum;
     }
   },
   watch: {
+    vibeFromAlbum(newVibe, oldVibe) {
+      this.renderVibeFromAlbum(newVibe);
+    },
     selectedVibe(vibe) {
       if (vibe) {
         this.focusVibe(vibe);

@@ -17,7 +17,8 @@ export default new Vuex.Store({
     loggedIn: false,
     album: null,
     selectedVibe: null, //when user click a vibe on map or list, it first selects it and if clicked again it opens
-    visible: true
+    visible: true,
+    vibeFromAlbum: null
   },
   getters: {
     getVibeById: (state) => (id) => {
@@ -61,6 +62,9 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setVibeFromAlbum: (state, vibe) => {
+      state.vibeFromAlbum = vibe;
+    },
     setAlbum: (state, album) => {
       state.album = album;
     },
@@ -393,9 +397,10 @@ export default new Vuex.Store({
       context.commit("leaveVibe");
     },
     setAlbum(context, album) {
-      setTimeout(function () {
-        context.commit("setAlbum", album);
-      }, 1500)
+      context.commit("setAlbum", album);
+    },
+    setVibeFromAlbum(context, vibe) {
+      context.commit("setVibeFromAlbum", vibe)
     }
   }
 });

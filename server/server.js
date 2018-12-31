@@ -147,6 +147,21 @@ io.on('connection', function (socket) {
       })
     });
   })
+
+  socket.on("getVibeFromAlbum", function ({
+    token,
+    vibeId
+  }) {
+    validate(token).then(user => {
+      if (user) {
+        db.getVibeFromAlbum(vibeId).then(vibe => {
+          if (vibe) {
+            socket.emit("setVibeFromAlbum", vibe);
+          }
+        })
+      }
+    });
+  })
 });
 
 function checkPiggyBack() {

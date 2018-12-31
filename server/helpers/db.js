@@ -138,6 +138,18 @@ async function getAlbum(fbid) {
     }
 }
 
+async function getVibeFromAlbum(vibeId) {
+    try {
+        const db = await getDb();
+        let res = await db.collection("vibe").findOne({
+            _id: ObjectID(vibeId)
+        });
+        return res;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 // async function newVibe(vibe, user) {
 //     var now = Date.now();
 //     vibe.createdAt = now;
@@ -337,6 +349,7 @@ module.exports = {
     getFutureVibes,
     removeFutureVibe,
     getAlbum,
+    getVibeFromAlbum,
     saveCacheState,
     loadCacheState,
     updateFutureVibeActivated

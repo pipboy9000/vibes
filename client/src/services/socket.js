@@ -6,16 +6,6 @@ const localConfig = require('./localConfig').default;
 var socketAddress = process.env.SOCKET_ADDRESS;
 if (localConfig.socketAddress) socketAddress = localConfig.socketAddress;
 
-//  var socketAddress = "https://vibes-web.herokuapp.com";
-// var socketAddress = "http://172.16.0.95:8080";
-// var socketAddress = "http://192.168.43.3:8080";
-// var socketAddress = "http://192.168.14.97:8080";
-// var socketAddress = "http://192.168.1.194:8080"; //java
-// var port = 80;
-//socketAdress = socketAdress.replace(port, "8080");
-// var io = socketio.connect(socketAdress);
-// var io = socketio.connect("10.0.0.16:8080");
-
 console.log("env: " + process.env.NODE_ENV)
 console.log("process.env.SOCKET_ADDRESS: " + process.env.SOCKET_ADDRESS)
 if (process.env.NODE_ENV == 'production') {
@@ -36,10 +26,15 @@ io.on("joinVibe", vibeId => store.dispatch("joinVibe", vibeId));
 io.on("leaveVibe", _ => store.dispatch("leaveVibe"));
 io.on("setPictures", pictures => store.dispatch("setPictures", pictures));
 io.on("setAlbum", album => store.dispatch("setAlbum", album));
+io.on("setVibeFromAlbum", vibe => store.dispatch("setVibeFromAlbum", vibe));
 
 //to server
 function getAlbum(token) {
   io.emit("getAlbum", token);
+}
+
+function getVibeFromAlbum(id) {
+  io.emit("getVibeFromAlbum", id);
 }
 
 function newVibe(vibe) {
@@ -78,5 +73,6 @@ export default {
   newPicture,
   joinVibe,
   leaveVibe,
-  getAlbum
+  getAlbum,
+  getVibeFromAlbum
 };

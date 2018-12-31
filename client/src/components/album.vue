@@ -9,7 +9,6 @@
           <div class="closeBtn" @click="close">X</div>
         </div>
         <div class="bottom">
-          <font-awesome-icon icon="sync-alt" class="reload" @click="reload"></font-awesome-icon>
           <font-awesome-icon v-if="!album" icon="spinner" class="spinner"></font-awesome-icon>
           <div v-else-if="album.length === 0">
             <p class="empty">Your album is empty</p>
@@ -18,6 +17,7 @@
             <album-list-item v-for="(vibe, idx) in albumSliced" :key="idx" :vibe="vibe"></album-list-item>
             <p v-if="album && vibesToShow < album.length" class="more" @click="showMore">More...</p>
           </div>
+          <font-awesome-icon icon="sync-alt" class="reload" @click="reload"></font-awesome-icon>
         </div>
       </div>
     </div>
@@ -40,9 +40,9 @@ export default {
   methods: {
     open() {
       this.show = true;
-      // if (this.album === null) {
-      //   socket.getAlbum(this.$store.getters.token);
-      // }
+      if (this.album === null) {
+        socket.getAlbum(this.$store.getters.token);
+      }
     },
     reload() {
       this.$store.commit("setAlbum", null);
@@ -60,29 +60,10 @@ export default {
   },
   computed: {
     album() {
+      // return [];
       return this.$store.state.album;
     },
     albumSliced() {
-      // return [
-      //   {
-      //     id: "5be7422531246035e03a04fe",
-      //     title: "Work sesh@dov hoz",
-      //     createdAt: 1541882390276,
-      //     createdBy: { fbid: "10156492526329808", name: "Dan Levin" }
-      //   },
-      //   {
-      //     id: "5be7422531246035e03a04fe",
-      //     title: "Work sesh@dov hoz",
-      //     createdAt: 1541882390276,
-      //     createdBy: { fbid: "10156492526329808", name: "Dan Levin" }
-      //   },
-      //   {
-      //     id: "5be7422531246035e03a04fe",
-      //     title: "Work sesh@dov hoz",
-      //     createdAt: 1541882390276,
-      //     createdBy: { fbid: "10156492526329808", name: "Dan Levin" }
-      //   }
-      // ];
       if (this.album) return this.album.slice(-this.vibesToShow).reverse();
     }
   },
@@ -109,15 +90,13 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  justify-content: start;
-  align-items: flex-start;
 }
 
 .bg {
   width: 100%;
   max-width: 360px;
   min-height: 300px;
-  background: white;
+  background: black;
   border-radius: 5px;
   overflow: hidden;
 }
@@ -189,9 +168,9 @@ export default {
 }
 
 .bottom {
+  background: white;
   position: relative;
-  max-height: 560px;
-  min-height: 280px;
+  height: 75vh;
 }
 
 .list {
@@ -257,5 +236,16 @@ export default {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+@media (max-width: 540px) {
+  .bg {
+    max-width: 100%;
+    height: 100%;
+  }
+
+  .bottom {
+    height: -webkit-fill-available;
+  }
 }
 </style>

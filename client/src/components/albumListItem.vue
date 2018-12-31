@@ -1,5 +1,5 @@
 <template>
-  <div class="item">
+  <div class="item" @click="getVibeFromAlbum">
     <img :src="'https://graph.facebook.com/' + vibe.createdBy.fbid + '/picture?type=large'">
     <div class="details">
       <div class="title">{{vibe.title}}</div>
@@ -10,10 +10,21 @@
 
 <script>
 import { timeAgo } from "../services/timeAgo.js";
+import socket from "../services/socket.js";
 
 export default {
   name: "albumListItem",
   props: ["vibe"],
+  methods: {
+    getVibeFromAlbum() {
+      debugger;
+      socket.getVibeFromAlbum({
+        token: this.$store.getters.token,
+        vibeId: this.vibe.id
+      });
+      this.$router.go(-1);
+    }
+  },
   computed: {
     time() {
       return timeAgo.format(this.vibe.createdAt);
