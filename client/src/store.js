@@ -181,7 +181,7 @@ export default new Vuex.Store({
       if (v)
         v.pictures = pictures;
 
-      if (state.openVibe.id === vibeId)
+      if (state.openVibe && state.openVibe.id === vibeId)
         state.openVibe.pictures = pictures;
     },
     addUser(state, {

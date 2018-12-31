@@ -1,5 +1,5 @@
 <template>
-  <div class="main" :class="{open: isOpen, closed: !isOpen}">
+  <div ref="main" class="main">
     <div class="bg">
       <div class="top">
         <div class="coverOverlay"></div>
@@ -23,10 +23,14 @@
         </div>
       </div>
     </div>
-    <div class="overlay" :class="{overlayClosed: !isOpen}"></div>
-    <div v-if="isOpen" class="closeBtn" @click="close">X</div>
-    <div v-else class="openBtn" @click="open">
-      <font-awesome-icon icon="user-alt"></font-awesome-icon>
+    <div class="right">
+      <div class="overlay" :class="{overlayClosed: !isOpen}"></div>
+      <div class="btn" :class="{closeBtnOpen: isOpen}">
+        <div v-if="isOpen" class="closeBtn" @click="close">X</div>
+        <div v-else class="openBtn" @click="open">
+          <font-awesome-icon icon="user-alt"></font-awesome-icon>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -36,8 +40,14 @@ export default {
   name: "profile",
   data() {
     return {
-      isOpen: false
+      isOpen: false,
+      width: null
     };
+  },
+  mounted() {
+    this.width = window.innerWidth;
+    this.width = Math.min(this.width, 465);
+    this.$refs.main.style.transform = "translateX(" + -this.width + "px)";
   },
   methods: {
     close() {
@@ -68,8 +78,10 @@ export default {
     $route(to, from) {
       if (to.query.profile) {
         this.isOpen = true;
+        this.$refs.main.style.transform = "translateX(0px)";
       } else {
         this.isOpen = false;
+        this.$refs.main.style.transform = "translateX(" + -this.width + "px)";
       }
     }
   }
@@ -77,19 +89,11 @@ export default {
 </script>
 
 <style scoped="true">
-.open {
-  transform: translateX(0px);
-}
-
-.closed {
-  transform: translateX(-288px);
-}
-
 .main {
   pointer-events: none;
-  width: 200vw;
+  width: 100%;
   height: 100%;
-  max-width: 360px;
+  transform: translateX(-1000px);
   transition: transform 0.25s;
   will-change: transform;
   /* overflow: hidden; */
@@ -101,7 +105,6 @@ export default {
   height: 100%;
   background: #0008;
   position: absolute;
-  transform: translateX(288px);
   opacity: 1;
   transition: opacity 0.25s;
 }
@@ -111,8 +114,7 @@ export default {
   pointer-events: none;
 }
 
-.openBtn,
-.closeBtn {
+.btn {
   pointer-events: all;
   cursor: pointer;
   border-radius: 50px;
@@ -125,12 +127,30 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 7px;
-  margin-top: 9px;
+  margin: 10px;
   align-items: center;
   position: absolute;
-  top: 0;
-  right: 0;
+  transition: transform 0.25s;
+  will-change: transform;
+}
+
+.openBtn,
+.closeBtn {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtnOpen {
+  transform: translateX(-75px);
+}
+.right {
+  position: relative;
+  width: fit-content;
+  height: 100vh;
+  float: left;
 }
 
 .bg {
@@ -139,8 +159,9 @@ export default {
   height: 100%;
   background: white;
   box-shadow: -5px 0px 35px #000000a3;
-  max-width: 288px;
-  position: absolute;
+  max-width: 465px;
+  position: relative;
+  float: left;
 }
 
 .top {
@@ -205,6 +226,7 @@ export default {
 }
 
 .bottom {
+  color: #535353;
   width: 100%;
   user-select: none;
 }
@@ -213,7 +235,7 @@ export default {
   width: 100%;
   background: white;
   height: 68px;
-  border-bottom: 1.5px solid #b9b9b9;
+  border-bottom: 1px solid #e8e8e8;
   display: flex;
   align-items: center;
   justify-content: start;
@@ -235,7 +257,7 @@ export default {
   width: 100%;
   background: white;
   height: 68px;
-  border-bottom: 1.5px solid #b9b9b9;
+  border-bottom: 1px solid #e8e8e8;
   display: flex;
   align-items: center;
   justify-content: start;

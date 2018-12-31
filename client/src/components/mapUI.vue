@@ -111,7 +111,7 @@ export default {
   transform: translateX(-50%);
   bottom: 24px;
   border-radius: 5px;
-  font-family: "Fredoka One", cursive;
+  font-family: "Fredoka One", cursive, sans-serif;
   font-size: 23px;
   line-height: 70px;
   color: white;

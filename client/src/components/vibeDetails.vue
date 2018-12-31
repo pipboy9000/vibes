@@ -30,7 +30,8 @@
           </div>
           <div class="bottom">
             <div class="joinLeave">
-              <p class="leave" v-if="inVibe" @click="leaveVibe">i want out</p>
+              <p class="tooFar" v-if="vibe._id">{{randomOverMsg()}}</p>
+              <p class="leave" v-else-if="inVibe" @click="leaveVibe">i want out</p>
               <p class="join" v-else-if="vibe.distance < 25" @click="joinVibe">i want in!</p>
               <p class="tooFar" v-else>too far</p>
             </div>
@@ -128,7 +129,14 @@ export default {
       demoPics: null,
       scrollM: 0, //picture scroller
       isMoving: false,
-      commentSent: false //did we just a new comment?
+      commentSent: false, //did we just a new comment?
+      randomOverMsgs: [
+        "Cya next time :)",
+        "It was awesome",
+        "you looked so dumb lol",
+        "Awesome memories :)",
+        "sure was fun!"
+      ]
     };
   },
   mounted() {
@@ -146,6 +154,11 @@ export default {
     }, 10000);
   },
   methods: {
+    randomOverMsg() {
+      return this.randomOverMsgs[
+        Math.floor(Math.random() * this.randomOverMsgs.length)
+      ];
+    },
     openShare() {
       var q = this.$route.query;
       this.$router.push({ query: { ...q, share: true } });
