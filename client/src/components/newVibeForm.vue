@@ -8,14 +8,17 @@
         </div>
 
         <div class="bottom">
-          <input
-            ref="titleInput"
-            class="title input"
-            placeholder="What's your vibe?"
-            v-model="title"
-            maxlength="35"
-            @keyup.enter="startVibe"
-          >
+          <div class="inputWrapper">
+            <input
+              class="title input"
+              ref="titleInput"
+              placeholder="What's your vibe?"
+              v-model="title"
+              maxlength="35"
+              @keyup.enter="startVibe"
+            >
+            <font-awesome-icon class="smily" :icon="['far', 'smile']" @click="openEmojiSelector"></font-awesome-icon>
+          </div>
           <hr>
           <div class="startBtn" @click="startVibe">Start</div>
         </div>
@@ -39,8 +42,13 @@ export default {
       title: ""
     };
   },
-  mounted() {},
   methods: {
+    addEmoji(emoji) {
+      this.title += emoji;
+    },
+    openEmojiSelector() {
+      EventBus.$emit("openEmojiSelector", this.addEmoji);
+    },
     open() {
       this.show = true;
       this.$nextTick(function() {
@@ -144,20 +152,26 @@ export default {
   justify-content: center;
 }
 
-.bottom > input {
+.inputWrapper {
+  margin-left: 30px;
+}
+
+.inputWrapper > input {
   background: #fff;
   font-size: 20px;
   height: unset;
   margin-top: 10px;
   border: none;
   color: #646464;
+  width: unset;
+  display: inline-block;
 }
 
-.bottom > input::placeholder {
+.inputWrapper > input::placeholder {
   color: #b5b8b8;
 }
 
-.bottom > input:focus {
+.inputWrapper > input:focus {
   outline: none;
 }
 
@@ -184,6 +198,11 @@ hr {
   font-size: 20px;
   margin-top: 17px;
   border-bottom: #00b4f4 5px solid;
+}
+
+.smily {
+  font-size: 30px;
+  color: #b5b8b8;
 }
 
 .fade-enter-active,

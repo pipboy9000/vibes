@@ -32,7 +32,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped="true">
 .item {
   width: 100%;
   height: 70px;

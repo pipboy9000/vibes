@@ -80,7 +80,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped="true">
 .overlay {
   position: absolute;
   width: 100%;
@@ -172,6 +172,9 @@ export default {
   background: white;
   position: relative;
   height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .list {

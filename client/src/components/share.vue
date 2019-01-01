@@ -50,7 +50,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped="true">
 .overlay {
   width: 100%;
   height: 100%;
