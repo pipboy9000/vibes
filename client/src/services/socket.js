@@ -16,9 +16,7 @@ if (process.env.NODE_ENV == 'production') {
 
 //from server
 io.on("login", data => store.dispatch("login", data));
-io.on("setData", data => {
-  store.dispatch("setData", data)
-});
+io.on("setData", data => store.dispatch("setData", data));
 io.on("setServerLocation", user => store.dispatch("setServerLocation", user));
 io.on("newVibe", vibe => store.dispatch("newVibe", vibe));
 io.on("setComments", comments => store.dispatch("setComments", comments));
@@ -27,8 +25,13 @@ io.on("leaveVibe", _ => store.dispatch("leaveVibe"));
 io.on("setPictures", pictures => store.dispatch("setPictures", pictures));
 io.on("setAlbum", album => store.dispatch("setAlbum", album));
 io.on("setVibeFromAlbum", vibe => store.dispatch("setVibeFromAlbum", vibe));
+io.on("setVisible", visible => store.dispatch("setVisible", visible));
 
 //to server
+function setVisible(visible) {
+  io.emit("setVisible", visible);
+}
+
 function getAlbum(token) {
   io.emit("getAlbum", token);
 }
@@ -74,5 +77,6 @@ export default {
   joinVibe,
   leaveVibe,
   getAlbum,
-  getVibeFromAlbum
+  getVibeFromAlbum,
+  setVisible
 };

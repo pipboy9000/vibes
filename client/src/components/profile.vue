@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import socket from "../services/socket.js";
 export default {
   name: "profile",
   data() {
@@ -60,7 +61,10 @@ export default {
       }
     },
     toggleVisibility() {
-      this.$store.commit("setVisible", !this.visible);
+      socket.setVisible({
+        token: this.$store.getters.token,
+        visible: !this.visible
+      });
     },
     openAlbum() {
       this.$router.replace({ query: { album: true } });

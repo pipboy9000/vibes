@@ -162,7 +162,23 @@ io.on('connection', function (socket) {
       }
     });
   })
+
+  socket.on("setVisible", function ({
+    token,
+    visible
+  }) {
+    validate(token).then(user => {
+      if (user) {
+        var success = cache.setVisible(user, visible);
+        if (success) {
+          socket.emit("setVisible", visible);
+          piggyBack.setVisible();
+        }
+      }
+    });
+  })
 });
+
 
 function checkPiggyBack() {
   if (piggyBack.isFull()) {

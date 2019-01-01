@@ -44,7 +44,13 @@ export default {
   },
   methods: {
     addEmoji(emoji) {
-      this.title += emoji;
+      debugger;
+      var selectionStart = this.$refs.titleInput.selectionStart;
+      var selectionEnd = this.$refs.titleInput.selectionEnd;
+      this.title =
+        this.title.slice(0, selectionStart) +
+        emoji +
+        this.title.slice(selectionEnd, this.$refs.titleInput.value.length);
     },
     openEmojiSelector() {
       EventBus.$emit("openEmojiSelector", this.addEmoji);

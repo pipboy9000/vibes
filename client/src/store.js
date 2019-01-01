@@ -411,6 +411,12 @@ export default new Vuex.Store({
     },
     setVibeFromAlbum(context, vibe) {
       context.commit("setVibeFromAlbum", vibe)
+    },
+    setVisible(context, visible) {
+      context.commit("setVisible", visible);
+      if (!visible) {
+        context.commit("leaveVibe");
+      }
     }
   }
 });

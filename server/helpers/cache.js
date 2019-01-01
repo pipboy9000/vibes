@@ -65,6 +65,7 @@ function login({
             fbid,
             inVibe: "",
             location,
+            visible: true,
             updatedAt: Date.now()
         }
         usersMap[fbid] = user;
@@ -249,12 +250,32 @@ function leaveVibe(user) {
     return true;
 }
 
+function setVisible(user, visible) {
+    user = usersMap[user.fbid];
+    user.visible = visible;
+
+    //if user has gone invisible while inside vibe
+    if (!visible && user.inVibe) {
+        var vibe = vibesMap[user.inVibe];
+        usersMap[user.fbid].inVibe = "";
+        if (vibe) {
+            var removeIdx = vibe.users.indexOf(user.fbid);
+            if (removeIdx != -1)
+                vibe.users.splice(removeIdx, 1);
+
+        }
+    }
+    return true;
+}
+
 function getVibes() {
     return vibes;
 }
 
 function getUsers() {
-    return users;
+    return users.filter(function (u) {
+        return u.visible;
+    })
 }
 
 function getComments(vibeId) {
@@ -321,5 +342,6 @@ module.exports = {
     joinVibe,
     leaveVibe,
     save,
-    clear
+    clear,
+    setVisible
 };

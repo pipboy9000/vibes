@@ -54,6 +54,12 @@ function vibeRemoved() {
     data.users = cache.getUsers();
 }
 
+function setVisible() {
+    full = true;
+    data.vibes = cache.getVibes();
+    data.users = cache.getUsers();
+}
+
 function clear() {
     full = false;
     data = {};
@@ -78,5 +84,6 @@ module.exports = {
     joinVibe,
     leaveVibe,
     vibeRemoved,
-    clear
+    clear,
+    setVisible
 }

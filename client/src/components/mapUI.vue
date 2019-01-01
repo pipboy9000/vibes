@@ -2,7 +2,10 @@
   <div class="wrapper">
     <div class="gradient"></div>
     <list></list>
-    <div v-if="!inVibe || inVibe === ''" class="newVibeBtn" @click="openNewVibeForm">New Vibe</div>
+    <div v-if="!visible" class="newVibeBtn invisible">
+      <font-awesome-icon icon="eye-slash" class="eye"></font-awesome-icon>New Vibe
+    </div>
+    <div v-else-if="!inVibe || inVibe === ''" class="newVibeBtn" @click="openNewVibeForm">New Vibe</div>
     <div v-else class="newVibeBtn inVibe" @click="clickedInVibe">
       <font-awesome-icon icon="map-marker-alt"></font-awesome-icon>
       <p>: {{inVibe.title}}</p>
@@ -73,6 +76,9 @@ export default {
     },
     openVibe() {
       return this.$store.state.openVibe;
+    },
+    visible() {
+      return this.$store.state.visible;
     }
   }
 };
