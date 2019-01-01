@@ -19,7 +19,7 @@
               >
               <p v-if="plusUsers > 0">+{{plusUsers}}</p>
             </div>
-            <div class="shareBtn" @click="openShare">
+            <div v-if="!vibe._id" class="shareBtn" @click="openShare">
               <font-awesome-icon icon="share"></font-awesome-icon>
             </div>
             <div class="title">{{vibe.title}}</div>
