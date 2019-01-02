@@ -201,6 +201,9 @@ export default new Vuex.Store({
     login: (context, data) => {
       context.commit("setUser", data.user);
       context.commit("setUsers", data.users);
+      if (data.user.hasOwnProperty("visible")) {
+        context.dispatch("setVisible", data.user.visible);
+      }
       context.dispatch("setVibes", data.vibes);
       if (context.state.location && context.getters.me) {
         socket.updateLocation({

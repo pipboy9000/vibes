@@ -130,6 +130,14 @@ export default {
   border-bottom: 5px solid #21b5ec;
 }
 
+.invisible {
+  opacity: 0.5;
+}
+
+.eye {
+  margin-right: 10px;
+}
+
 .sideBtns {
   cursor: pointer;
   width: min-content;
