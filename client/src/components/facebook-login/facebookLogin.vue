@@ -1,17 +1,15 @@
 <template>
   <div class="container">
     <button @click="buttonClicked">
-      <div class="spinner"
-        v-if="isWorking"> </div>
-      <img :src="icon"
-        v-if="!isWorking"> <div class="text"> {{getButtonText}} </div>
+      <div class="spinner" v-if="isWorking"></div>
+      <img :src="icon" v-if="!isWorking">
+      <div class="text">{{getButtonText}}</div>
     </button>
   </div>
 </template>
 <script>
 import Vue from "vue";
-
-
+import { EventBus } from "../../event-bus.js";
 import {
   loadFbSdk,
   getLoginStatus,
@@ -95,6 +93,7 @@ export default {
     }
   },
   mounted() {
+    EventBus.$on("logout", this.logout);
     this.isWorking = true;
     console.log("waiting for device ready");
     this.$root.cordova.on("deviceready", () => {

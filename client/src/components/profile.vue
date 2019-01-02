@@ -17,7 +17,7 @@
           <font-awesome-icon icon="book-open"></font-awesome-icon>
           <p>My Vibes Album</p>
         </div>
-        <div class="logout">
+        <div class="logout" @click="logout">
           <font-awesome-icon icon="power-off"></font-awesome-icon>
           <p>Logout</p>
         </div>
@@ -37,6 +37,7 @@
 
 <script>
 import socket from "../services/socket.js";
+import { EventBus } from "../event-bus.js";
 export default {
   name: "profile",
   data() {
@@ -68,6 +69,9 @@ export default {
     },
     openAlbum() {
       this.$router.replace({ query: { album: true } });
+    },
+    logout() {
+      EventBus.$emit("logout");
     }
   },
   computed: {
